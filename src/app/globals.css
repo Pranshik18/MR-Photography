@@ -1,26 +1,82 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Surface Hierarchy */
+  --surface: #131313;
+  --surface-container-low: #1B1B1B;
+  --surface-container: #212121;
+  --surface-container-high: #2B2B2B;
+  --surface-container-highest: #353535;
+  --surface-container-lowest: #0E0E0E;
+  
+  /* Text & Accents */
+  --on-surface: #E5E2E1;
+  --tertiary: #CEC5B6;
+  --on-tertiary: #131313;
+  --primary: #9DCFD5;
+  --primary-container: #2A5C61;
+  --outline-variant: #313131;
+
+  /* Spacing & Utilities */
+  --glass-opacity: 0.7;
+  --glass-blur: 20px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-low: var(--surface-container-low);
+  --color-surface-lowest: var(--surface-container-lowest);
+  --color-on-surface: var(--on-surface);
+  --color-tertiary: var(--tertiary);
+  --color-on-tertiary: var(--on-tertiary);
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-outline-variant: var(--outline-variant);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+  --font-display: var(--font-manrope), ui-serif, Georgia;
+
+  --animate-slow-zoom: zoom 800ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface selection:bg-primary/30;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-balance;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .glass {
+    @apply bg-surface/70 backdrop-blur-xl border border-outline-variant/15;
+  }
+
+  .signature-gradient {
+    @apply bg-gradient-to-br from-primary to-primary-container;
+  }
+
+  .display-lg {
+    @apply text-[3.5rem] font-display font-extrabold tracking-[-0.02em] leading-tight;
+  }
+
+  .label-md {
+    @apply text-[0.75rem] font-sans font-medium tracking-[0.15em] uppercase;
+  }
+
+  .cinematic-mask {
+    mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  }
+
+  .outline-text {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+    color: transparent;
+  }
 }
