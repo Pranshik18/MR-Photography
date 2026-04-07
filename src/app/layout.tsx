@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -32,7 +34,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-surface text-on-surface font-sans">
         <main className="flex-grow">
+          <Navbar/>
           {children}
+          <Footer/>
         </main>
       </body>
     </html>

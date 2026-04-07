@@ -39,7 +39,6 @@ const Page = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      navbar
       <section className="mx-6 md:mx-10 mt-20 lg:mt-24">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-8 lg:gap-12">
           <div className="lg:max-w-2xl">
