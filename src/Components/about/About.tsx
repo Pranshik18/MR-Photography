@@ -1,3 +1,4 @@
+import React from "react";
 import Link from 'next/link';
 import { Camera, MapPin } from 'lucide-react';
 
@@ -37,7 +38,7 @@ export default function About() {
         <div className="max-w-screen-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24">
             {/* Column Left: Large Narrative Title */}
-            <div className="md:col-span-5 sticky top-32 h-fit">
+            <div className="md:col-span-5 h-fit mb-12 md:mb-0 md:sticky md:top-32">
               <h2 className="font-headline text-4xl md:text-6xl font-bold tracking-tight text-on-surface leading-[1.1]">
                 The Mind <br/> Behind <br/> <span className="text-primary italic">The Lens.</span>
               </h2>

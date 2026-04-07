@@ -1,9 +1,5 @@
-import React from 'react'
+import PricePage from "../../Components/price/Price";
 
-const page = () => {
-  return (
-    <div>Price</div>
-  )
+export default function Page() {
+  return <PricePage />;
 }
-
-export default page
