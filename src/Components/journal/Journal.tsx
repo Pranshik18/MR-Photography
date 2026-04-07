@@ -53,7 +53,7 @@ export default function Journal() {
           <h1 className="text-[3.5rem] leading-[1.1] font-headline font-extrabold tracking-tight text-on-surface">
             Journal
           </h1>
-          <p className="text-on-surface-variant text-lg max-w-xl mt-4">
+          <p className="text-on-surface-variant text-sm sm:text-lg max-w-xl mt-4">
             A collection of thoughts on light, shadow, and the transient moments captured through the lens. Curated explorations into the art of seeing.
           </p>
         </motion.div>

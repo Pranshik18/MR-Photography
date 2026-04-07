@@ -62,7 +62,7 @@ export default function About() {
                   <span className="text-5xl font-headline mr-3 float-left">P</span>
                   hotography is not merely a method of documentation; it is a philosophy of observation. To look is common, but to truly see requires a stillness that the modern world often rejects.
                 </p>
-                <p className="mt-8 font-body text-lg leading-relaxed text-on-surface-variant">
+                <p className="mt-8 font-body text-sm sm:text-lg leading-relaxed text-on-surface-variant">
                   My journey began in the darkrooms of a forgotten street in Lisbon, where I learned that the absence of light is just as vital as its presence. Shadow provides the architecture; light provides the soul. I have spent the last decade chasing the &quot;blue hour&quot; and the way cityscapes transform into abstract paintings of steel and glass when the sun dips below the horizon.
                 </p>
               </div>
@@ -84,10 +84,10 @@ export default function About() {
 
               <div className="max-w-none">
                 <h3 className="font-headline text-3xl font-bold mb-6 text-on-surface tracking-tight">The Intention</h3>
-                <p className="font-body text-lg leading-relaxed text-on-surface-variant">
+                <p className="font-body text-sm sm:text-lg leading-relaxed text-on-surface-variant">
                   Every shutter click is an intentional choice. I don&apos;t believe in &quot;spraying and praying.&quot; I wait for the alignment—the geometric perfection of a shadow hitting a corner, the fleeting emotion in a stranger&apos;s eye, the way grain adds a tactile memory to a digital frame.
                 </p>
-                <p className="mt-6 font-body text-lg leading-relaxed text-on-surface-variant">
+                <p className="mt-6 font-body text-sm sm:text-lg leading-relaxed text-on-surface-variant">
                   My work is deeply inspired by cinematic noir and brutalist architecture. I look for the structure within chaos. Whether I am shooting a high-fashion editorial or a quiet landscape, the goal remains the same: to curate an emotional atmosphere that lingers long after the viewer has moved on.
                 </p>
               </div>
@@ -114,7 +114,7 @@ export default function About() {
               </div>
 
               <div className="max-w-none pb-24">
-                <p className="font-body text-lg leading-relaxed text-on-surface-variant">
+                <p className="font-body text-sm sm:text-lg leading-relaxed text-on-surface-variant">
                   For me, the portfolio is a living document. It is a dialogue between the viewer and the viewed. I am Shivam Sharma, and I invite you to see the world not as it is, but as it feels.
                 </p>
                 <div className="mt-12 flex items-center gap-6">

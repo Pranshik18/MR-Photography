@@ -63,7 +63,7 @@ export default function Price() {
           <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
             Capturing light, <br/><span className="text-stone-500">Defining moments.</span>
           </h1>
-          <p className="text-on-surface-variant text-lg font-light leading-relaxed max-w-xl">
+          <p className="text-on-surface-variant text-sm sm:text-lg font-light leading-relaxed max-w-xl">
             Transparent pricing for bespoke photographic services. Each package is tailored to preserve the unique narrative of your vision with uncompromising quality.
           </p>
         </motion.div>
@@ -136,7 +136,7 @@ export default function Price() {
           <div className="absolute inset-0 bg-gradient-to-t from-stone-950 to-transparent"></div>
           <div className="absolute bottom-16 left-8 md:left-16 max-w-xl">
             <h3 className="font-headline text-4xl font-bold mb-6">Looking for something unique?</h3>
-            <p className="text-on-surface-variant mb-8">Custom photography projects often require a specific approach. Let's discuss your vision and create a bespoke package that fits your exact needs.</p>
+            <p className="text-on-surface-variant mb-8">Custom photography projects often require a specific approach. Let&apos;s discuss your vision and create a bespoke package that fits your exact needs.</p>
             <a className="inline-flex items-center gap-4 group" href="#">
               <span className="font-sans text-[10px] font-bold tracking-[0.25em] uppercase border-b border-tertiary pb-2 group-hover:border-primary transition-colors duration-500">Request Custom Quote</span>
               <ArrowRight size={18} className="text-tertiary group-hover:translate-x-2 transition-transform duration-500" />
