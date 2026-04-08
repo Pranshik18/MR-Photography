@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 
+
 import PageLayout from "@/Components/layout/PageLayout";
 
 const manrope = Manrope({
