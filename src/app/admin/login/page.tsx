@@ -10,6 +10,7 @@ const AdminLoginPage = () => {
     const router = useRouter();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -25,6 +26,7 @@ const AdminLoginPage = () => {
             email:email,
             password:password,
         }
+        setIsLoading(true)
         try {
             const req = await fetch('/api/auth/login',{
                 method:"POST",
@@ -41,8 +43,14 @@ const AdminLoginPage = () => {
             else{
                 toast.error(data.message)
             }
-        } catch (error : any) {
-            toast.error(error.message);
+        } catch (error : unknown) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -101,10 +109,11 @@ const AdminLoginPage = () => {
                             </div>
                         </div>
                         <button 
-                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02] cursor-pointer" 
+                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" 
                             type="submit"
+                            disabled={isLoading}
                         >
-                            Login
+                            {isLoading ? 'Authenticating...' : 'Login'}
                         </button>
                     </form>
                     <div className="mt-10 flex flex-col items-center space-y-4">
