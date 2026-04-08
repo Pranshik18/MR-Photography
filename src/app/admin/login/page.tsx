@@ -2,24 +2,37 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+
 
 const AdminLoginPage = () => {
-    const [name, setName] = useState('')
+    const router = useRouter();
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log('Login attempt:', { name, password })
+        // console.log('Login attempt:', { name, password })
         const body = {
-            name:name,
+            email:email,
             password:password,
         }
         try {
             const req = await fetch('/api/auth/login',{
                 method:"POST",
-                headers:{},
-                body:JSON.stringify()
+                headers:{ "Content-Type": "application/x-www-form-urlencoded",},
+                body:JSON.stringify(body)
             })
+            const data = await req.json();
+            console.log(data)
+            if(data.success){
+                setEmail('');
+                setPassword('');
+                router.push('/admin')
+            }
+            else{
+                console.log(data.message)
+            }
         } catch (error) {
             console.log(error)
         }
@@ -47,17 +60,17 @@ const AdminLoginPage = () => {
                         <div className="space-y-4">
                             <div className="group input-autofill-custom">
                                 <label className="text-[0.7rem] tracking-[0.15em] uppercase text-on-surface/40 mb-2 block ml-1 transition-colors group-focus-within:text-tertiary" htmlFor="name">
-                                    Name
+                                    Email
                                 </label>
                                 <div className="relative">
                                     <input 
                                         className="w-full bg-surface-low border border-outline-variant/20 rounded-lg px-4 py-4 text-on-surface placeholder:text-on-surface/20 focus:ring-1 focus:ring-tertiary/30 focus:border-tertiary/30 focus:outline-none transition-all duration-500 font-light" 
                                         id="name" 
                                         name="name" 
-                                        placeholder="Curator ID" 
+                                        placeholder="guest@gmail.com" 
                                         type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         autoComplete="off"
                                     />
                                 </div>
