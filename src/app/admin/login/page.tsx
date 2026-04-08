@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 
 const AdminLoginPage = () => {
@@ -12,7 +13,14 @@ const AdminLoginPage = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // console.log('Login attempt:', { name, password })
+        if(email.trim().length == 0){
+            toast.error("Enter Valid Email");
+            return
+        }
+        if(password.trim().length == 0){
+            toast.error("Enter Valid Password")
+            return
+        }
         const body = {
             email:email,
             password:password,
@@ -24,17 +32,17 @@ const AdminLoginPage = () => {
                 body:JSON.stringify(body)
             })
             const data = await req.json();
-            console.log(data)
             if(data.success){
                 setEmail('');
                 setPassword('');
                 router.push('/admin')
+                toast.success(data.message)
             }
             else{
-                console.log(data.message)
+                toast.error(data.message)
             }
-        } catch (error) {
-            console.log(error)
+        } catch (error : any) {
+            toast.error(error.message);
         }
     }
 
@@ -93,7 +101,7 @@ const AdminLoginPage = () => {
                             </div>
                         </div>
                         <button 
-                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02]" 
+                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02] cursor-pointer" 
                             type="submit"
                         >
                             Login
