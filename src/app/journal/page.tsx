@@ -1,9 +1,5 @@
-import React from 'react'
+import JournalPage from "../../Components/journal/Journal";
 
-const page = () => {
-  return (
-    <div>Journal</div>
-  )
+export default function Page() {
+  return <JournalPage />;
 }
-
-export default page
