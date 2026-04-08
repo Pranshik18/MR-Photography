@@ -30,9 +30,9 @@ export default function ContactPage() {
           <div className="lg:col-span-5 space-y-16">
             <header className="space-y-6">
               <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-display text-on-surface leading-[1.1]">
-                Let's create something timeless.
+                Let&apos;s create something timeless.
               </h1>
-              <p className="text-stone-400 text-lg max-w-md leading-relaxed">
+              <p className="text-stone-400 text-sm sm:text-lg max-w-md leading-relaxed">
                 Currently accepting select commissions for 2024. Available for global inquiries spanning editorial, architectural, and cinematic projects.
               </p>
             </header>
@@ -134,10 +134,10 @@ export default function ContactPage() {
           <div className="absolute inset-0 flex items-center pointer-events-none z-20 overflow-hidden whitespace-nowrap">
             <motion.div className="flex animate-scroll" initial={{translateX:0}} animate={{translateX:"-50%"}} transition={{duration:10, ease:"linear",repeat:Infinity}}>
               <span className="text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
-                GET IN TOUCH — START A PROJECT — LET'S COLLABORATE —&nbsp;
+                GET IN TOUCH — START A PROJECT — LET&apos;S COLLABORATE —&nbsp;
               </span>
               <span className="text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
-                GET IN TOUCH — START A PROJECT — LET'S COLLABORATE —&nbsp;
+                GET IN TOUCH — START A PROJECT — LET&apos;S COLLABORATE —&nbsp;
               </span>
             </motion.div>
           </div>
