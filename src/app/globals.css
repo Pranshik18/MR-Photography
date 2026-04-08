@@ -60,7 +60,7 @@
   }
 
   .signature-gradient {
-    @apply bg-gradient-to-br from-primary to-primary-container;
+    @apply bg-linear-to-br from-primary to-primary-container;
   }
 
   .display-lg {
@@ -78,5 +78,21 @@
   .outline-text {
     -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
     color: transparent;
+  }
+
+  .vignette {
+    background: radial-gradient(circle, transparent 20%, rgba(14, 14, 14, 0.9) 100%);
+  }
+
+  .grain-overlay {
+    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQqof_EppxIEueuR7Z6rYpVDWNrijcuEJ4O60rXY6SSQq3OkGuoWhHATKSFX90nFOCc2cRmRXfOi4by2F9BzLrWcXEw4xxHxp_4jPO9wQTHkKUhR3uMvdb3cB7kx03dsT5XWJI5SMKAxq3sEQ9Fc0BEGEVANpURvx1wnSoUsa0-3Ec2qA-0sHJ3T4mgPM0hFywO4sjw87OXi13jbZqGC0uP2CtIbVWnd3yBt46Yvh2oUMUwpAsrxPRYLROMoHsNFyGKDCunuTAiUHB');
+  }
+
+  .input-autofill-custom input:-webkit-autofill,
+  .input-autofill-custom input:-webkit-autofill:hover, 
+  .input-autofill-custom input:-webkit-autofill:focus {
+      -webkit-text-fill-color: #E5E2E1;
+      -webkit-box-shadow: 0 0 0px 1000px #1B1B1B inset;
+      transition: background-color 5000s ease-in-out 0s;
   }
 }
