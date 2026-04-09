@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import bcrypt from "bcrypt";
-import UserModel from "@/src/models/user";
+import UserModel from "@/models/user";
 import { z } from "zod";
-import { connectToDatabase } from "@/src/utils/db";
+import connectToDatabase from "@/utils/db";
 import jwt  from 'jsonwebtoken'
-
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").toLowerCase().trim(),
   password: z.string().min(1, "Password is required"),

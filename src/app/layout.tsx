@@ -3,7 +3,7 @@ import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 
 
-import PageLayout from "@/Components/layout/PageLayout";
+import CustomToaster from "@/components/layout/Toaster";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -20,11 +20,7 @@ export const metadata: Metadata = {
   description: "Get in touch for editorial, architectural, and cinematic projects.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
@@ -34,7 +30,8 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" />
       </head>
       <body className="min-h-full flex flex-col bg-surface text-on-surface font-sans overflow-x-hidden">
-        <PageLayout>{children}</PageLayout>
+        {children}
+        <CustomToaster />
       </body>
     </html>
   );

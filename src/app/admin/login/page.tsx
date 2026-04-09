@@ -2,28 +2,55 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+
 
 const AdminLoginPage = () => {
-    const [name, setName] = useState('')
+    const router = useRouter();
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log('Login attempt:', { name, password })
+        if(email.trim().length == 0){
+            toast.error("Enter Valid Email");
+            return
+        }
+        if(password.trim().length == 0){
+            toast.error("Enter Valid Password")
+            return
+        }
         const body = {
-            name:name,
+            email:email,
             password:password,
         }
+        setIsLoading(true)
         try {
             const req = await fetch('/api/auth/login',{
                 method:"POST",
-                headers:{
-                    'Content-Type': 'application/json',
-                },
+                headers:{ "Content-Type": "application/x-www-form-urlencoded",},
                 body:JSON.stringify(body)
             })
-        } catch (error) {
-            console.log(error)
+            const data = await req.json();
+            if(data.success){
+                setEmail('');
+                setPassword('');
+                router.push('/admin')
+                toast.success(data.message)
+            }
+            else{
+                toast.error(data.message)
+            }
+        } catch (error : unknown) {
+            if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -49,17 +76,17 @@ const AdminLoginPage = () => {
                         <div className="space-y-4">
                             <div className="group input-autofill-custom">
                                 <label className="text-[0.7rem] tracking-[0.15em] uppercase text-on-surface/40 mb-2 block ml-1 transition-colors group-focus-within:text-tertiary" htmlFor="name">
-                                    Name
+                                    Email
                                 </label>
                                 <div className="relative">
                                     <input 
                                         className="w-full bg-surface-low border border-outline-variant/20 rounded-lg px-4 py-4 text-on-surface placeholder:text-on-surface/20 focus:ring-1 focus:ring-tertiary/30 focus:border-tertiary/30 focus:outline-none transition-all duration-500 font-light" 
                                         id="name" 
                                         name="name" 
-                                        placeholder="Curator ID" 
+                                        placeholder="guest@gmail.com" 
                                         type="text"
-                                        value={name}
-                                        onChange={(e) => setName(e.target.value)}
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
                                         autoComplete="off"
                                     />
                                 </div>
@@ -82,10 +109,11 @@ const AdminLoginPage = () => {
                             </div>
                         </div>
                         <button 
-                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02]" 
+                            className="w-full bg-tertiary text-on-tertiary py-4 rounded-lg text-[0.75rem] font-bold tracking-[0.2em] uppercase shadow-[0_0_20px_-5px_rgba(206,197,182,0.3)] hover:shadow-[0_0_30px_-5px_rgba(206,197,182,0.5)] active:scale-95 transition-all duration-500 transform hover:scale-[1.02] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none" 
                             type="submit"
+                            disabled={isLoading}
                         >
-                            Login
+                            {isLoading ? 'Authenticating...' : 'Login'}
                         </button>
                     </form>
                     <div className="mt-10 flex flex-col items-center space-y-4">
