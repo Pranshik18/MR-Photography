@@ -17,8 +17,10 @@ const AdminLoginPage = () => {
         try {
             const req = await fetch('/api/auth/login',{
                 method:"POST",
-                headers:{},
-                body:JSON.stringify()
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body:JSON.stringify(body)
             })
         } catch (error) {
             console.log(error)
@@ -26,8 +28,8 @@ const AdminLoginPage = () => {
     }
 
     return (
-        <div className="bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary min-h-screen flex items-center justify-center overflow-hidden relative">
-            <div className="fixed inset-0 z-0">
+        <div className="bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary min-h-full flex items-center justify-center overflow-hidden relative py-16">
+            <div className="absolute inset-0 z-0">
                 <div className="absolute inset-0 bg-surface-lowest"></div>
                 <img 
                     alt="blurred cinematic long exposure" 

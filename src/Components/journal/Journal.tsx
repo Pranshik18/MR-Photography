@@ -70,7 +70,7 @@ export default function Journal() {
             viewport={{ once: true }}
             className="group relative grid grid-cols-1 md:grid-cols-12 gap-12 items-center"
           >
-            <div className="md:col-span-8 overflow-hidden rounded-sm luma-fade">
+            <div className="md:col-span-8 overflow-hidden rounded-sm">
               <img 
                 src={article.image} 
                 alt={article.title}
@@ -105,7 +105,7 @@ export default function Journal() {
               transition={{ delay: idx * 0.2 }}
               className={`space-y-8 ${idx === 1 ? 'md:mt-24' : ''}`}
             >
-              <div className="overflow-hidden rounded-sm luma-fade aspect-[4/5]">
+              <div className="overflow-hidden rounded-sm aspect-[4/5]">
                 <img 
                   src={article.image} 
                   alt={article.title}
@@ -158,7 +158,7 @@ export default function Journal() {
                 viewport={{ once: true }}
                 className="space-y-8"
               >
-                <div className="overflow-hidden rounded-sm luma-fade aspect-square">
+                <div className="overflow-hidden rounded-sm aspect-square">
                   <img 
                     src={article.image} 
                     alt={article.title}
