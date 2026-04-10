@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export interface AdminProfile {
   name: string;
@@ -47,10 +47,10 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const setProfile = (newProfile: AdminProfile) => {
+  const setProfile = useCallback((newProfile: AdminProfile) => {
     setProfileState(newProfile);
     localStorage.setItem('adminProfile', JSON.stringify(newProfile));
-  };
+  }, []);
 
   return (
     <AdminContext.Provider value={{ profile, setProfile }}>

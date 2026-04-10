@@ -6,6 +6,7 @@ export interface IPricing extends Document {
   currency: 'INR' | 'USD';
   price: number;          
   isActive: boolean;
+  isRecommended: boolean;
   order: number;                    
   createdAt: Date;
   updatedAt: Date;
@@ -45,6 +46,11 @@ const pricingSchema: Schema<IPricing> = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    
+    isRecommended: {
+      type: Boolean,
+      default: false,
     },
 
     order: {

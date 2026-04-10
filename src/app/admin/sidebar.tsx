@@ -1,16 +1,18 @@
 "use client";
 
-import { LayoutGrid, Camera, Images, BookOpen, LayoutTemplate, Settings, LogOut, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { LayoutGrid, Camera, Images, BookOpen,DollarSign, LayoutTemplate, Settings, LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 import { useAdmin } from './AdminContext';
+import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
 
 const navItems = [
   { icon: LayoutGrid, label: 'Dashboard', path: '/admin' },
   { icon: Camera, label: 'Add New Project', path: '/admin/add-project' },
   { icon: Images, label: 'Manage Portfolio', path: '/admin/manage-portfolio' },
-  { icon: BookOpen, label: 'Journal', path: '/admin/journal' },
+  { icon: DollarSign, label: 'Pricing', path: '/admin/pricing' },
   { icon: LayoutTemplate, label: 'Website Layout', path: '/admin/website-layout' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
@@ -23,6 +25,7 @@ type SidebarProps = {
 export default function Sidebar({ variant = 'desktop', onNavigate }: SidebarProps) {
   const pathname = usePathname();
   const { profile } = useAdmin();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
   const isDesktop = variant === 'desktop';
   const asideClassName = isDesktop
     ? 'fixed left-0 top-0 h-screen w-64 bg-[#1B1B1B] border-r border-white/5 hidden md:flex flex-col py-8 z-30'
@@ -74,12 +77,27 @@ export default function Sidebar({ variant = 'desktop', onNavigate }: SidebarProp
             </div>
           </Link>
           
-          <button className="flex items-center gap-x-4 text-on-surface-variant/50 hover:text-on-surface transition-colors group">
+           <button 
+            onClick={() => setIsLogoutDialogOpen(true)}
+            className="flex items-center gap-x-4 text-on-surface-variant/50 hover:text-on-surface transition-colors group"
+          >
             <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Logout</span>
           </button>
         </div>
       </div>
+
+      <AdminConfirmModal
+        isOpen={isLogoutDialogOpen}
+        title="Terminate Session?"
+        message="Are you sure you want to log out? You will need to re-authenticate to access the administrative archives."
+        confirmText="Confirm Logout"
+        variant="danger"
+        onConfirm={() => {
+          window.location.href = '/api/admin/user/logout';
+        }}
+        onCancel={() => setIsLogoutDialogOpen(false)}
+      />
     </aside>
   );
 }

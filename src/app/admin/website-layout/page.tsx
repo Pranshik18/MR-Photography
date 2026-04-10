@@ -1,73 +1,85 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { GripVertical, Search, Plus, ArrowLeft, Save } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { GripVertical, Search, Plus, ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
 
-const initialProjects = [
-  {
-    id: 1,
-    title: 'Obsidian Monolith',
-    category: 'Architecture',
-    image: 'https://picsum.photos/seed/arch1/400/300',
-  },
-  {
-    id: 2,
-    title: 'The Silent Gaze',
-    category: 'Portraiture',
-    image: 'https://picsum.photos/seed/portrait1/400/300',
-  },
-  {
-    id: 3,
-    title: 'Nocturnal Woods',
-    category: 'Landscape',
-    image: 'https://picsum.photos/seed/landscape1/400/300',
-  },
-];
+interface Project {
+  _id: string;
+  title: string;
+  category?: string;
+  heroImage: string;
+}
 
-const databaseProjects = [
-  { id: 101, title: 'Ethereal Echoes', category: 'Fine Art', image: 'https://picsum.photos/seed/art1/400/300' },
-  { id: 102, title: 'Urban Decay', category: 'Street', image: 'https://picsum.photos/seed/street1/400/300' },
-  { id: 103, title: 'Neon Dreams', category: 'Commercial', image: 'https://picsum.photos/seed/neon1/400/300' },
-  { id: 104, title: 'Silent Mountains', category: 'Landscape', image: 'https://picsum.photos/seed/land2/400/300' },
-  { id: 105, title: 'Crystal Water', category: 'Nature', image: 'https://picsum.photos/seed/nature1/400/300' },
-  { id: 106, title: 'Concrete Jungle', category: 'Architecture', image: 'https://picsum.photos/seed/arch2/400/300' },
-];
 
 export default function WebsiteLayoutPage() {
   const router = useRouter();
-  const [featured, setFeatured] = useState(initialProjects);
+  const [featured, setFeatured] = useState<Project[]>([]);
+  const [allProjects, setAllProjects] = useState<Project[]>([]);
   const [headerSearch, setHeaderSearch] = useState('');
   const [addSearch, setAddSearch] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean;
+    project: Project | null;
+  }>({
+    isOpen: false,
+    project: null
+  });
 
   // Drag config
-  const dragItem = useRef<number | null>(null);
-  const dragOverItem = useRef<number | null>(null);
+  const dragItem = useRef<string | null>(null);
+  const dragOverItem = useRef<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        const [featuredRes, allRes] = await Promise.all([
+          fetch('/api/admin/feature'),
+          fetch('/api/user/project')
+        ]);
+        
+        const featuredData = await featuredRes.json();
+        const allData = await allRes.json();
+        
+        if (featuredData.success) setFeatured(featuredData.data);
+        if (allData.success) setAllProjects(allData.data);
+      } catch (error) {
+        toast.error('Failed to load project database');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const displayFeatured = featured.filter(p => !headerSearch || p.title.toLowerCase().includes(headerSearch.toLowerCase()));
 
-  const searchSuggestions = addSearch.trim() === '' ? [] : databaseProjects.filter(p => 
+  const searchSuggestions = addSearch.trim() === '' ? [] : allProjects.filter(p => 
     p.title.toLowerCase().includes(addSearch.toLowerCase()) && 
-    !featured.some(f => f.id === p.id)
-  );
+    !featured.some(f => f._id === p._id)
+  ).slice(0, 5); // Limit suggestions
 
-  const handleDragStart = (e: React.DragEvent, id: number) => {
+  const handleDragStart = (e: React.DragEvent, id: string) => {
     dragItem.current = id;
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent, id: number) => {
+  const handleDragEnter = (e: React.DragEvent, id: string) => {
     dragOverItem.current = id;
   };
 
   const handleDragEnd = () => {
     if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
       const newFeatured = [...featured];
-      const sourceIdx = newFeatured.findIndex(p => p.id === dragItem.current);
-      const targetIdx = newFeatured.findIndex(p => p.id === dragOverItem.current);
+      const sourceIdx = newFeatured.findIndex(p => p._id === dragItem.current);
+      const targetIdx = newFeatured.findIndex(p => p._id === dragOverItem.current);
       
       if (sourceIdx !== -1 && targetIdx !== -1) {
         const draggedItemContent = newFeatured.splice(sourceIdx, 1)[0];
@@ -79,37 +91,68 @@ export default function WebsiteLayoutPage() {
     dragOverItem.current = null;
   };
 
-  const handleRemove = (id: number) => {
-    setFeatured(prev => prev.filter(p => p.id !== id));
+  const handleRemove = (project: Project) => {
+    setModalState({
+      isOpen: true,
+      project
+    });
+  };
+
+  const confirmRemove = () => {
+    if (!modalState.project) return;
+    const id = modalState.project._id;
+    setFeatured(prev => prev.filter(p => p._id !== id));
+    setModalState({ isOpen: false, project: null });
   };
 
   const handleAdd = () => {
     if (!addSearch.trim()) return;
-    
-    // Default to the top matching suggestion when clicking Add or hitting enter
     const match = searchSuggestions[0];
-    
-    if (match && !featured.find(f => f.id === match.id)) {
+    if (match && !featured.find(f => f._id === match._id)) {
       setFeatured([...featured, match]);
     }
-    
     setAddSearch('');
   };
 
-  const handleQuickAdd = (id: number) => {
-    const match = databaseProjects.find(p => p.id === id);
-    if (match && !featured.find(f => f.id === match.id)) {
+  const handleQuickAdd = (id: string) => {
+    const match = allProjects.find(p => p._id === id);
+    if (match && !featured.find(f => f._id === match._id)) {
       setFeatured([...featured, match]);
     }
   };
 
-  const saveLayout = () => {
+  const saveLayout = async () => {
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const projectIds = featured.map(p => p._id);
+      const res = await fetch('/api/admin/feature', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectIds }),
+      });
+      
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message || 'Layout synchronized successfully');
+        setTimeout(() => router.push('/admin'), 1000);
+      } else {
+        toast.error(data.message || 'Sync failed');
+      }
+    } catch (error) {
+      toast.error('Network error while saving');
+    } finally {
       setIsSaving(false);
-      router.push('/admin'); // Navigate back to standard admin page when done saving
-    }, 800);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center space-y-4">
+        <Loader2 className="w-10 h-10 text-tertiary animate-spin opacity-50" />
+        <p className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 animate-pulse">Establishing Connection...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto animate-in fade-in duration-700 pb-16">
@@ -153,10 +196,10 @@ export default function WebsiteLayoutPage() {
             <div className="space-y-4">
               {displayFeatured.map((project) => (
                 <div 
-                  key={project.id}
+                  key={project._id}
                   draggable={!headerSearch}
-                  onDragStart={(e) => handleDragStart(e, project.id)}
-                  onDragEnter={(e) => handleDragEnter(e, project.id)}
+                  onDragStart={(e) => handleDragStart(e, project._id)}
+                  onDragEnter={(e) => handleDragEnter(e, project._id)}
                   onDragEnd={handleDragEnd}
                   onDragOver={(e) => e.preventDefault()}
                   className="group flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 bg-surface rounded-lg border border-transparent hover:border-tertiary/20 hover:bg-neutral-900/50 transition-all duration-200"
@@ -168,7 +211,7 @@ export default function WebsiteLayoutPage() {
                     <img 
                       alt={project.title} 
                       className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700 pointer-events-none" 
-                      src={project.image}
+                      src={project.heroImage}
                     />
                   </div>
                   <div className="flex-1 w-full">
@@ -176,7 +219,7 @@ export default function WebsiteLayoutPage() {
                     <h4 className="font-headline font-bold text-lg tracking-tight">{project.title}</h4>
                   </div>
                   <button 
-                    onClick={() => handleRemove(project.id)}
+                    onClick={() => handleRemove(project)}
                     className="w-full sm:w-auto px-4 py-2 text-[0.65rem] tracking-[0.2em] font-bold uppercase text-red-500/80 hover:text-red-400 transition-colors sm:self-auto self-stretch"
                   >
                     Remove
@@ -218,14 +261,14 @@ export default function WebsiteLayoutPage() {
                     {searchSuggestions.length > 0 ? (
                       searchSuggestions.map(project => (
                         <div 
-                          key={project.id}
+                          key={project._id}
                           onClick={() => {
-                            handleQuickAdd(project.id);
+                            handleQuickAdd(project._id);
                             setAddSearch('');
                           }}
                           className="px-4 py-3 flex items-center gap-4 cursor-pointer border-b border-outline-variant/10 hover:bg-tertiary/20 hover:text-tertiary transition-all last:border-0 bg-surface/95 backdrop-blur-md"
                         >
-                          <img src={project.image} alt={project.title} className="w-12 h-12 object-cover rounded-sm" />
+                          <img src={project.heroImage} alt={project.title} className="w-12 h-12 object-cover rounded-sm" />
                           <div>
                             <p className="text-sm font-bold text-on-surface tracking-tight">{project.title}</p>
                             <p className="text-[0.65rem] text-primary/60 uppercase tracking-widest">{project.category}</p>
@@ -249,8 +292,15 @@ export default function WebsiteLayoutPage() {
               </button>
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span onClick={() => handleQuickAdd(101)} className="px-3 py-1 bg-surface text-[0.6rem] text-on-surface/40 uppercase tracking-widest border border-outline-variant/10 rounded-full cursor-pointer hover:bg-tertiary/10 hover:text-tertiary transition-colors">Recent: Ethereal Echoes</span>
-              <span onClick={() => handleQuickAdd(102)} className="px-3 py-1 bg-surface text-[0.6rem] text-on-surface/40 uppercase tracking-widest border border-outline-variant/10 rounded-full cursor-pointer hover:bg-tertiary/10 hover:text-tertiary transition-colors">Recent: Urban Decay</span>
+              {allProjects.filter(p => !featured.some(f => f._id === p._id)).slice(0, 3).map(p => (
+                <span 
+                  key={p._id}
+                  onClick={() => handleQuickAdd(p._id)} 
+                  className="px-3 py-1 bg-surface text-[0.6rem] text-on-surface/40 uppercase tracking-widest border border-outline-variant/10 rounded-full cursor-pointer hover:bg-tertiary/10 hover:text-tertiary transition-colors"
+                >
+                  Quick Add: {p.title}
+                </span>
+              ))}
             </div>
           </section>
 
@@ -271,6 +321,16 @@ export default function WebsiteLayoutPage() {
 
         </div>
       </div>
+
+      <AdminConfirmModal 
+        isOpen={modalState.isOpen}
+        title="Remove from Featured?"
+        message={`Are you sure you want to remove "${modalState.project?.title}" from the homepage featured grid? You can add it back later from the search bar.`}
+        confirmText="Remove Project"
+        variant="danger"
+        onConfirm={confirmRemove}
+        onCancel={() => setModalState({ isOpen: false, project: null })}
+      />
     </div>
   );
 }
