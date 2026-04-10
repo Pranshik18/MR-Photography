@@ -41,16 +41,16 @@ const articles = [
 
 export default function Journal() {
   return (
-    <div className="pt-32 pb-24">
+    <div className="pt-24 md:pt-32 pb-16 md:pb-24">
       {/* Header Section */}
-      <header className="px-6 md:px-12 max-w-screen-2xl mx-auto mb-24">
+      <header className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto mb-12 md:mb-24">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col gap-4 max-w-3xl"
         >
           <span className="text-[0.75rem] tracking-[0.15em] uppercase text-tertiary font-medium">Notes & Observations</span>
-          <h1 className="text-[3.5rem] leading-[1.1] font-headline font-extrabold tracking-tight text-on-surface">
+          <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] leading-[1.1] font-headline font-extrabold tracking-tight text-on-surface">
             Journal
           </h1>
           <p className="text-on-surface-variant text-sm sm:text-lg max-w-xl mt-4">
@@ -60,7 +60,7 @@ export default function Journal() {
       </header>
 
       {/* Journal Content */}
-      <section className="px-6 md:px-12 max-w-screen-2xl mx-auto space-y-32">
+      <section className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto space-y-20 md:space-y-32">
         {/* Featured Article */}
         {articles.filter(a => a.featured).map(article => (
           <motion.article 
@@ -68,7 +68,7 @@ export default function Journal() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            className="group relative grid grid-cols-1 md:grid-cols-12 gap-12 items-center"
+            className="group relative grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center"
           >
             <div className="md:col-span-8 overflow-hidden rounded-sm">
               <img 
@@ -95,7 +95,7 @@ export default function Journal() {
         ))}
 
         {/* Secondary Articles Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
           {articles.filter(a => !a.featured && a.id < 4).map((article, idx) => (
             <motion.article 
               key={article.id}
@@ -196,7 +196,7 @@ export default function Journal() {
       </section>
 
       {/* Pagination */}
-      <div className="mt-32 flex justify-center">
+      <div className="mt-20 md:mt-32 flex justify-center">
         <button className="bg-tertiary text-stone-900 px-12 py-4 rounded-lg font-headline font-bold text-[10px] tracking-[0.2em] uppercase transition-transform hover:scale-105 active:scale-95">
           Load Older Entries
         </button>

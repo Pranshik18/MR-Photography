@@ -2,8 +2,33 @@
 
 import { motion } from 'motion/react';
 import { Heart, Briefcase, Frame, ArrowRight } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-const packages = [
+const accentDotHoverClassByColor = {
+  tertiary: 'group-hover:bg-tertiary',
+  primary: 'group-hover:bg-primary',
+  'stone-500': 'group-hover:bg-stone-500',
+} as const;
+
+const accentTextClassByColor = {
+  tertiary: 'text-tertiary',
+  primary: 'text-primary',
+  'stone-500': 'text-stone-500',
+} as const;
+
+type ThemeColor = keyof typeof accentDotHoverClassByColor;
+
+type PricingPackage = {
+  title: string;
+  icon: ReactNode;
+  features: string[];
+  price: string;
+  cta: string;
+  color: ThemeColor;
+  bg: string;
+};
+
+const packages: PricingPackage[] = [
   {
     title: 'Wedding',
     icon: <Heart size={24} className="text-tertiary" />,
@@ -53,7 +78,7 @@ export default function Price() {
   return (
     <div className="pt-32 pb-24 overflow-x-hidden">
       {/* Hero Section */}
-      <header className="px-6 md:px-12 max-w-screen-2xl mx-auto mb-32">
+      <header className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto mb-16 md:mb-32">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,7 +104,7 @@ export default function Price() {
       </div>
 
       {/* Pricing Grid */}
-      <section className="px-6 md:px-12 max-w-screen-2xl mx-auto relative z-10">
+      <section className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-outline-variant/10">
           {packages.map((pkg, idx) => (
             <motion.div 
@@ -98,14 +123,16 @@ export default function Price() {
                 <ul className="space-y-6 mb-16">
                   {pkg.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-4 group">
-                      <span className={`w-1.5 h-1.5 bg-stone-700 group-hover:bg-${pkg.color} transition-colors duration-500`}></span>
+                      <span
+                        className={`w-1.5 h-1.5 bg-stone-700 ${accentDotHoverClassByColor[pkg.color]} transition-colors duration-500`}
+                      ></span>
                       <span className="text-sm uppercase tracking-widest font-sans text-on-surface-variant">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
               <div>
-                <p className={`font-headline text-sm text-${pkg.color} mb-2 uppercase tracking-widest`}>
+                <p className={`font-headline text-sm ${accentTextClassByColor[pkg.color]} mb-2 uppercase tracking-widest`}>
                   {pkg.title === 'Commercial' ? 'Inquire for Quote' : 'Starting at'}
                 </p>
                 <p className="font-headline text-4xl font-extrabold mb-8">{pkg.price}</p>
@@ -125,7 +152,7 @@ export default function Price() {
       </section>
 
       {/* Immersive CTA */}
-      <section className="mt-32 px-6 md:px-12 max-w-screen-2xl mx-auto">
+      <section className="mt-24 md:mt-32 px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto">
         <div className="relative h-[600px] w-full overflow-hidden group rounded-sm">
           <img 
             src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000" 
@@ -134,7 +161,7 @@ export default function Price() {
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-stone-950 to-transparent"></div>
-          <div className="absolute bottom-16 left-8 md:left-16 max-w-xl">
+          <div className="absolute bottom-10 md:bottom-16 left-4 sm:left-6 md:left-16 max-w-xl">
             <h3 className="font-headline text-4xl font-bold mb-6">Looking for something unique?</h3>
             <p className="text-on-surface-variant mb-8">Custom photography projects often require a specific approach. Let&apos;s discuss your vision and create a bespoke package that fits your exact needs.</p>
             <a className="inline-flex items-center gap-4 group" href="#">
@@ -146,7 +173,7 @@ export default function Price() {
       </section>
 
       {/* Process Section */}
-      <section className="mt-32 px-6 md:px-12 max-w-screen-2xl mx-auto">
+      <section className="mt-24 md:mt-32 px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {[
             { step: '01', title: 'Consultation', desc: 'We discuss your aesthetic goals and specific requirements for the shoot.' },

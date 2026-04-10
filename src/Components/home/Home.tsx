@@ -68,12 +68,12 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
         </div>
         
-        <div className="relative z-10 text-center px-6 max-w-4xl">
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl">
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="font-headline text-6xl md:text-[120px] font-extrabold kerning-tight leading-[0.9] text-white mb-8"
+            className="font-headline text-5xl sm:text-6xl md:text-[120px] font-extrabold kerning-tight leading-[0.9] text-white mb-6 md:mb-8"
           >
             Shivam Sharma
           </motion.h1>
@@ -81,7 +81,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 0.7 }}
             transition={{ delay: 0.5, duration: 1 }}
-            className="font-body text-[10px] md:text-xs font-medium kerning-loose text-on-surface-variant uppercase mb-16"
+            className="font-body text-[10px] md:text-xs font-medium kerning-loose text-on-surface-variant uppercase mb-10 md:mb-16"
           >
             Digital Curator & Lens-Based Artist
           </motion.p>
@@ -90,7 +90,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8, duration: 1 }}
-            className="group inline-flex items-center gap-6 px-12 py-5 border border-white/20 hover:border-primary/50 text-white font-body text-[10px] kerning-loose uppercase font-bold transition-all duration-700 bg-transparent hover:bg-white/5"
+            className="group inline-flex items-center gap-4 md:gap-6 px-8 md:px-12 py-4 md:py-5 border border-white/20 hover:border-primary/50 text-white font-body text-[10px] kerning-loose uppercase font-bold transition-all duration-700 bg-transparent hover:bg-white/5"
           >
             Explore
             <span className="transition-transform duration-500 group-hover:translate-x-1">
@@ -105,8 +105,8 @@ export default function Home() {
       </header>
 
       {/* Featured Projects Section */}
-      <section id="featured" className="py-48 px-8 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+      <section id="featured" className="py-24 md:py-48 px-4 sm:px-6 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-24 gap-8">
           <div className="max-w-xl">
             <span className="font-body text-[10px] kerning-loose text-primary uppercase mb-6 block font-bold">Volume 01</span>
             <h2 className="font-headline text-4xl md:text-6xl font-light leading-tight text-white">
@@ -134,7 +134,7 @@ export default function Home() {
                 className="w-full h-full object-cover cinematic-zoom opacity-70 group-hover:opacity-100"
                 referrerPolicy="no-referrer"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-12">
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-6 md:p-12">
                 <span className="font-body text-[9px] kerning-loose text-primary uppercase mb-3 font-bold">{project.category}</span>
                 <h3 className="font-headline text-2xl font-bold tracking-tight text-white">{project.title}</h3>
               </div>
@@ -142,7 +142,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-48 max-w-4xl mx-auto text-center">
+        <div className="mt-24 md:mt-48 max-w-4xl mx-auto text-center">
           <p className="font-headline text-2xl md:text-4xl leading-[1.6] text-white/90 font-light italic">
             &quot;Art is not what you see, but what you make others see through the deliberate{" "}
             <span className="font-extrabold text-primary not-italic">absence of light</span>.&quot;
@@ -154,8 +154,8 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-48 px-8 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
-        <div className="flex flex-col mb-24">
+      <section className="py-24 md:py-48 px-4 sm:px-6 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
+        <div className="flex flex-col mb-12 md:mb-24">
           <span className="font-body text-[10px] kerning-loose text-primary uppercase mb-6 block font-bold">Perspectives</span>
           <h2 className="font-headline text-4xl md:text-6xl font-light leading-tight text-white mb-4">
             What Clients <span className="font-extrabold italic opacity-90">Say</span>
@@ -185,7 +185,7 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section className="bg-surface/30 py-48 px-8 md:px-16 relative overflow-hidden">
+      <section className="bg-surface/30 py-24 md:py-48 px-4 sm:px-6 md:px-16 relative overflow-hidden">
         <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-24 items-center">
           <div className="lg:col-span-5">
             <h2 className="font-headline text-4xl md:text-5xl font-bold tracking-tight text-white mb-10 leading-tight">
@@ -216,7 +216,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 bg-background p-12 md:p-20 border border-white/5 shadow-2xl">
+          <div className="lg:col-span-7 bg-background p-8 md:p-20 border border-white/5 shadow-2xl">
             <form className="space-y-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 <div className="relative group">

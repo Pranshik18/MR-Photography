@@ -25,7 +25,7 @@ export default function ContactPage() {
   return (
     <main className="relative min-h-screen pt-32 pb-24 overflow-hidden bg-surface text-on-surface">
 
-      <div className="relative z-10 max-w-screen-2xl mx-auto px-8">
+      <div className="relative z-10 max-w-screen-2xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
           <div className="lg:col-span-5 space-y-16">
             <header className="space-y-6">
@@ -48,7 +48,7 @@ export default function ContactPage() {
                 </a>
               </div>
 
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-primary">location_on</span>
@@ -133,10 +133,10 @@ export default function ContactPage() {
           />
           <div className="absolute inset-0 flex items-center pointer-events-none z-20 overflow-hidden whitespace-nowrap">
             <motion.div className="flex animate-scroll" initial={{translateX:0}} animate={{translateX:"-50%"}} transition={{duration:10, ease:"linear",repeat:Infinity}}>
-              <span className="text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
+              <span className="text-5xl sm:text-6xl md:text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
                 GET IN TOUCH — START A PROJECT — LET&apos;S COLLABORATE —&nbsp;
               </span>
-              <span className="text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
+              <span className="text-5xl sm:text-6xl md:text-[120px] font-black font-display uppercase tracking-tighter text-on-surface/90 outline-text">
                 GET IN TOUCH — START A PROJECT — LET&apos;S COLLABORATE —&nbsp;
               </span>
             </motion.div>
