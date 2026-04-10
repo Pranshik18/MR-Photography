@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
       {
         success: true,
         message: "Pricing package created successfully",
+        data: newPricing,
       },
       { status: 201 }
     );

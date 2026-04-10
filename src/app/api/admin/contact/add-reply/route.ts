@@ -16,15 +16,21 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
     const updatedContact = await ContactModel.findByIdAndUpdate(
-      id,
-      {
-        status: "replied",
-        reply: reply,
-        repliedAt: new Date(),
-        isRead: true,
-      },
-      { new: true }
-    );
+  id,
+  {
+    $set: {
+      status: "replied",
+      reply: reply,
+      repliedAt: new Date(),
+      isRead: true,
+    }
+  },
+  {
+    returnDocument: 'after',     
+    runValidators: true,         
+    new: false                   
+  }
+);
 
     if (!updatedContact) {
       return NextResponse.json(

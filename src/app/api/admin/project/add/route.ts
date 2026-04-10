@@ -48,7 +48,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Project created successfully"
+        message: "API Test: Project created successfully",
+        data: newProject,
       },
       { status: 201 }
     );

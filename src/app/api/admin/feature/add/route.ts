@@ -15,10 +15,13 @@ export async function PUT(req: NextRequest) {
 
     await connectToDatabase();
     const updatedProject = await ProjectModel.findByIdAndUpdate(
-      id,
-      { featured: true },
-      { new: true }
-    );
+  id,
+  { featured: true },
+  { 
+    returnDocument: 'after',     
+    runValidators: true         
+  }
+);
 
     if (!updatedProject) {
       return NextResponse.json(

@@ -13,14 +13,19 @@ export async function PUT(req: NextRequest) {
         { status: 400 }
       );
     }
-
+    console.log(id , isActive)
     await connectToDatabase();
 
     const updatedPricing = await PricingModel.findByIdAndUpdate(
       id,
-      { isActive },
-      { new: true }
+      { isActive },                    
+      { 
+        new: true,                     
+        returnDocument: 'after',       
+        runValidators: true 
+      }
     );
+    console.log(updatedPricing)
 
     if (!updatedPricing) {
       return NextResponse.json(
