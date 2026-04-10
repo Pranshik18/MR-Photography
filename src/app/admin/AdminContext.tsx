@@ -32,8 +32,18 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem('adminProfile');
     if (stored) {
       try {
-        setProfileState(JSON.parse(stored));
-      } catch (e) {}
+        const parsed = JSON.parse(stored);
+        if (typeof parsed === 'object' && parsed !== null) {
+          // Merge with defaultProfile to ensure all required fields exist
+          setProfileState({ ...defaultProfile, ...parsed });
+        } else {
+          throw new Error('Invalid profile format');
+        }
+      } catch (e) {
+        console.error('Failed to parse adminProfile from localStorage, resetting to default:', e);
+        localStorage.removeItem('adminProfile');
+        setProfileState(defaultProfile);
+      }
     }
   }, []);
 

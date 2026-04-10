@@ -25,7 +25,15 @@ export default function SettingsPage() {
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setAvatarPreview(URL.createObjectURL(file));
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setAvatarPreview(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleProfileSubmit = (e: React.FormEvent) => {

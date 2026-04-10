@@ -5,7 +5,7 @@ import { useEffect, useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
 import Sidebar from './sidebar';
-import { Menu, Search, X } from 'lucide-react';
+import { Menu, Search } from 'lucide-react';
 import { AdminProvider } from './AdminContext';
 
 export default function AdminLayout({ children }: { children: { children: ReactNode }['children'] }) {

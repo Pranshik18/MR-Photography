@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Heart, Briefcase, Frame, ArrowRight } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 const accentDotHoverClassByColor = {
   tertiary: 'group-hover:bg-tertiary',
@@ -15,7 +16,19 @@ const accentTextClassByColor = {
   'stone-500': 'text-stone-500',
 } as const;
 
-const packages = [
+type ThemeColor = keyof typeof accentDotHoverClassByColor;
+
+type PricingPackage = {
+  title: string;
+  icon: ReactNode;
+  features: string[];
+  price: string;
+  cta: string;
+  color: ThemeColor;
+  bg: string;
+};
+
+const packages: PricingPackage[] = [
   {
     title: 'Wedding',
     icon: <Heart size={24} className="text-tertiary" />,
@@ -111,7 +124,7 @@ export default function Price() {
                   {pkg.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-4 group">
                       <span
-                        className={`w-1.5 h-1.5 bg-stone-700 ${accentDotHoverClassByColor[pkg.color as keyof typeof accentDotHoverClassByColor]} transition-colors duration-500`}
+                        className={`w-1.5 h-1.5 bg-stone-700 ${accentDotHoverClassByColor[pkg.color]} transition-colors duration-500`}
                       ></span>
                       <span className="text-sm uppercase tracking-widest font-sans text-on-surface-variant">{feature}</span>
                     </li>
@@ -119,7 +132,7 @@ export default function Price() {
                 </ul>
               </div>
               <div>
-                <p className={`font-headline text-sm ${accentTextClassByColor[pkg.color as keyof typeof accentTextClassByColor]} mb-2 uppercase tracking-widest`}>
+                <p className={`font-headline text-sm ${accentTextClassByColor[pkg.color]} mb-2 uppercase tracking-widest`}>
                   {pkg.title === 'Commercial' ? 'Inquire for Quote' : 'Starting at'}
                 </p>
                 <p className="font-headline text-4xl font-extrabold mb-8">{pkg.price}</p>

@@ -7,7 +7,7 @@ const recentProjects = [
   {
     id: 1,
     title: 'Obsidian Peaks: Volume IV',
-    subtitle: 'Uploaded 2 days ago â€¢ 24 Photographs',
+    subtitle: 'Uploaded 2 days ago • 24 Photographs',
     status: 'Published',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANa-xRKLbM3Y3rAvK-i7jU2U_t0g1E5u4eSeTdXhZs6vjLMxsBRTwdANpA0AXyyswXM_nirPVjr9e8u5iSBDCNbSq2I0G9vxlXRRiaPuaxZdOK-Igkb_EQlrVd5JpCbUfCJ2e7S_K4-kp34rB-YN8ngeREf0z23G0OXGoxCnlRXwJvwQJ094fasIkKhA2hxRanZRZ3BrrnZP0LkTo2HWZeb9Timv6OQUm_mO2mf_6Z04E6TyS1yegT2mJLq5EyvVrtbZREbNERGARg',
     large: true

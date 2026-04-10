@@ -52,23 +52,28 @@ export default function WebsiteLayoutPage() {
     !featured.some(f => f.id === p.id)
   );
 
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    dragItem.current = index;
+  const handleDragStart = (e: React.DragEvent, id: number) => {
+    dragItem.current = id;
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = 'move';
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent, index: number) => {
-    dragOverItem.current = index;
+  const handleDragEnter = (e: React.DragEvent, id: number) => {
+    dragOverItem.current = id;
   };
 
   const handleDragEnd = () => {
     if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
       const newFeatured = [...featured];
-      const draggedItemContent = newFeatured.splice(dragItem.current, 1)[0];
-      newFeatured.splice(dragOverItem.current, 0, draggedItemContent);
-      setFeatured(newFeatured);
+      const sourceIdx = newFeatured.findIndex(p => p.id === dragItem.current);
+      const targetIdx = newFeatured.findIndex(p => p.id === dragOverItem.current);
+      
+      if (sourceIdx !== -1 && targetIdx !== -1) {
+        const draggedItemContent = newFeatured.splice(sourceIdx, 1)[0];
+        newFeatured.splice(targetIdx, 0, draggedItemContent);
+        setFeatured(newFeatured);
+      }
     }
     dragItem.current = null;
     dragOverItem.current = null;
@@ -146,12 +151,12 @@ export default function WebsiteLayoutPage() {
               <p className="text-[0.65rem] text-on-surface/30 italic">Drag to reorder elements on the live grid</p>
             </div>
             <div className="space-y-4">
-              {displayFeatured.map((project, index) => (
+              {displayFeatured.map((project) => (
                 <div 
                   key={project.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragEnter={(e) => handleDragEnter(e, index)}
+                  draggable={!headerSearch}
+                  onDragStart={(e) => handleDragStart(e, project.id)}
+                  onDragEnter={(e) => handleDragEnter(e, project.id)}
                   onDragEnd={handleDragEnd}
                   onDragOver={(e) => e.preventDefault()}
                   className="group flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 bg-surface rounded-lg border border-transparent hover:border-tertiary/20 hover:bg-neutral-900/50 transition-all duration-200"

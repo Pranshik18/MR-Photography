@@ -36,6 +36,22 @@ function AddProjectContent() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Prevent memory leaks by revoking object URLs on unmount
+  const heroPreviewRef = useRef(heroPreview);
+  const galleryRef = useRef(gallery);
+  
+  useEffect(() => {
+    heroPreviewRef.current = heroPreview;
+    galleryRef.current = gallery;
+  }, [heroPreview, gallery]);
+
+  useEffect(() => {
+    return () => {
+      if (heroPreviewRef.current) URL.revokeObjectURL(heroPreviewRef.current);
+      galleryRef.current.forEach(item => URL.revokeObjectURL(item.preview));
+    };
+  }, []);
+
   useEffect(() => {
     if (isEditing) {
       // Simulate fetching project details
@@ -50,6 +66,7 @@ function AddProjectContent() {
   const handleHeroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (heroPreview) URL.revokeObjectURL(heroPreview);
       setHeroImage(file);
       setHeroPreview(URL.createObjectURL(file));
     }
@@ -70,7 +87,10 @@ function AddProjectContent() {
   };
 
   const removeGalleryImage = (index: number) => {
-    setGallery(prev => prev.filter((_, i) => i !== index));
+    setGallery(prev => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
   };
 
   const handleFormat = (type: 'bold' | 'italic' | 'list' | 'link') => {
@@ -112,8 +132,19 @@ function AddProjectContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('subtitle', subtitle);
+    formData.append('description', description);
+    formData.append('clientName', clientName);
+    formData.append('projectRole', projectRole);
+    if (heroImage) formData.append('heroImage', heroImage);
+    gallery.forEach((item, index) => formData.append(`gallery[${index}]`, item.file));
+
     // Simulate API call processing delay
     setTimeout(() => {
+      console.log('Dummy payload:', Array.from(formData.entries()));
       setIsSubmitting(false);
       router.push('/admin/manage-portfolio'); // Navigate back to portfolio dashboard when done
     }, 1500);

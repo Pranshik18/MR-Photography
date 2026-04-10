@@ -76,6 +76,7 @@ function ManagePortfolioContent() {
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [sortOpen, setSortOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
+  const [openVisibilityId, setOpenVisibilityId] = useState<number | null>(null);
   const sortMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -93,9 +94,29 @@ function ManagePortfolioContent() {
   }, [sortOpen]);
 
   useEffect(() => {
-    if (qsString) {
-      setSearchQuery(qsString);
-    }
+    if (openVisibilityId === null) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpenVisibilityId(null);
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (!target?.closest?.('.visibility-menu-container')) {
+        setOpenVisibilityId(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('pointerdown', handlePointerDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [openVisibilityId]);
+
+  useEffect(() => {
+    setSearchQuery(qsString || '');
   }, [qsString]);
 
   const sortedProjects = useMemo(() => {
@@ -261,27 +282,52 @@ function ManagePortfolioContent() {
                 
                 <div className="pt-6 border-t border-white/5 flex items-center justify-between mt-auto">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-outline">Visibility</span>
-                  <div className="relative group/select">
+                  <div className="relative visibility-menu-container">
                     <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={openVisibilityId === project.id}
+                      onClick={() => setOpenVisibilityId(openVisibilityId === project.id ? null : project.id)}
                       className="text-[10px] uppercase tracking-[0.1em] font-bold flex items-center gap-1 hover:text-tertiary transition-colors outline-none"
                     >
                       {project.visibility}
                       <ChevronDown className="w-3 h-3" />
                     </button>
-                    <div className="absolute right-0 bottom-full mb-2 w-32 bg-surface-container border border-outline-variant/30 shadow-2xl opacity-0 invisible group-hover/select:opacity-100 group-hover/select:visible transition-all duration-200 z-50 py-1">
-                       <button
-                         onClick={() => handleVisibilitySelect(project.id, 'Public')}
-                         className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
-                       >
-                         Public
-                       </button>
-                       <button
-                         onClick={() => handleVisibilitySelect(project.id, 'Private')}
-                         className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
-                       >
-                         Private
-                       </button>
-                    </div>
+                    <AnimatePresence>
+                      {openVisibilityId === project.id && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: -5 }} 
+                          animate={{ opacity: 1, y: 0 }} 
+                          exit={{ opacity: 0, y: -5 }} 
+                          transition={{ duration: 0.15 }}
+                          role="menu"
+                          className="absolute right-0 bottom-full mb-2 w-32 bg-surface-container border border-outline-variant/30 shadow-2xl z-50 py-1"
+                        >
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              handleVisibilitySelect(project.id, 'Public');
+                              setOpenVisibilityId(null);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
+                          >
+                            Public
+                          </button>
+                          <button
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              handleVisibilitySelect(project.id, 'Private');
+                              setOpenVisibilityId(null);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
+                          >
+                            Private
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
               </div>
