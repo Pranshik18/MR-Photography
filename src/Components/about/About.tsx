@@ -12,7 +12,7 @@ export default function About() {
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden flex items-end pb-24 px-12">
+      <section className="relative h-[92vh] md:h-screen w-full overflow-hidden flex items-end pb-16 md:pb-24 px-4 sm:px-6 md:px-12">
         <div className="absolute inset-0 z-0">
           <img 
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKI-7rLCEl7oSjeDt7kgD7tUuDO5EkMpYk0u5eQxiYzaQSXyepOpaSETMmqYVOTNKOrgxp6lTruXuqOjE005AGmAbL7_sPd_ZdFqBViIwnV35qz23pZblYoXNAqQEeMxSDBz59kSKd1lP3Nq6AFWEsDbF2MVK5Gxx4i-VP98sFFWxzV8oVriXkR6esZciLiwvpDF_8FZCvdqUxNskgs-H_riZ5DtBBBkwXZr-xqj0MIfE8TGZH6_kNT9it2ZiVTTFw3UTZFHAyri5r" 
@@ -34,7 +34,7 @@ export default function About() {
       </section>
 
       {/* Deep Storytelling Section */}
-      <section className="py-32 px-12 bg-surface">
+      <section className="py-20 md:py-32 px-4 sm:px-6 md:px-12 bg-surface">
         <div className="max-w-screen-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24">
             {/* Column Left: Large Narrative Title */}
@@ -56,7 +56,7 @@ export default function About() {
             </div>
 
             {/* Column Right: Narrative Copy & Supporting Imagery */}
-            <div className="md:col-span-7 flex flex-col gap-32">
+            <div className="md:col-span-7 flex flex-col gap-20 md:gap-32">
               <div className="max-w-none">
                 <p className="font-body text-xl md:text-2xl leading-relaxed text-on-surface/90 font-light">
                   <span className="text-5xl font-headline mr-3 float-left">P</span>
@@ -113,7 +113,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="max-w-none pb-24">
+              <div className="max-w-none pb-16 md:pb-24">
                 <p className="font-body text-sm sm:text-lg leading-relaxed text-on-surface-variant">
                   For me, the portfolio is a living document. It is a dialogue between the viewer and the viewed. I am Shivam Sharma, and I invite you to see the world not as it is, but as it feels.
                 </p>
@@ -128,7 +128,7 @@ export default function About() {
       </section>
 
       {/* Stats/Exhibitions Bento Style */}
-      <section className="py-32 px-12 bg-surface/50">
+      <section className="py-20 md:py-32 px-4 sm:px-6 md:px-12 bg-surface/50">
         <div className="max-w-screen-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-surface p-12 border border-white/5 flex flex-col justify-between aspect-square md:aspect-auto">

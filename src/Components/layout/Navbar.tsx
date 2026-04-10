@@ -35,12 +35,12 @@ export default function Navbar() {
 
   return (
     <nav className={cn(
-      "fixed top-0 w-full z-50 transition-all duration-500 py-8",
+      "fixed top-0 w-full z-50 transition-all duration-500 py-4 md:py-8",
       isScrolled || isMenuOpen
-        ? "bg-neutral-950/80 backdrop-blur-xl py-6"
+        ? "bg-neutral-950/80 backdrop-blur-xl py-3 md:py-6"
         : "bg-transparent"
     )}>
-      <div className="flex justify-between items-center px-8 md:px-16 w-full max-w-screen-2xl mx-auto">
+      <div className="flex justify-between items-center px-4 sm:px-6 md:px-16 w-full max-w-screen-2xl mx-auto">
         <Link
           href="/"
           onClick={() => setIsMenuOpen(false)}
@@ -78,7 +78,7 @@ export default function Navbar() {
       </div>
 
       {isMenuOpen ? (
-        <div className="md:hidden px-8 md:px-16 w-full max-w-screen-2xl mx-auto">
+        <div className="md:hidden px-4 sm:px-6 md:px-16 w-full max-w-screen-2xl mx-auto">
           <div className="border-t border-white/10 pt-6 pb-4 flex flex-col gap-5">
             {navLinks.map((link) => (
               <Link
