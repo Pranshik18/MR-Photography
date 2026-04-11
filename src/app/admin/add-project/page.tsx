@@ -131,23 +131,60 @@ function AddProjectContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!heroImage) {
+      alert("Hero image is required");
+      return;
+    }
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('subtitle', subtitle);
-    formData.append('description', description);
-    formData.append('clientName', clientName);
-    formData.append('projectRole', projectRole);
-    if (heroImage) formData.append('heroImage', heroImage);
-    gallery.forEach((item, index) => formData.append(`gallery[${index}]`, item.file));
+    try {
+      const fileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+        });
+      };
 
-    // Simulate API call processing delay
-    setTimeout(() => {
-      console.log('Dummy payload:', Array.from(formData.entries()));
+      const heroBase64 = await fileToBase64(heroImage);
+      const galleryBase64 = await Promise.all(
+        gallery.map(async (item, index) => ({
+          url: await fileToBase64(item.file),
+          order: index
+        }))
+      );
+
+      const payload = {
+        title,
+        subtitle,
+        description,
+        clientName,
+        projectRole,
+        heroImage: heroBase64,
+        images: galleryBase64,
+      };
+
+      const response = await fetch('/api/admin/project/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        router.push('/admin/manage-portfolio');
+      } else {
+        alert(data.message || 'Failed to create project');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while creating the project');
+    } finally {
       setIsSubmitting(false);
-      router.push('/admin/manage-portfolio'); // Navigate back to portfolio dashboard when done
-    }, 1500);
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/utils/db";
 import ProjectModel from "@/models/project";
+import { uploadSingle } from "@/utils/cloudinary-client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,21 +10,17 @@ export async function POST(req: NextRequest) {
       title,
       subtitle,
       description,
-      client,
-      role,
+      clientName,
+      projectRole,
       heroImage, 
       images,   
-      slug,
-      year,
-      location,
-      isPublic,
     } = body;
 
-    if (!title || !description || !heroImage || !slug) {
+    if (!title || !description || !heroImage) {
       return NextResponse.json(
         {
           success: false,
-          message: "Missing required fields (title, description, heroImage, or slug)",
+          message: "Missing required fields (title, description, heroImage)",
         },
         { status: 400 }
       );
@@ -31,18 +28,36 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
+    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+
+    // Upload Hero Image
+    const heroUpload = await uploadSingle(heroImage, `mr-photography/projects/${slug}`);
+    const heroUrl = heroUpload.secure_url;
+
+    // Upload Gallery Images
+    const uploadedImages = [];
+    if (images && images.length > 0) {
+      for (const img of images) {
+        const upload = await uploadSingle(img.url, `mr-photography/projects/${slug}/gallery`);
+        uploadedImages.push({
+          url: upload.secure_url,
+          publicId: upload.public_id,
+          order: img.order || 0
+        });
+      }
+    }
+
     const newProject = await ProjectModel.create({
       title,
       subtitle,
       description,
-      client,
-      role: role || "Photographer",
-      heroImage,
-      images: images || [],
+      client: clientName,
+      role: projectRole || "Photographer",
+      heroImage: heroUrl,
+      images: uploadedImages,
       slug,
-      year,
-      location,
-      isPublic: isPublic !== undefined ? isPublic : true,
+      year: new Date().getFullYear(),
+      isPublic: true,
     });
 
     return NextResponse.json(
