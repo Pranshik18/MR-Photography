@@ -71,13 +71,32 @@ function ManagePortfolioContent() {
   const searchParams = useSearchParams();
   const qsString = searchParams.get('q') || '';
   
-  const [projectList, setProjectList] = useState(initialProjects);
+  const [projectList, setProjectList] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(qsString);
   const [sortOption, setSortOption] = useState<SortOption>('newest');
   const [sortOpen, setSortOpen] = useState(false);
-  const [projectToDelete, setProjectToDelete] = useState<number | null>(null);
-  const [openVisibilityId, setOpenVisibilityId] = useState<number | null>(null);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const [openVisibilityId, setOpenVisibilityId] = useState<string | null>(null);
   const sortMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch('/api/user/project');
+      const data = await res.json();
+      if (data.success) {
+        setProjectList(data.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch projects', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     if (!sortOpen) return;
@@ -137,35 +156,66 @@ function ManagePortfolioContent() {
       return copy;
     }
     
-    // With static seed data, treat higher id as newer.
-    copy.sort((a, b) => (sortOption === 'newest' ? b.id - a.id : a.id - b.id));
+    // With dynamic data, ID is string so use dates
+    copy.sort((a, b) => {
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return sortOption === 'newest' ? dateB - dateA : dateA - dateB;
+    });
     return copy;
   }, [projectList, sortOption, searchQuery]);
 
   const activeSortLabel = SORT_OPTIONS.find((o) => o.key === sortOption)?.label ?? 'Sort';
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     setProjectToDelete(id);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (projectToDelete !== null) {
-      setProjectList(prev => prev.filter(p => p.id !== projectToDelete));
-      setProjectToDelete(null);
+      try {
+        const res = await fetch('/api/admin/project/delete', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: projectToDelete }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          setProjectList(prev => prev.filter(p => p._id !== projectToDelete));
+        } else {
+          alert('Failed to delete project');
+        }
+      } catch (error) {
+        console.error('Error deleting project', error);
+      } finally {
+        setProjectToDelete(null);
+      }
     }
   };
 
-  const handleVisibilitySelect = (id: number, newVisibility: string) => {
-    setProjectList(prev => prev.map(p => {
-      if (p.id === id) {
-        return {
-          ...p, 
-          visibility: newVisibility,
-          status: newVisibility === 'Public' ? 'Published' : 'Draft' 
-        };
+  const handleVisibilitySelect = async (id: string, newVisibility: string) => {
+    try {
+      const isPublic = newVisibility === 'Public';
+      const res = await fetch('/api/admin/project/status', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, isPublic }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setProjectList(prev => prev.map(p => {
+          if (p._id === id) {
+            return {
+              ...p, 
+              isPublic: isPublic
+            };
+          }
+          return p;
+        }));
       }
-      return p;
-    }));
+    } catch (error) {
+      console.error('Failed to update visibility', error);
+    }
   };
 
   return (
@@ -233,10 +283,14 @@ function ManagePortfolioContent() {
 
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-10">
         <AnimatePresence mode="popLayout">
-          {sortedProjects.map((project) => (
+          {loading ? (
+            <div className="col-span-full text-center py-20 text-outline-variant font-headline text-lg">
+              Loading projects...
+            </div>
+          ) : sortedProjects.map((project: any) => (
             <motion.div 
               layout
-              key={project.id}
+              key={project._id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -246,33 +300,33 @@ function ManagePortfolioContent() {
             >
               <div className="aspect-[4/3] overflow-hidden relative">
                 <img 
-                  src={project.image} 
+                  src={project.heroImage || project.image} 
                   alt={project.title}
                   className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-110 transition-all duration-[2000ms] ease-out"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute top-4 left-4">
-                  <span className="backdrop-blur-md px-3 py-1 text-[10px] uppercase tracking-widest font-bold transition-colors">
-                    {project.status}
+                  <span className="backdrop-blur-md px-3 py-1 text-[10px] uppercase tracking-widest font-bold transition-colors bg-black/40 text-white rounded">
+                    {project.isPublic ? 'Published' : 'Draft'}
                   </span>
                 </div>
               </div>
               
-              <div className="p-6 md:p-8 space-y-4 relative z-10 bg-surface-container-lowest/80 backdrop-blur-xs flex-grow flex flex-col">
+              <div className="p-4 md:p-6 space-y-4 relative z-10 bg-surface-container-lowest/80 backdrop-blur-xs flex-grow flex flex-col">
                 <div className="flex justify-between items-start flex-grow">
                   <div className="pr-4">
-                    <h3 className="font-headline text-2xl font-bold tracking-tight text-on-surface line-clamp-2">{project.title}</h3>
-                    <p className="text-sm text-outline tracking-wide mt-1 line-clamp-1">{project.subtitle}</p>
+                    <h3 className="font-headline text-xl lg:text-2xl font-bold tracking-tight text-on-surface line-clamp-2">{project.title}</h3>
+                    <p className="text-xs lg:text-sm text-outline tracking-wide mt-1 line-clamp-1">{project.subtitle || new Date(project.updatedAt).toLocaleDateString()}</p>
                   </div>
                   <div className="flex gap-2">
                     <button 
-                      onClick={() => router.push(`/admin/add-project?id=${project.id}`)}
+                      onClick={() => router.push(`/admin/add-project?id=${project._id}`)}
                       className="text-white hover:text-gray-200 hover:scale-110 transition-all p-1"
                     >
                       <Edit2 className="w-5 h-5" />
                     </button>
                     <button 
-                      onClick={() => handleDelete(project.id)}
+                      onClick={() => handleDelete(project._id)}
                       className="text-red-500 hover:text-red-400 hover:scale-110 transition-all p-1"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -280,21 +334,21 @@ function ManagePortfolioContent() {
                   </div>
                 </div>
                 
-                <div className="pt-6 border-t border-white/5 flex items-center justify-between mt-auto">
+                <div className="pt-4 lg:pt-6 border-t border-white/5 flex items-center justify-between mt-auto">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-outline">Visibility</span>
                   <div className="relative visibility-menu-container">
                     <button
                       type="button"
                       aria-haspopup="menu"
-                      aria-expanded={openVisibilityId === project.id}
-                      onClick={() => setOpenVisibilityId(openVisibilityId === project.id ? null : project.id)}
-                      className="text-[10px] uppercase tracking-[0.1em] font-bold flex items-center gap-1 hover:text-tertiary transition-colors outline-none"
+                      aria-expanded={openVisibilityId === project._id}
+                      onClick={() => setOpenVisibilityId(openVisibilityId === project._id ? null : project._id)}
+                      className="text-[10px] items-center gap-1 uppercase tracking-[0.1em] font-bold flex hover:text-tertiary transition-colors outline-none"
                     >
-                      {project.visibility}
+                      {project.isPublic ? 'Public' : 'Private'}
                       <ChevronDown className="w-3 h-3" />
                     </button>
                     <AnimatePresence>
-                      {openVisibilityId === project.id && (
+                      {openVisibilityId === project._id && (
                         <motion.div 
                           initial={{ opacity: 0, y: -5 }} 
                           animate={{ opacity: 1, y: 0 }} 
@@ -307,7 +361,7 @@ function ManagePortfolioContent() {
                             type="button"
                             role="menuitem"
                             onClick={() => {
-                              handleVisibilitySelect(project.id, 'Public');
+                              handleVisibilitySelect(project._id, 'Public');
                               setOpenVisibilityId(null);
                             }}
                             className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
@@ -318,7 +372,7 @@ function ManagePortfolioContent() {
                             type="button"
                             role="menuitem"
                             onClick={() => {
-                              handleVisibilitySelect(project.id, 'Private');
+                              handleVisibilitySelect(project._id, 'Private');
                               setOpenVisibilityId(null);
                             }}
                             className="w-full text-left px-4 py-2 text-xs hover:bg-white/5 transition-colors"
@@ -354,7 +408,7 @@ function ManagePortfolioContent() {
         </Link>
       </section>
 
-      {sortedProjects.length === 0 && (
+      {sortedProjects.length === 0 && !loading && (
         <div className="text-center py-20">
           <p className="text-outline-variant font-headline text-lg">No projects found matching your search.</p>
         </div>
