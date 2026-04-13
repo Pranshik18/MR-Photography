@@ -3,6 +3,7 @@ import connectToDatabase from "@/utils/db";
 import ProjectModel from "@/models/project";
 
 export async function GET(req: NextRequest) {
+  console.log("--> GET /api/user/project CALLED!");
   try {
     await connectToDatabase();
 
