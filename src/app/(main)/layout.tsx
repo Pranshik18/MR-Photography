@@ -1,4 +1,4 @@
-import PageLayout from "@/components/layout/PageLayout";
+import PageLayout from "@/Components/layout/PageLayout";
 
 export default function MainLayout({
   children,

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface Project {
   _id: string;
@@ -64,21 +65,37 @@ const Page = () => {
   const hasMore = displayedProjects.length < allProjects.length;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      className="min-h-screen bg-black text-white"
+    >
 
       <section className="mx-6 md:mx-10 mt-20 lg:mt-24">
         <div className="flex flex-col lg:flex-row lg:justify-between gap-8 lg:gap-12">
-          <div className="lg:max-w-2xl">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:max-w-2xl"
+          >
             <p className="text-xs tracking-[3px] text-gray-400 font-medium mb-6">
               CURATED WORKS 2022—2026
             </p>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
               Visual narratives<br />carved in light.
             </h1>
-          </div>
-          <div className="lg:mt-auto lg:max-w-xs text-sm md:text-base text-gray-300 lg:text-right">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:mt-auto lg:max-w-xs text-sm md:text-base text-gray-300 lg:text-right"
+          >
             Exploring the intersection of architectural silence and the fleeting human presence in modern landscapes.
-          </div>
+          </motion.div>
         </div>
       </section>
 
@@ -108,9 +125,26 @@ const Page = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 auto-rows-fr">
+            <motion.div 
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.15
+                  }
+                }
+              }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 auto-rows-fr"
+            >
               {displayedProjects.map((item) => (
-                <div
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0, y: 50 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+                  }}
                   key={item._id}
                   className="group relative overflow-hidden rounded-xl aspect-[4/3] lg:aspect-auto lg:min-h-[420px] xl:min-h-[520px] cursor-pointer"
                   onClick={() => router.push(`/detail/${item._id}`)}
@@ -133,9 +167,9 @@ const Page = () => {
                       </h2>
                     </div>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {hasMore && (
               <div className="flex justify-center mt-16 mb-20">
@@ -159,7 +193,13 @@ const Page = () => {
         )}
       </section>
 
-      <section className="bg-zinc-950 py-16 md:py-24 mt-20">
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="bg-zinc-950 py-16 md:py-24 mt-20"
+      >
         <div className="max-w-screen-2xl mx-auto px-6 md:px-10 flex flex-col items-center text-center">
           <h2 className="text-3xl md:text-6xl font-bold max-w-3xl leading-tight">
             Interested in working on a collection?
@@ -168,8 +208,8 @@ const Page = () => {
             Inquire for projects
           </button>
         </div>
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 };
 

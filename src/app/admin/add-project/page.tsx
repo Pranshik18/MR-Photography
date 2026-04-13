@@ -1,10 +1,81 @@
 ﻿'use client';
 
 import { motion } from 'motion/react';
-import { Camera, Bold, Italic, List, Link as LinkIcon, Plus, X, ArrowLeft } from 'lucide-react';
-import { useState, useRef, useEffect, Suspense } from 'react';
+import { Camera, Bold, Italic, List, Link as LinkIcon, Plus, X, ArrowLeft, Check } from 'lucide-react';
+import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import Cropper from 'react-easy-crop';
+
+// Helper to create the cropped image
+const createImage = (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener('load', () => resolve(image));
+    image.addEventListener('error', (error) => reject(error));
+    image.src = url;
+  });
+
+const getCroppedImg = async (
+  imageSrc: string,
+  pixelCrop: { x: number; y: number; width: number; height: number },
+  rotation = 0
+): Promise<File | null> => {
+  const image = await createImage(imageSrc);
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    return null;
+  }
+
+  // set canvas size to match the bounding box
+  canvas.width = image.width;
+  canvas.height = image.height;
+
+  // translate canvas context to a central location to allow rotating and flipping around the center
+  ctx.translate(image.width / 2, image.height / 2);
+  ctx.rotate((rotation * Math.PI) / 180);
+  ctx.translate(-image.width / 2, -image.height / 2);
+
+  // draw rotated image
+  ctx.drawImage(image, 0, 0);
+
+  // croppedArea format is {x, y, width, height}
+  // draw cropped image onto new canvas
+  const croppedCanvas = document.createElement('canvas');
+  const croppedCtx = croppedCanvas.getContext('2d');
+
+  if (!croppedCtx) {
+    return null;
+  }
+
+  croppedCanvas.width = pixelCrop.width;
+  croppedCanvas.height = pixelCrop.height;
+
+  croppedCtx.drawImage(
+    canvas,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  // As a blob
+  return new Promise((resolve, reject) => {
+    croppedCanvas.toBlob((file) => {
+      if (file) {
+        resolve(new File([file], "cropped.jpg", { type: "image/jpeg" }));
+      } else {
+        reject(new Error("Canvas is empty"));
+      }
+    }, 'image/jpeg');
+  });
+};
 
 export default function AddProject() {
   return (
@@ -31,10 +102,17 @@ function AddProjectContent() {
   const [heroImage, setHeroImage] = useState<File | null>(null);
   const heroInputRef = useRef<HTMLInputElement>(null);
 
-  const [gallery, setGallery] = useState<{file: File, preview: string}[]>([]);
+  const [gallery, setGallery] = useState<{file: File | null, preview: string, publicId?: string}[]>([]);
   const galleryInputRef = useRef<HTMLInputElement>(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Cropper State
+  const [cropFile, setCropFile] = useState<string | null>(null);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
+  const [isCropping, setIsCropping] = useState(false);
 
   // Prevent memory leaks by revoking object URLs on unmount
   const heroPreviewRef = useRef(heroPreview);
@@ -54,21 +132,79 @@ function AddProjectContent() {
 
   useEffect(() => {
     if (isEditing) {
-      // Simulate fetching project details
-      setTitle('Dummy Project Title');
-      setSubtitle('Collection • 2024');
-      setClientName('Client Name');
-      setProjectRole('Lead Photographer');
-      setDescription('This is a dummy description for the loaded project.');
+      const fetchProjectDetails = async () => {
+        try {
+          const res = await fetch(`/api/user/project/${projectId}`);
+          const data = await res.json();
+          if (data.success) {
+            const p = data.data;
+            setTitle(p.title || '');
+            setSubtitle(p.subtitle || '');
+            setClientName(p.client || '');
+            setProjectRole(p.role || '');
+            setDescription(p.description || '');
+            if (p.heroImage) {
+              setHeroPreview(p.heroImage);
+            }
+            if (p.images && p.images.length > 0) {
+              setGallery(p.images.map((img: any) => ({
+                file: null as any,
+                preview: img.url,
+                publicId: img.publicId, // preserve for existing
+              })));
+            }
+          }
+        } catch (error) {
+          console.error('Failed to load project details', error);
+        }
+      };
+      
+      fetchProjectDetails();
     }
-  }, [isEditing]);
+  }, [isEditing, projectId]);
 
   const handleHeroChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (heroPreview) URL.revokeObjectURL(heroPreview);
-      setHeroImage(file);
-      setHeroPreview(URL.createObjectURL(file));
+      if (cropFile) URL.revokeObjectURL(cropFile);
+      const url = URL.createObjectURL(file);
+      setCropFile(url);
+      setIsCropping(true);
+      // clear the input so user can re-upload if they cancel
+      if (heroInputRef.current) {
+         heroInputRef.current.value = '';
+      }
+    }
+  };
+
+  const onCropComplete = useCallback((croppedArea: any, croppedAreaPixels: any) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const finishCrop = async () => {
+    if (!cropFile || !croppedAreaPixels) return;
+    try {
+      const croppedFile = await getCroppedImg(cropFile, croppedAreaPixels);
+      if (croppedFile) {
+        if (heroPreview) URL.revokeObjectURL(heroPreview);
+        setHeroImage(croppedFile);
+        setHeroPreview(URL.createObjectURL(croppedFile));
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Failed to crop image");
+    } finally {
+      setIsCropping(false);
+      URL.revokeObjectURL(cropFile);
+      setCropFile(null);
+    }
+  };
+
+  const cancelCrop = () => {
+    setIsCropping(false);
+    if (cropFile) {
+      URL.revokeObjectURL(cropFile);
+      setCropFile(null);
     }
   };
 
@@ -88,7 +224,10 @@ function AddProjectContent() {
 
   const removeGalleryImage = (index: number) => {
     setGallery(prev => {
-      URL.revokeObjectURL(prev[index].preview);
+      const item = prev[index];
+      if (item.file) {
+        URL.revokeObjectURL(item.preview);
+      }
       return prev.filter((_, i) => i !== index);
     });
   };
@@ -131,7 +270,7 @@ function AddProjectContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!heroImage) {
+    if (!heroPreview && !heroImage) {
       alert("Hero image is required");
       return;
     }
@@ -147,15 +286,20 @@ function AddProjectContent() {
         });
       };
 
-      const heroBase64 = await fileToBase64(heroImage);
+      let heroBase64 = heroPreview || '';
+      if (heroImage) {
+        heroBase64 = await fileToBase64(heroImage);
+      }
+
       const galleryBase64 = await Promise.all(
         gallery.map(async (item, index) => ({
-          url: await fileToBase64(item.file),
-          order: index
+          url: item.file ? await fileToBase64(item.file) : item.preview,
+          order: index,
+          publicId: item.publicId || undefined
         }))
       );
 
-      const payload = {
+      const payload: any = {
         title,
         subtitle,
         description,
@@ -165,8 +309,17 @@ function AddProjectContent() {
         images: galleryBase64,
       };
 
-      const response = await fetch('/api/admin/project/add', {
-        method: 'POST',
+      let endpoint = '/api/admin/project/add';
+      let method = 'POST';
+
+      if (isEditing) {
+        payload.id = projectId;
+        endpoint = '/api/admin/project/edit';
+        method = 'PUT';
+      }
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -177,11 +330,11 @@ function AddProjectContent() {
       if (data.success) {
         router.push('/admin/manage-portfolio');
       } else {
-        alert(data.message || 'Failed to create project');
+        alert(data.message || (isEditing ? 'Failed to update project' : 'Failed to create project'));
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred while creating the project');
+      alert('An error occurred while saving the project');
     } finally {
       setIsSubmitting(false);
     }
@@ -217,11 +370,64 @@ function AddProjectContent() {
             type="file" 
             ref={heroInputRef} 
             onChange={handleHeroChange} 
+            // Removed hidden so Cropper modal can be appended correctly relative to container if needed, but it works globally too
             accept="image/*" 
             className="hidden" 
           />
+          
+          {isCropping && cropFile ? (
+            <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 sm:p-8">
+              <div className="relative w-full max-w-4xl h-[60vh] bg-surface-container rounded-lg overflow-hidden border border-outline-variant/20 shadow-2xl">
+                 <div className="absolute inset-x-0 inset-y-0 bottom-24">
+                  {/* @ts-ignore */}
+                  <Cropper
+                    image={cropFile}
+                    crop={crop}
+                    zoom={zoom}
+                    aspect={21/9}
+                    onCropChange={setCrop}
+                    onCropComplete={onCropComplete}
+                    onZoomChange={setZoom}
+                  />
+                </div>
+                {/* Controls */}
+                <div className="absolute bottom-0 w-full h-24 bg-surface/80 backdrop-blur-sm border-t border-outline-variant/20 flex flex-col items-center justify-center gap-2 px-6">
+                  <div className="w-full max-w-md flex items-center gap-4">
+                    <span className="font-label text-xs uppercase text-on-surface-variant">Zoom</span>
+                    <input
+                      type="range"
+                      value={zoom}
+                      min={1}
+                      max={3}
+                      step={0.1}
+                      aria-labelledby="Zoom"
+                      onChange={(e) => setZoom(Number(e.target.value))}
+                      className="flex-1 w-full h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <button 
+                      type="button" 
+                      onClick={cancelCrop} 
+                      className="px-6 py-2 bg-transparent text-white font-label text-xs uppercase tracking-widest hover:text-red-400 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={finishCrop} 
+                      className="px-6 py-2 bg-primary text-black font-label text-xs uppercase tracking-widest font-bold flex items-center gap-2 hover:bg-white transition-colors"
+                    >
+                      <Check className="w-4 h-4" /> Save Crop
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           <div 
-            onClick={() => heroInputRef.current?.click()}
+            onClick={() => !isCropping && heroInputRef.current?.click()}
             className="group relative w-full aspect-[21/9] bg-surface-container-lowest border-2 border-dashed border-outline-variant/30 flex flex-col items-center justify-center cursor-pointer hover:border-primary/50 transition-all duration-700 overflow-hidden"
           >
             {heroPreview ? (

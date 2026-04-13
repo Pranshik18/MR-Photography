@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { Plus, Edit2, Tag, Layers, Settings } from 'lucide-react';
+import { Plus, Edit2, Tag, Layers, Settings, Mail, MessageSquare, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
@@ -124,15 +124,36 @@ export default function Dashboard() {
 
       <section className="mt-14 md:mt-20">
         <div className="flex justify-between items-center mb-6 md:mb-8">
-          <h3 className="text-xl font-headline font-bold text-on-surface tracking-tight">Gallery Administration</h3>
+          <h3 className="text-xl font-headline font-bold text-on-surface tracking-tight">Administrative Modules</h3>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <Link href="/admin/price" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <Link href="/admin/manage-portfolio" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
+            <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">
+              <ImageIcon className="w-6 h-6 text-outline group-hover:text-[#353025]" />
+            </div>
+            <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Portfolio</h4>
+            <p className="text-xs text-neutral-500 mt-2">Manage your photography pieces</p>
+          </Link>
+          <Link href="/admin/inquire" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
+            <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">
+              <Mail className="w-6 h-6 text-outline group-hover:text-[#353025]" />
+            </div>
+            <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Inquiries</h4>
+            <p className="text-xs text-neutral-500 mt-2">Manage contact form requests</p>
+          </Link>
+          <Link href="/admin/pricing" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
             <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">
               <Tag className="w-6 h-6 text-outline group-hover:text-[#353025]" />
             </div>
-            <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Price</h4>
+            <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Pricing</h4>
             <p className="text-xs text-neutral-500 mt-2">Manage pricing and packages</p>
+          </Link>
+          <Link href="/admin/review" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
+            <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">
+              <MessageSquare className="w-6 h-6 text-outline group-hover:text-[#353025]" />
+            </div>
+            <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Reviews</h4>
+            <p className="text-xs text-neutral-500 mt-2">Manage client testimonials</p>
           </Link>
           <Link href="/admin/website-layout" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
             <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { Plus, Edit3, Trash2, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
+import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 
 interface Project {
   _id: string;
@@ -233,7 +233,7 @@ export default function ReviewsManagement() {
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Client Name</label>
                 <input
                   type="text"
-                  value={formData.clientName}
+                  value={formData.clientName || ''}
                   onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
                   className="w-full bg-[#0e0e0e] border border-outline-variant/15 px-6 py-5 text-on-surface placeholder:text-stone-700 font-body transition-all focus:border-tertiary/40 rounded focus:outline-none"
                   placeholder="e.g. John & Sarah"
@@ -245,7 +245,7 @@ export default function ReviewsManagement() {
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Linked Project (Optional)</label>
                 <div className="relative">
                   <select
-                    value={formData.projectId}
+                    value={formData.projectId || ''}
                     onChange={(e) => setFormData({ ...formData, projectId: e.target.value })}
                     className="w-full bg-[#0e0e0e] border border-outline-variant/15 px-6 py-5 text-on-surface appearance-none font-body transition-all cursor-pointer focus:border-tertiary/40 rounded focus:outline-none"
                   >
@@ -265,7 +265,7 @@ export default function ReviewsManagement() {
               <div className="col-span-1 md:col-span-2 group relative">
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Testimonial</label>
                 <textarea
-                  value={formData.description}
+                  value={formData.description || ''}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   rows={5}
                   className="w-full bg-[#0e0e0e] border border-outline-variant/15 px-6 py-5 text-on-surface placeholder:text-stone-700 font-body transition-all focus:border-tertiary/40 rounded focus:outline-none resize-y"

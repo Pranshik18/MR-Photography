@@ -17,11 +17,13 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: unknown) {
+    console.error("DEBUG PROJECT FETCH ERROR:", error);
+    const errorMessage = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       {
         success: false,
         message: "Failed to fetch projects",
-        error: error,
+        error: errorMessage,
       },
       { status: 500 }
     );

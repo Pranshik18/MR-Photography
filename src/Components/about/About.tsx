@@ -1,35 +1,67 @@
+"use client";
+
 import React from "react";
 import Link from 'next/link';
 import { Camera, MapPin } from 'lucide-react';
+import { motion } from 'motion/react';
 
-const exhibitions = [
-  { name: "The Silence of Cities", location: "Lisbon, 2022" },
-  { name: "Light & Brutalism", location: "Berlin, 2021" },
-  { name: "Mono-No-Aware", location: "Tokyo, 2019" }
+const disciplines = [
+  { name: "Cinematic Portraits", description: "Studio & Location" },
+  { name: "Architectural & Spatial", description: "Form & Light" },
+  { name: "Editorial & Fashion", description: "Brand Narratives" }
 ];
 
 export default function About() {
   return (
-    <div className="w-full">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      className="w-full overflow-hidden"
+    >
       {/* Hero Section */}
       <section className="relative h-[92vh] md:h-screen w-full overflow-hidden flex items-end pb-16 md:pb-24 px-4 sm:px-6 md:px-12">
-        <div className="absolute inset-0 z-0">
+        <motion.div 
+          className="absolute inset-0 z-0"
+          initial={{ scale: 1.15, filter: "blur(10px)" }}
+          animate={{ scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+        >
           <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKI-7rLCEl7oSjeDt7kgD7tUuDO5EkMpYk0u5eQxiYzaQSXyepOpaSETMmqYVOTNKOrgxp6lTruXuqOjE005AGmAbL7_sPd_ZdFqBViIwnV35qz23pZblYoXNAqQEeMxSDBz59kSKd1lP3Nq6AFWEsDbF2MVK5Gxx4i-VP98sFFWxzV8oVriXkR6esZciLiwvpDF_8FZCvdqUxNskgs-H_riZ5DtBBBkwXZr-xqj0MIfE8TGZH6_kNT9it2ZiVTTFw3UTZFHAyri5r" 
+            src="/Images/profile.jpg" 
             alt="Shivam Sharma Portrait" 
-            className="w-full h-full object-cover filter grayscale brightness-75 contrast-125"
+            className="w-full h-full object-cover object-top filter grayscale brightness-75 contrast-125"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-90"></div>
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-90"></div>
+          <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-b from-background/90 via-background/40 to-transparent pointer-events-none"></div>
+        </motion.div>
         <div className="relative z-10 max-w-4xl">
-          <span className="font-body text-[10px] tracking-[0.3em] uppercase text-primary mb-4 block opacity-80">The Digital Curator</span>
-          <h1 className="font-headline text-5xl md:text-8xl font-extrabold tracking-tighter text-on-surface leading-none">
+          <motion.span 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 0.8, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+            className="font-body text-[10px] tracking-[0.3em] uppercase text-primary mb-4 block"
+          >
+            The Digital Curator
+          </motion.span>
+          <motion.h1 
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="font-headline text-5xl md:text-8xl font-extrabold tracking-tighter text-on-surface leading-none"
+          >
             SHIVAM <br/> SHARMA
-          </h1>
-          <p className="mt-8 font-body text-sm md:text-base text-on-surface-variant max-w-md leading-relaxed">
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.8, ease: "easeOut" }}
+            className="mt-8 font-body text-sm md:text-base text-on-surface-variant max-w-md leading-relaxed"
+          >
             Capturing the silence between moments. A dedicated observer of light, shadow, and the human condition through a minimalist lens.
-          </p>
+          </motion.p>
         </div>
       </section>
 
@@ -38,7 +70,13 @@ export default function About() {
         <div className="max-w-screen-2xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24">
             {/* Column Left: Large Narrative Title */}
-            <div className="md:col-span-5 h-fit mb-12 md:mb-0 md:sticky md:top-32">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="md:col-span-5 h-fit mb-12 md:mb-0 md:sticky md:top-32"
+            >
               <h2 className="font-headline text-4xl md:text-6xl font-bold tracking-tight text-on-surface leading-[1.1]">
                 The Mind <br/> Behind <br/> <span className="text-primary italic">The Lens.</span>
               </h2>
@@ -46,17 +84,23 @@ export default function About() {
               <div className="mt-8 flex flex-col gap-2">
                 <div className="flex items-center gap-4 text-on-surface-variant">
                   <MapPin size={14} />
-                  <span className="font-body text-[10px] tracking-widest uppercase">Based in Madrid, Spain</span>
+                  <span className="font-body text-[10px] tracking-widest uppercase">Based in Palampur, Himachal Pradesh</span>
                 </div>
                 <div className="flex items-center gap-4 text-on-surface-variant">
                   <Camera size={14} />
                   <span className="font-body text-[10px] tracking-widest uppercase">Digital & Film Mediums</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Column Right: Narrative Copy & Supporting Imagery */}
-            <div className="md:col-span-7 flex flex-col gap-20 md:gap-32">
+            <motion.div 
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+              className="md:col-span-7 flex flex-col gap-20 md:gap-32"
+            >
               <div className="max-w-none">
                 <p className="font-body text-xl md:text-2xl leading-relaxed text-on-surface/90 font-light">
                   <span className="text-5xl font-headline mr-3 float-left">P</span>
@@ -118,43 +162,56 @@ export default function About() {
                   For me, the portfolio is a living document. It is a dialogue between the viewer and the viewed. I am Shivam Sharma, and I invite you to see the world not as it is, but as it feels.
                 </p>
                 <div className="mt-12 flex items-center gap-6">
-                  <Link href="/portfolio" className="bg-primary text-background px-8 py-4 font-body text-[10px] tracking-[0.2em] uppercase font-bold hover:scale-[1.02] transition-transform duration-500 rounded-lg">View Portfolio</Link>
+                  <Link href="/portfolio" className="group relative inline-flex items-center justify-center bg-transparent text-primary hover:text-black border border-primary px-8 py-4 font-body text-[10px] tracking-[0.2em] uppercase font-bold overflow-hidden rounded-lg transition-colors duration-500">
+                    <span className="absolute inset-0 w-full h-full bg-primary translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-out z-0"></span>
+                    <span className="relative z-10 w-full text-center group-hover:text-black transition-colors duration-500">View Portfolio</span>
+                  </Link>
                   <Link href="/contact" className="text-on-surface font-body text-[10px] tracking-[0.2em] uppercase border-b border-on-surface/20 pb-1 hover:border-primary transition-colors duration-300">Contact Me</Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
       {/* Stats/Exhibitions Bento Style */}
-      <section className="py-20 md:py-32 px-4 sm:px-6 md:px-12 bg-surface/50">
+      <section className="py-20 md:py-32 px-4 sm:px-6 md:px-12 bg-surface/50 border-t border-white/5">
         <div className="max-w-screen-2xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="bg-surface p-12 border border-white/5 flex flex-col justify-between aspect-square md:aspect-auto">
-              <span className="font-headline text-4xl text-primary font-extralight tracking-tighter">12+</span>
-              <p className="font-body text-[10px] tracking-[0.2em] uppercase text-on-surface-variant">Years of Experience</p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            
+            {/* Experience Box */}
+            <div className="bg-surface p-10 md:p-14 border border-white/5 flex flex-col justify-between min-h-[320px] rounded-2xl hover:border-primary/30 transition-colors duration-500">
+              <span className="font-headline text-7xl md:text-8xl text-primary font-light tracking-tighter">12<span className="text-4xl">+</span></span>
+              <p className="font-body text-xs tracking-[0.25em] uppercase text-on-surface-variant font-bold mt-auto pt-8">Years of Experience</p>
             </div>
-            <div className="md:col-span-2 bg-surface p-12 border border-white/5 flex flex-col justify-between">
-              <div>
-                <h4 className="font-headline text-2xl font-bold mb-4">Select Exhibitions</h4>
-                <ul className="space-y-4">
-                  {exhibitions.map((ex) => (
-                    <li key={ex.name} className="flex justify-between items-center border-b border-white/5 pb-2">
-                      <span className="font-body text-sm text-on-surface">{ex.name}</span>
-                      <span className="font-body text-[9px] uppercase text-on-surface-variant">{ex.location}</span>
+            
+            {/* Disciplines Box */}
+            <div className="md:col-span-2 bg-surface p-10 md:p-14 border border-white/5 flex flex-col justify-between min-h-[320px] rounded-2xl hover:border-white/10 transition-colors duration-500">
+              <div className="flex flex-col h-full justify-between">
+                <h4 className="font-headline text-3xl font-bold mb-10 text-white tracking-tight">Core Disciplines</h4>
+                <ul className="space-y-6">
+                  {disciplines.map((discipline) => (
+                    <li key={discipline.name} className="flex flex-col sm:flex-row sm:justify-between sm:items-end border-b border-white/10 pb-4 group">
+                      <span className="font-headline text-lg sm:text-xl text-white/80 group-hover:text-primary transition-colors">{discipline.name}</span>
+                      <span className="font-body text-[10px] tracking-widest uppercase text-on-surface-variant mt-2 sm:mt-0">{discipline.description}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-            <div className="bg-primary/20 p-12 flex flex-col justify-center items-center text-center border border-primary/10">
-              <Camera className="text-4xl mb-4 text-primary" size={32} />
-              <p className="font-body text-[10px] tracking-[0.2em] uppercase text-primary">Book a Session</p>
-            </div>
+            
+            {/* CTA Box */}
+            <Link href="/contact" className="group bg-primary/5 hover:bg-primary/20 p-10 md:p-14 flex flex-col justify-center items-center text-center border border-primary/20 hover:border-primary/50 min-h-[320px] rounded-2xl transition-all duration-500 cursor-pointer">
+              <div className="bg-primary/10 group-hover:bg-primary/20 w-20 h-20 rounded-full flex items-center justify-center mb-6 transition-colors duration-500">
+                <Camera className="text-primary group-hover:scale-110 transition-transform duration-500" size={32} />
+              </div>
+              <h4 className="font-headline text-2xl text-white group-hover:text-primary transition-colors mb-2">Book a Session</h4>
+              <p className="font-body text-[10px] tracking-[0.2em] uppercase text-on-surface-variant group-hover:text-white/70 transition-colors">Let's create together</p>
+            </Link>
+
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 }
