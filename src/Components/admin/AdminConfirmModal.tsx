@@ -27,13 +27,11 @@ export function AdminConfirmModal({
 
   useEffect(() => {
     if (isOpen) {
-      // Focus the confirm button when modal opens
       confirmButtonRef.current?.focus();
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') onCancel();
         
-        // Basic focus trap iteration
         if (e.key === 'Tab') {
           const focusableElements = modalRef.current?.querySelectorAll(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'

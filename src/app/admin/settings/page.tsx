@@ -39,10 +39,7 @@ export default function SettingsPage() {
     };
 
     fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Use empty array to ensure this only runs once on mount.
-
-  // Sync state with profile from context if it changes elsewhere
+  }, []); 
   useEffect(() => {
     if (profile) {
       setAdminProfile(profile);
@@ -53,7 +50,6 @@ export default function SettingsPage() {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Basic size validation (e.g., 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('Image is too large (max 5MB)');
         return;
@@ -126,7 +122,7 @@ export default function SettingsPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          oldPassword: passwords.current, // Use the field name 'oldPassword' as required by the API
+          oldPassword: passwords.current,
           newPassword: passwords.new,
         }),
       });
@@ -157,14 +153,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl animate-in fade-in duration-700 py-8 md:py-12 pb-24">
-      <header className="mb-10 md:mb-16">
-        <h2 className="font-headline font-extrabold text-4xl md:text-5xl lg:text-7xl tracking-tighter text-on-surface mb-2">Settings</h2>
+    <div className="max-w-4xl w-full mx-auto animate-in fade-in duration-700 py-8 md:py-12 pb-24 px-4 sm:px-0">
+      <header className="mb-8 md:mb-16">
+        <h2 className="font-headline font-extrabold text-3xl sm:text-4xl md:text-5xl lg:text-7xl tracking-tighter text-on-surface mb-2">Settings</h2>
         <div className="w-12 h-0.5 bg-tertiary"></div>
       </header>
 
       <div className="space-y-16">
-        {/* Section 1: Admin Profile */}
         <section>
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-headline font-bold text-lg tracking-widest uppercase text-stone-400 opacity-60">Admin Profile</h3>
@@ -174,9 +169,8 @@ export default function SettingsPage() {
           <form onSubmit={handleProfileSubmit} className="glass-panel p-6 sm:p-8 lg:p-12 rounded-lg relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-tertiary/5 blur-[100px] -mr-32 -mt-32 rounded-full transition-all duration-1000 group-hover:bg-tertiary/10"></div>
             
-            <div className="relative flex flex-col md:flex-row gap-12 items-start">
-              {/* Avatar Upload */}
-              <div className="flex flex-col items-center group/avatar">
+            <div className="relative flex flex-col md:flex-row gap-10 md:gap-12 items-center md:items-start">
+              <div className="flex flex-col items-center group/avatar shrink-0 w-full md:w-auto">
                 <input type="file" ref={fileInputRef} onChange={handleAvatarChange} accept="image/*" className="hidden" />
                 <div onClick={() => fileInputRef.current?.click()} className="relative cursor-pointer rounded-full p-1 border border-outline-variant/10 ring-0 ring-tertiary/20 hover:ring-8 transition-all duration-500">
                   <div className="w-32 h-32 rounded-full overflow-hidden border border-outline-variant/30 transition-transform duration-700 group-hover/avatar:scale-105 relative z-10 flex items-center justify-center bg-surface-container">
@@ -196,9 +190,7 @@ export default function SettingsPage() {
                 </div>
                 <p className="mt-4 font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-hover/avatar:text-tertiary transition-colors">Edit Portrait</p>
               </div>
-
-              {/* Profile Fields */}
-              <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
+              <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 md:gap-y-10">
                 <div className="space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Full Name</label>
                   <input 
@@ -252,8 +244,6 @@ export default function SettingsPage() {
             </div>
           </form>
         </section>
-
-        {/* Section 2: Security */}
         <section>
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-headline font-bold text-lg tracking-widest uppercase text-stone-400 opacity-60">Authentication & Shield</h3>
@@ -263,8 +253,8 @@ export default function SettingsPage() {
           <form onSubmit={handlePasswordSubmit} className="glass-panel p-6 sm:p-8 lg:p-12 rounded-lg relative overflow-hidden group">
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary/5 blur-[80px] -ml-24 -mb-24 rounded-full group-hover:bg-primary/10 transition-all duration-1000"></div>
             
-            <div className="relative flex flex-col lg:flex-row justify-between gap-16">
-              <div className="flex-1 space-y-12">
+            <div className="relative flex flex-col lg:flex-row justify-between gap-10 lg:gap-16">
+              <div className="flex-1 space-y-8 md:space-y-12">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-full bg-primary/5 border border-primary/10">
                     <ShieldCheck className="w-6 h-6 text-primary" />

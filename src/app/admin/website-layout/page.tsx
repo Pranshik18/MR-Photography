@@ -62,7 +62,7 @@ export default function WebsiteLayoutPage() {
   const searchSuggestions = addSearch.trim() === '' ? [] : allProjects.filter(p => 
     p.title.toLowerCase().includes(addSearch.toLowerCase()) && 
     !featured.some(f => f._id === p._id)
-  ).slice(0, 5); // Limit suggestions
+  ).slice(0, 5); 
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     dragItem.current = id;
@@ -187,7 +187,6 @@ export default function WebsiteLayoutPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="space-y-12 lg:col-span-12 max-w-4xl mx-auto w-full">
-          {/* Section 1: Featured Projects */}
           <section>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 mb-6 md:mb-8">
               <h3 className="text-[0.75rem] font-medium tracking-[0.15em] uppercase text-on-surface/60">Featured Projects ({displayFeatured.length})</h3>
@@ -240,7 +239,6 @@ export default function WebsiteLayoutPage() {
             </div>
           </section>
 
-          {/* Section 2: Add to Featured */}
           <section className="p-6 sm:p-8 bg-neutral-900/30 rounded-lg border border-outline-variant/10">
             <h3 className="text-[0.75rem] font-medium tracking-[0.15em] uppercase text-on-surface mb-6">Add to Featured</h3>
             <div className="flex flex-col md:flex-row gap-4">
@@ -254,8 +252,7 @@ export default function WebsiteLayoutPage() {
                   placeholder="SEARCH FOR A PROJECT TO ADD..." 
                   type="text"
                 />
-                
-                {/* Search Suggestions Dropdown */}
+
                 {addSearch.trim() !== '' && (
                   <div className="absolute top-full left-0 right-0 mt-2 bg-surface border border-outline-variant/20 rounded-sm shadow-2xl overflow-y-auto max-h-60 z-50">
                     {searchSuggestions.length > 0 ? (
@@ -304,7 +301,6 @@ export default function WebsiteLayoutPage() {
             </div>
           </section>
 
-          {/* Master Actions */}
           <div className="flex justify-end pt-6">
             <button 
               onClick={saveLayout}

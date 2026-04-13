@@ -37,7 +37,6 @@ export default function PricingManagement() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Form State
   const [formData, setFormData] = useState({
     title: '',
     price: '',
@@ -48,7 +47,6 @@ export default function PricingManagement() {
     order: 0
   });
 
-  // Modal State
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     type: 'delete' | 'visibility';
@@ -126,7 +124,6 @@ export default function PricingManagement() {
   };
 
   const toggleStatus = (pkg: PricingPackage) => {
-    // Prevent accidentally toggling while editing
     if (editingId === pkg._id) {
       toast.error('Finish editing this package first');
       return;
@@ -229,10 +226,9 @@ export default function PricingManagement() {
 
   return (
     <div className="max-w-7xl mx-auto py-8 md:py-12 pb-24 animate-in fade-in duration-700">
-      {/* Film Grain Mesh (Abstractly handled by globals.css layer but reinforced here) */}
+    
       <div className="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] z-10"></div>
 
-      {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 relative gap-6">
         <div>
           <h2 className="text-4xl md:text-6xl font-extrabold font-headline tracking-tighter text-on-surface mb-2">
@@ -271,11 +267,11 @@ export default function PricingManagement() {
       {isAdding ? (
         /* Form View */
         <div className="relative max-w-4xl mx-auto py-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <form onSubmit={handleSubmit} className="bg-stone-900/40 backdrop-blur-2xl p-10 md:p-12 border border-outline-variant/10 shadow-2xl space-y-12 rounded-lg">
+          <form onSubmit={handleSubmit} className="bg-stone-900/40 backdrop-blur-2xl p-6 sm:p-10 md:p-12 border border-outline-variant/10 shadow-2xl space-y-12 rounded-lg">
             {/* Basic Info Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
               {/* Package Title */}
-              <div className="col-span-2 group relative">
+              <div className="col-span-1 md:col-span-2 group relative">
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Package Title</label>
                 <input 
                   className="w-full bg-[#0e0e0e] border border-outline-variant/15 px-6 py-5 text-on-surface placeholder:text-stone-700 font-body transition-all focus:border-tertiary/40 rounded focus:outline-none" 
@@ -287,7 +283,6 @@ export default function PricingManagement() {
                 />
               </div>
 
-              {/* Currency Selector */}
               <div className="group relative">
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Currency</label>
                 <div className="relative">
@@ -305,7 +300,6 @@ export default function PricingManagement() {
                 </div>
               </div>
 
-              {/* Price */}
               <div className="group relative">
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Package Price</label>
                 <input 
@@ -318,7 +312,6 @@ export default function PricingManagement() {
                 />
               </div>
 
-              {/* Toggles */}
               <div className="col-span-1 md:col-span-1 group relative flex items-center gap-4 border-t border-outline-variant/5 pt-8">
                 <div className="flex flex-col">
                   <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-1 ml-1">Recommended Package</label>
@@ -356,7 +349,6 @@ export default function PricingManagement() {
               </div>
             </div>
 
-            {/* Features Dynamic Section */}
             <div className="pt-8 border-t border-outline-variant/5">
               <div className="flex justify-between items-end mb-8">
                 <div>
@@ -398,22 +390,21 @@ export default function PricingManagement() {
               </div>
             </div>
 
-            {/* Form Actions */}
-            <div className="pt-10 flex items-center justify-end gap-8">
+            <div className="pt-10 flex flex-col-reverse sm:flex-row items-center justify-end gap-6 sm:gap-8">
               <button 
                 onClick={() => {
                   setIsAdding(false);
                   setEditingId(null);
                   setFormData({ title: '', price: '', currency: 'INR', features: [''], isActive: true, isRecommended: false, order: 0 });
                 }}
-                className="font-label text-[0.7rem] uppercase tracking-[0.2em] text-stone-500 hover:text-on-surface transition-colors" 
+                className="w-full sm:w-auto font-label text-[0.7rem] uppercase tracking-[0.2em] text-stone-500 hover:text-on-surface transition-colors py-4 sm:py-0" 
                 type="button"
               >
                 Discard Draft
               </button>
               <button 
                 disabled={isSubmitting}
-                className="bg-tertiary text-on-tertiary font-label text-[0.75rem] uppercase tracking-[0.2em] font-bold px-12 py-5 rounded-lg shadow-xl shadow-tertiary/10 hover:shadow-tertiary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 disabled:opacity-50 flex items-center gap-3" 
+                className="w-full sm:w-auto bg-tertiary text-on-tertiary font-label text-[0.75rem] uppercase tracking-[0.2em] font-bold px-12 py-5 rounded-lg shadow-xl shadow-tertiary/10 hover:shadow-tertiary/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 disabled:opacity-50 flex items-center justify-center gap-3" 
                 type="submit"
               >
                 {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : (editingId ? <Save className="w-4 h-4" /> : <Package className="w-4 h-4" />)}
@@ -423,7 +414,6 @@ export default function PricingManagement() {
           </form>
         </div>
       ) : (
-        /* Listing View */
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 relative">
           {packages.length === 0 && !isLoading ? (
              <div onClick={() => setIsAdding(true)} className="xl:col-span-2 relative group border-2 border-dashed border-outline-variant/20 p-20 flex flex-col items-center justify-center min-h-[400px] hover:border-tertiary/30 hover:bg-surface-low/20 transition-all duration-500 cursor-pointer rounded-xl">
@@ -437,7 +427,6 @@ export default function PricingManagement() {
             <>
               {packages.map((pkg) => (
                 <div key={pkg._id} className={`relative group overflow-hidden glass-panel border border-outline-variant/10 p-8 flex flex-col h-full hover:bg-surface-low/60 transition-all duration-700 rounded-lg ${!pkg.isActive ? 'grayscale opacity-60' : ''}`}>
-                  {/* Status Toggle Header */}
                   <div className="absolute top-0 right-0 p-8">
                     <div className="flex items-center space-x-3 bg-surface-lowest/50 px-3 py-1.5 rounded-full backdrop-blur-md">
                       <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">{pkg.isActive ? 'Public' : 'Private'}</span>
@@ -496,8 +485,7 @@ export default function PricingManagement() {
                   </div>
                 </div>
               ))}
-              
-              {/* Add New Placeholder */}
+
               <div 
                 onClick={() => setIsAdding(true)}
                 className="relative group border border-dashed border-outline-variant/20 p-8 flex flex-col items-center justify-center h-full min-h-[350px] hover:border-tertiary/30 hover:bg-surface-low/20 transition-all duration-500 cursor-pointer rounded-lg"
@@ -512,8 +500,6 @@ export default function PricingManagement() {
           )}
         </div>
       )}
-
-      {/* Footer Stats - Hidden in Mobile for clean look */}
       {!isAdding && packages.length > 0 && (
         <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 border-t border-outline-variant/10 pt-12 relative">
           <div className="space-y-1">
@@ -543,11 +529,9 @@ export default function PricingManagement() {
         </div>
       )}
 
-      {/* Background Decoration */}
       <div className="fixed top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-container/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] left-[20%] w-[30%] h-[40%] bg-tertiary-container/5 blur-[120px] rounded-full pointer-events-none z-0"></div>
 
-      {/* Confirmation Modal */}
       <AdminConfirmModal
         isOpen={modalState.isOpen}
         title={modalState.type === 'delete' ? "Remove Service Tier?" : "Change Visibility?"}
