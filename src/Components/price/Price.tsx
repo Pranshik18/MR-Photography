@@ -130,34 +130,56 @@ export default function Price() {
   }
 
   return (
-    <div className="pt-32 pb-24 overflow-x-hidden">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      className="pt-32 pb-24 overflow-x-hidden"
+    >
 
       <header className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto mb-16 md:mb-32">
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2, delayChildren: 0.1 }
+            }
+          }}
           className="max-w-3xl"
         >
-          <span className="font-sans text-[10px] tracking-[0.3em] uppercase text-tertiary mb-6 block">Investment</span>
-          <h1 className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
+          <motion.span variants={{ hidden: { opacity: 0, y: 15 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 0.8 }} className="font-sans text-[10px] tracking-[0.3em] uppercase text-tertiary mb-6 block">Investment</motion.span>
+          <motion.h1 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 1 }} className="font-headline text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]">
             Capturing light, <br/><span className="text-stone-500">Defining moments.</span>
-          </h1>
-          <p className="text-on-surface-variant text-sm sm:text-lg font-light leading-relaxed max-w-xl">
+          </motion.h1>
+          <motion.p variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }} transition={{ duration: 1 }} className="text-on-surface-variant text-sm sm:text-lg font-light leading-relaxed max-w-xl">
             Transparent pricing for bespoke photographic services. Each package is tailored to preserve the unique narrative of your vision with uncompromising quality.
-          </p>
+          </motion.p>
         </motion.div>
       </header>
 
-      <div className="relative overflow-hidden w-full h-32 md:h-48 -mb-16 md:-mb-24 z-0 pointer-events-none opacity-5 select-none whitespace-nowrap">
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 1.5 }}
+        className="relative overflow-hidden w-full h-32 md:h-48 -mb-16 md:-mb-24 z-0 pointer-events-none opacity-5 select-none whitespace-nowrap"
+      >
         <div className="animate-marquee">
           <span className="font-headline text-[8rem] md:text-[12rem] font-extrabold uppercase tracking-tighter text-on-surface whitespace-nowrap">
             INVEST IN YOUR STORY — ARTFUL DOCUMENTATION — TIMELESS IMAGES — INVEST IN YOUR STORY — ARTFUL DOCUMENTATION — TIMELESS IMAGES —
           </span>
         </div>
-      </div>
+      </motion.div>
 
 
-      <section 
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, ease: "easeOut" }}
         className="px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto relative z-10"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -267,10 +289,16 @@ export default function Price() {
             ))}
           </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       <section className="mt-24 md:mt-32 px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto">
-        <div className="relative h-[600px] w-full overflow-hidden group rounded-sm shadow-2xl">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="relative h-[600px] w-full overflow-hidden group rounded-sm shadow-2xl"
+        >
           <img 
             src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=2000" 
             alt="Cinematic landscape" 
@@ -281,15 +309,27 @@ export default function Price() {
           <div className="absolute bottom-10 md:bottom-16 left-4 sm:left-6 md:left-16 max-w-xl">
             <h3 className="font-headline text-4xl font-bold mb-6">Looking for something unique?</h3>
             <p className="text-on-surface-variant mb-8">Custom photography projects often require a specific approach. Let&apos;s discuss your vision and create a bespoke package that fits your exact needs.</p>
-            <a className="inline-flex items-center gap-4 group" href="#">
+            <Link className="inline-flex items-center gap-4 group" href="/contact">
               <span className="font-sans text-[10px] font-bold tracking-[0.25em] uppercase border-b border-tertiary pb-2 group-hover:border-primary transition-colors duration-500">Request Custom Quote</span>
               <ArrowRight size={18} className="text-tertiary group-hover:translate-x-2 transition-transform duration-500" />
-            </a>
+            </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      <section className="mt-24 md:mt-32 px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto">
+      <motion.section 
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.15 }
+          }
+        }}
+        className="mt-24 md:mt-32 px-4 sm:px-6 md:px-12 max-w-screen-2xl mx-auto"
+      >
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {[
             { step: '01', title: 'Consultation', desc: 'We discuss your aesthetic goals and specific requirements for the shoot.' },
@@ -297,14 +337,14 @@ export default function Price() {
             { step: '03', title: 'Production', desc: 'The day of capture. Using professional grade equipment and creative expertise.' },
             { step: '04', title: 'Curation', desc: 'Detailed editing and selection of the final collection delivered digitally.' },
           ].map((item) => (
-            <div key={item.step} className="space-y-4">
+            <motion.div variants={{ hidden: { opacity: 0, y: 30 }, visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } } }} key={item.step} className="space-y-4">
               <span className="font-sans text-[10px] text-tertiary tracking-[0.2em] uppercase">Step {item.step}</span>
               <h4 className="font-headline font-bold uppercase tracking-tight">{item.title}</h4>
               <p className="text-xs text-on-surface-variant leading-loose">{item.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

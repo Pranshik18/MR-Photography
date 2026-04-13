@@ -18,7 +18,7 @@ import {
   Save,
   GripVertical
 } from 'lucide-react';
-import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
+import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 
 interface PricingPackage {
   _id: string;
@@ -454,9 +454,6 @@ export default function PricingManagement() {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 relative">
           {packages.length === 0 && !isLoading ? (
              <div onClick={() => setIsAdding(true)} className="xl:col-span-2 relative group border-2 border-dashed border-outline-variant/20 p-20 flex flex-col items-center justify-center min-h-[400px] hover:border-tertiary/30 hover:bg-surface-low/20 transition-all duration-500 cursor-pointer rounded-xl">
-                <div className="w-16 h-16 rounded-full bg-surface-container-highest/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <Plus className="w-8 h-8 text-stone-600 group-hover:text-tertiary transition-colors" />
-                </div>
                 <h4 className="text-stone-400 font-headline font-bold tracking-widest uppercase text-xs mb-2">Create Your First Tier</h4>
                 <p className="text-stone-600 text-[10px] uppercase tracking-widest tracking-wide text-center max-w-[200px]">Define a new photography service and add it to your gallery.</p>
              </div>
@@ -485,9 +482,6 @@ export default function PricingManagement() {
                   </div>
 
                   <div className="mb-8 flex items-start gap-4">
-                    <div className="text-stone-700 mt-2 cursor-grab">
-                       <GripVertical className="w-6 h-6" />
-                    </div>
                     <div>
                       <div className="flex items-center gap-3 mb-4">
                         <span className="text-[0.65rem] uppercase tracking-[0.3em] text-tertiary font-bold">Standard Series</span>
@@ -512,7 +506,6 @@ export default function PricingManagement() {
                   <div className="flex-1 space-y-4 mb-10">
                     {pkg.features.map((feature, fIdx) => (
                       <div key={fIdx} className="flex items-start space-x-3">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-tertiary/70 mt-0.5" />
                         <span className="text-stone-300 text-[11px] tracking-wide font-light">{feature}</span>
                       </div>
                     ))}
@@ -523,14 +516,13 @@ export default function PricingManagement() {
                       onClick={() => startEditing(pkg)}
                       className="flex-1 flex items-center justify-center space-x-2 py-3 bg-surface-container-highest/30 text-stone-200 text-[9px] uppercase tracking-widest font-bold hover:bg-tertiary hover:text-on-tertiary transition-all duration-500 rounded"
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
                       <span>Edit Details</span>
                     </button>
                     <button 
                       onClick={() => deletePackage(pkg._id)}
-                      className="p-3 bg-surface-lowest/10 text-stone-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded"
+                      className="px-4 py-3 bg-surface-lowest/10 text-stone-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded text-[9px] uppercase tracking-widest font-bold"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete</span>
                     </button>
                   </div>
                 </div>
@@ -540,9 +532,6 @@ export default function PricingManagement() {
                 onClick={() => setIsAdding(true)}
                 className="relative group border border-dashed border-outline-variant/20 p-8 flex flex-col items-center justify-center h-full min-h-[350px] hover:border-tertiary/30 hover:bg-surface-low/20 transition-all duration-500 cursor-pointer rounded-lg"
               >
-                <div className="w-12 h-12 rounded-full bg-surface-container-highest/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
-                  <Plus className="w-6 h-6 text-stone-600 group-hover:text-tertiary transition-colors" />
-                </div>
                 <h4 className="text-stone-400 font-headline font-bold tracking-widest uppercase text-[10px] mb-2">Create New Tier</h4>
                 <p className="text-stone-600 text-[10px] text-center max-w-[180px] font-light tracking-wide uppercase">Define a new photography service and add it to your gallery.</p>
               </div>

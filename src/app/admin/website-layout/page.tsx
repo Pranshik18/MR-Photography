@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GripVertical, Search, Plus, ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
+import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 
 interface Project {
   _id: string;

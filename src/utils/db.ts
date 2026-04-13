@@ -25,10 +25,16 @@ async function connectToDatabase() {
  if (!cached.promise) {
    cached.promise = mongoose.connect(MONGODB_URI, {
      bufferCommands: false,
+   }).then((mongooseInstance) => {
+     console.log("Connected to db successfully")
+     return mongooseInstance;
+   }).catch((err) => {
+     console.error("Database connection failed:", err);
+     cached.promise = null; // Clear failing promise to allow retries
+     throw err;
    });
  }
 
- console.log("Connected to db")
  cached.conn = await cached.promise;
  globalForMongoose.mongoose = cached;
 

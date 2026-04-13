@@ -44,9 +44,16 @@ export default function Navbar() {
         <Link
           href="/"
           onClick={() => setIsMenuOpen(false)}
-          className="text-2xl font-bold tracking-tighter text-neutral-100 uppercase"
+          className="flex items-center gap-3 text-2xl font-bold tracking-tighter text-neutral-100 uppercase"
         >
-          Shivam Sharma
+          <div className="w-10 h-10 rounded-full overflow-hidden bg-black flex items-center justify-center">
+            <img 
+              src="/Images/image.png" 
+              alt="MR Photography Logo" 
+              className="w-full h-full object-contain transform scale-[1.2]" 
+            />
+          </div>
+          MR Photography
         </Link>
         
         <div className="hidden md:flex items-center gap-12">

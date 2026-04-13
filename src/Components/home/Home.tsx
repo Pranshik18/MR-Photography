@@ -1,143 +1,207 @@
 "use client";
 
 import { motion } from 'motion/react';
-import { ArrowRight, Mail, MapPin, ChevronDown } from 'lucide-react';
+import { ArrowRight, Mail, MapPin, ChevronDown, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-const projects = [
-  {
-    title: "The Concrete Monolith",
-    category: "Studio Archive",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB-ms9RMa9Oml3XktnymXMmd9MmlXDziyp9gfVJhMBsM6cd1UZ0JoFHH6sDdozBK2br4XrC45godbnkbfv_etWAA3IisdR6QOTqKtCjPMpITtR6Jw8S8RazNk2uz9VVGq5Hacs07aLQ3JArsZAZgWbJgm_ZXrS0FBWTiFie7Ki8VRDyly5Zqd-fqPgJenvcr_Z5yJaQtFAryiqLoQpur7Qc6JU22VDOoa9tNSFNqlKG-rtWKUH1bXkTaCAB92lykNheKrfoQk5SXzN8",
-    className: "md:col-span-7 aspect-[16/10]"
-  },
-  {
-    title: "Shadow & Light",
-    category: "Portraiture",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAP7ZOYXdNDHTYSPrRpybiPp7x9-w-aQOsoMtorToRKB8TCDGrWSkWGn3Bk96GB-FnWQZj8Zo04FRGa4yUVslmSsjVjIPvL7_rbnxinD82KjuB4T8Ws8MGzX-IJ2Ev2uHlSVijROT3EvyJTjeaLU4ndMBDTUO2a6mD_D2JTvXmXzsDR4x9WAzeF2oickvhfMAO0-4vcpHEjDoVXsRZzvIi_N3ZoYD1kPp0lqrrdrzVSkGcTKjJqvY9wloh1sGIqWsGeosp6POjBGQKo",
-    className: "md:col-span-5 aspect-[4/5] md:-mt-24"
-  },
-  {
-    title: "Ethereal Woodlands",
-    category: "Series: Roots",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD79hRwYFt3UM8s4bOeLPoOd2579-io_2G2TDgQRwmpCmeLbsD3gNBA-D2Qvbyw4Cgfe5mt1Qc7pXFDVftjWgqgCsbtVgPoqIvzBb44grVZt2xp9cYb67jdA4KG70NFfsHJefWcx6virMsX-kEcjo17LE5acY8eGqd84dRb4WpT96KiFxWUhIvl1nqVJZgg9jKsOblamKOufij_C3p7lQDanSRlY-zVURCI-sGA7AlZv82quGEByESmQoXwogvaE0_lXtg1275hHZPf",
-    className: "md:col-span-4 aspect-square"
-  },
-  {
-    title: "Nocturnal Rhythm",
-    category: "Urban Night",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDNfPI8mbplwHrEK5UW2YgqOnk_D2XezDrxqR5xWG1_EGlDvujgucNqtcNsfeL-773W2XFokXjPjMQ2i20zAR0dbKQbOgtQ-Tpn2F_wZFaKFZWrkI2lpQzkMo_JfCaw3UhZ9TP3BBCH_GiPMZKiBynmx2bSjxSThOVmuiJFtdlFiJn4LATX6MutZ-LTFfq7yWeiuqOb-O39BXeqhGYOZ2yG5Zx1MMuq_pABzVWR7xoJDsyqYaQ2eSUP91OopWedyFwIVmInkxD7sFJo",
-    className: "md:col-span-8 aspect-[21/9]"
-  }
-];
 
-const testimonials = [
-  {
-    quote: "Shivam's ability to capture the soul of concrete and steel is unmatched. He doesn't just take photos; he archives atmosphere.",
-    author: "Marcus Thorne",
-    role: "Architectural Archive"
-  },
-  {
-    quote: "A masterclass in restraint and minimalism. The editorial spread Shivam curated for our winter collection exceeded every expectation.",
-    author: "Elena Vance",
-    role: "Editorial Shoot"
-  },
-  {
-    quote: "Working with Shivam is an exercise in vision. He sees the geometry in the mundane and brings a cinematic weight to every frame.",
-    author: "Julian Grey",
-    role: "Brand Identity"
-  },
-  {
-    quote: "The shadows in his portraits tell more of a story than most full-light setups. Pure, unadulterated visual poetry.",
-    author: "Sofia Rossi",
-    role: "Portrait Series"
-  }
+const LAYOUT_CLASSES = [
+  "md:col-span-7 aspect-[16/10]",
+  "md:col-span-5 aspect-[4/5] md:-mt-24",
+  "md:col-span-4 aspect-square",
+  "md:col-span-8 aspect-[21/9]"
 ];
 
 export default function Home() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [showAllReviews, setShowAllReviews] = useState(false);
+  const [reviewData, setReviewData] = useState({ name: '', rating: 5, comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewSubmitStatus, setReviewSubmitStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+
+  const [contactData, setContactData] = useState({ name: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/user/project');
+        const data = await response.json();
+        if (data.success) {
+          // Filter only public projects
+          const publicProjects = data.data.filter((p: any) => p.isPublic);
+          setProjects(publicProjects.slice(0, 4)); // Get first 4 to match original design
+        }
+      } catch (error) {
+        console.error('Failed to load projects', error);
+      }
+    };
+    
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch('/api/user/review');
+        const data = await response.json();
+        if (data.success) {
+          setReviews(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to load reviews', error);
+      }
+    };
+    
+    fetchProjects();
+    fetchReviews();
+  }, []);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingReview(true);
+    setReviewSubmitStatus({ type: null, message: '' });
+
+    try {
+      const response = await fetch('/api/user/review', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setReviewSubmitStatus({ type: 'success', message: 'Review submitted successfully. It will be visible after approval.' });
+        setReviewData({ name: '', rating: 5, comment: '' });
+      } else {
+        setReviewSubmitStatus({ type: 'error', message: data.message || 'Failed to submit review.' });
+      }
+    } catch (error) {
+      setReviewSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus({ type: null, message: '' });
+
+    try {
+      const response = await fetch('/api/user/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSubmitStatus({ type: 'success', message: 'Inquiry sent successfully. We will get back to you soon.' });
+        setContactData({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus({ type: 'error', message: data.message || 'Failed to send inquiry.' });
+      }
+    } catch (error) {
+      setSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const scrollToFeatured = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const element = document.getElementById('featured');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="w-full">
       {/* Hero Section */}
-      <header className="relative h-[95vh] w-full overflow-hidden flex items-center justify-center bg-black">
-        <div className="absolute inset-0 z-0">
+      <header className="relative h-[100vh] w-full overflow-hidden flex items-center justify-center bg-black z-10">
+        <motion.div 
+          className="absolute inset-0 z-0"
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 20, ease: "easeOut" }}
+        >
           <img 
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEUIz1Zg4ogdCB-uYou7xCH5ttChl1zc4RBN9etRzRqnE8tqnU7ClTcEIa2oXO8OBpmgl-C54ZhZZkOp9XE_YK_aLpJndxl1ZyTHGaBW9nexFoJIDjQZmg6k2conXYu8RFMR5lDoQ_EnUn06jO5udaL92no7lu8AXDErlpvKFAVYU5yN0VnznYFURmojNSsogcbmsshnhqF9wz-SjyCkmijI1OprOxzTPMqw6KQtayN6xQwPhiERsvYitu3NuGia0rNLkIWKbiNydy" 
-            alt="Hero Landscape" 
-            className="w-full h-full object-cover opacity-50 contrast-125 brightness-[0.4]"
+            src="/Images/image.png" 
+            alt="Cinematic Camera Hero" 
+            className="w-full h-full object-contain object-top pt-24 pb-12 opacity-90 contrast-125"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
-        </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
+        </motion.div>
         
-        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="font-headline text-5xl sm:text-6xl md:text-[120px] font-extrabold kerning-tight leading-[0.9] text-white mb-6 md:mb-8"
-          >
-            Shivam Sharma
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.7 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="font-body text-[10px] md:text-xs font-medium kerning-loose text-on-surface-variant uppercase mb-10 md:mb-16"
-          >
-            Digital Curator & Lens-Based Artist
-          </motion.p>
-          <motion.a 
-            href="#featured"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="group inline-flex items-center gap-4 md:gap-6 px-8 md:px-12 py-4 md:py-5 border border-white/20 hover:border-primary/50 text-white font-body text-[10px] kerning-loose uppercase font-bold transition-all duration-700 bg-transparent hover:bg-white/5"
-          >
-            Explore
-            <span className="transition-transform duration-500 group-hover:translate-x-1">
-              <ArrowRight size={14} />
-            </span>
-          </motion.a>
-        </div>
-        
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/20 animate-bounce">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 2 }}
+          onClick={scrollToFeatured}
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/20 animate-bounce cursor-pointer hover:text-white transition-colors"
+        >
           <ChevronDown size={24} />
-        </div>
+        </motion.div>
       </header>
 
       {/* Featured Projects Section */}
       <section id="featured" className="py-24 md:py-48 px-4 sm:px-6 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-24 gap-8">
           <div className="max-w-xl">
-            <span className="font-body text-[10px] kerning-loose text-primary uppercase mb-6 block font-bold">Volume 01</span>
+            <span className="font-body text-[10px] tracking-[0.3em] text-primary uppercase mb-6 block font-bold">Volume 01</span>
             <h2 className="font-headline text-4xl md:text-6xl font-light leading-tight text-white">
               Featured <span className="font-extrabold italic opacity-90">Projects</span>
             </h2>
           </div>
-          <div className="font-body text-[10px] kerning-loose text-on-surface-variant/50 uppercase border-b border-white/10 pb-2">
-            Selected Works — 2024 Edition
+          <div className="font-body text-[10px] tracking-[0.3em] font-medium text-on-surface-variant/50 uppercase border-b border-white/10 pb-2">
+            Selected Works
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
           {projects.map((project, index) => (
             <motion.div 
-              key={project.title}
+              key={project._id || project.title}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1, duration: 0.8 }}
-              className={`group relative overflow-hidden bg-surface ${project.className}`}
+              className={`group relative overflow-hidden bg-surface ${LAYOUT_CLASSES[index % 4]} cursor-pointer`}
             >
-              <img 
-                src={project.image} 
-                alt={project.title} 
-                className="w-full h-full object-cover cinematic-zoom opacity-70 group-hover:opacity-100"
-                referrerPolicy="no-referrer"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-6 md:p-12">
-                <span className="font-body text-[9px] kerning-loose text-primary uppercase mb-3 font-bold">{project.category}</span>
-                <h3 className="font-headline text-2xl font-bold tracking-tight text-white">{project.title}</h3>
-              </div>
+              <Link href={`/detail/${project._id}`} className="block w-full h-full">
+                <img 
+                  src={project.heroImage || project.image} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-transform duration-[1.5s] ease-in-out group-hover:scale-[1.03]"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-6 md:p-12 z-20">
+                  <motion.span 
+                    initial={{ y: 10, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.1, duration: 0.5 }}
+                    className="font-body text-[9px] tracking-[0.3em] text-primary uppercase mb-3 font-bold"
+                  >
+                    {project.subtitle || "Selected Work"}
+                  </motion.span>
+                  <motion.h3 
+                    initial={{ y: 10, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className="font-headline text-2xl font-bold tracking-tight text-white"
+                  >
+                    {project.title}
+                  </motion.h3>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -153,93 +217,62 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-24 md:py-48 px-4 sm:px-6 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
-        <div className="flex flex-col mb-12 md:mb-24">
-          <span className="font-body text-[10px] kerning-loose text-primary uppercase mb-6 block font-bold">Perspectives</span>
-          <h2 className="font-headline text-4xl md:text-6xl font-light leading-tight text-white mb-4">
-            What Clients <span className="font-extrabold italic opacity-90">Say</span>
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {testimonials.map((t, i) => (
-            <motion.div 
-              key={t.author}
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-black border border-white/5 p-10 flex flex-col justify-between group hover:border-primary/30 transition-all duration-700 shadow-2xl relative overflow-hidden"
-            >
-              <p className="font-body text-on-surface-variant/80 text-[13px] leading-[1.8] italic mb-10 relative z-10">
-                &quot;{t.quote}&quot;
-              </p>
-              <div>
-                <h4 className="font-headline text-white text-[11px] font-bold kerning-loose uppercase mb-1">{t.author}</h4>
-                <span className="font-body text-primary/60 text-[9px] kerning-loose uppercase font-medium">{t.role}</span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="bg-surface/30 py-24 md:py-48 px-4 sm:px-6 md:px-16 relative overflow-hidden">
-        <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-24 items-center">
-          <div className="lg:col-span-5">
-            <h2 className="font-headline text-4xl md:text-5xl font-bold tracking-tight text-white mb-10 leading-tight">
-              Let&apos;s curate a <br/>vision together.
+      {/* Reviews Section */}
+      {reviews.length > 0 && (
+        <section className="py-24 md:py-32 px-4 sm:px-6 md:px-16 max-w-screen-xl mx-auto relative border-t border-white/5">
+          <div className="text-center mb-16 md:mb-24">
+            <span className="font-body text-[10px] tracking-[0.3em] font-bold text-primary uppercase mb-6 block">Client Words</span>
+            <h2 className="font-headline text-4xl md:text-5xl font-light leading-tight text-white mb-6">
+              What <span className="font-extrabold italic opacity-90">Clients Say</span>
             </h2>
-            <p className="font-body text-on-surface-variant/70 text-base leading-relaxed mb-16 max-w-md">
-              Available for worldwide editorial assignments, brand partnerships, and selected private commissions.
-            </p>
-            <div className="space-y-8">
-              <div className="flex items-center gap-6 group cursor-pointer">
-                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary/50 transition-all duration-500">
-                  <Mail size={20} className="text-primary" />
-                </div>
-                <div>
-                  <span className="block font-body text-[8px] kerning-loose uppercase text-on-surface-variant/40 mb-1">Inquiries</span>
-                  <span className="font-body text-[10px] kerning-loose uppercase text-white hover:text-primary transition-colors">studio@alexrivera.com</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-6 group cursor-pointer">
-                <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary/50 transition-all duration-500">
-                  <MapPin size={20} className="text-primary" />
-                </div>
-                <div>
-                  <span className="block font-body text-[8px] kerning-loose uppercase text-on-surface-variant/40 mb-1">Residence</span>
-                  <span className="font-body text-[10px] kerning-loose uppercase text-white">NYC / Paris</span>
-                </div>
-              </div>
-            </div>
+            <div className="w-12 h-px bg-white/20 mx-auto"></div>
           </div>
 
-          <div className="lg:col-span-7 bg-background p-8 md:p-20 border border-white/5 shadow-2xl">
-            <form className="space-y-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="relative group">
-                  <input type="text" id="name" placeholder=" " className="w-full bg-transparent border-0 border-b border-white/10 py-4 focus:ring-0 focus:border-primary peer text-white transition-all text-sm" />
-                  <label htmlFor="name" className="absolute left-0 top-4 font-body text-[9px] kerning-loose uppercase text-on-surface-variant/40 transition-all peer-focus:-top-4 peer-focus:text-primary peer-[:not(:placeholder-shown)]:-top-4">Full Name</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review, index) => (
+              <motion.div
+                key={review._id || index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1, duration: 0.6 }}
+                className="bg-surface/30 border border-white/5 p-8 md:p-10 flex flex-col justify-between hover:bg-surface/50 transition-colors duration-500"
+              >
+                <div>
+                  <div className="flex text-primary mb-6">
+                    {[...Array(review.rating || 5)].map((_, i) => (
+                      <Star key={i} size={14} fill="currentColor" stroke="currentColor" />
+                    ))}
+                  </div>
+                  <p className="font-body text-sm leading-relaxed text-white/80 mb-8 italic">
+                    &quot;{review.description}&quot;
+                  </p>
                 </div>
-                <div className="relative group">
-                  <input type="email" id="email" placeholder=" " className="w-full bg-transparent border-0 border-b border-white/10 py-4 focus:ring-0 focus:border-primary peer text-white transition-all text-sm" />
-                  <label htmlFor="email" className="absolute left-0 top-4 font-body text-[9px] kerning-loose uppercase text-on-surface-variant/40 transition-all peer-focus:-top-4 peer-focus:text-primary peer-[:not(:placeholder-shown)]:-top-4">Email Address</label>
+                <div>
+                  <p className="font-headline text-lg font-bold text-white mb-1 uppercase tracking-wider">{review.clientName}</p>
                 </div>
-              </div>
-              <div className="relative group">
-                <textarea id="message" rows={4} placeholder=" " className="w-full bg-transparent border-0 border-b border-white/10 py-4 focus:ring-0 focus:border-primary peer text-white transition-all resize-none text-sm"></textarea>
-                <label htmlFor="message" className="absolute left-0 top-4 font-body text-[9px] kerning-loose uppercase text-on-surface-variant/40 transition-all peer-focus:-top-4 peer-focus:text-primary peer-[:not(:placeholder-shown)]:-top-4">Your Message</label>
-              </div>
-              <button type="submit" className="group flex items-center gap-6 px-0 text-white font-body text-[10px] kerning-loose uppercase font-bold hover:text-primary transition-all duration-700">
-                Send Inquiry
-                <ArrowRight size={16} className="transition-transform duration-700 group-hover:translate-x-3" />
-              </button>
-            </form>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      </section>
+
+          {reviews.length > 3 && (
+            <motion.div 
+               initial={{ opacity: 0 }}
+               whileInView={{ opacity: 1 }}
+               viewport={{ once: true }}
+               className="mt-16 text-center"
+            >
+              <button 
+                onClick={() => setShowAllReviews(!showAllReviews)}
+                className="inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white font-body text-[10px] tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
+              >
+                {showAllReviews ? "Show Less" : "Read More Reviews"}
+              </button>
+            </motion.div>
+          )}
+        </section>
+      )}
+     
     </div>
   );
 }
