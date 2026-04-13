@@ -34,7 +34,6 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
       try {
         const parsed = JSON.parse(stored);
         if (typeof parsed === 'object' && parsed !== null) {
-          // Merge with defaultProfile to ensure all required fields exist
           setProfileState({ ...defaultProfile, ...parsed });
         } else {
           throw new Error('Invalid profile format');

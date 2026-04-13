@@ -15,7 +15,8 @@ import {
   DollarSign,
   Package,
   Layers,
-  Save
+  Save,
+  GripVertical
 } from 'lucide-react';
 import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
 
@@ -36,6 +37,7 @@ export default function PricingManagement() {
   const [isAdding, setIsAdding] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [draggedItemIndex, setDraggedItemIndex] = useState<number | null>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -212,6 +214,41 @@ export default function PricingManagement() {
       toast.error('Deletion failed');
     } finally {
       setModalState({ ...modalState, isOpen: false });
+    }
+  };
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedItemIndex(index);
+    // Needed for Firefox
+    if(e.dataTransfer) {
+       e.dataTransfer.effectAllowed = 'move';
+       e.dataTransfer.setData('text/html', e.currentTarget as any);
+    }
+  };
+
+  const handleDragEnter = (index: number) => {
+    if (draggedItemIndex === null) return;
+    if (draggedItemIndex === index) return;
+
+    const newPackages = [...packages];
+    const draggedItem = newPackages[draggedItemIndex];
+    newPackages.splice(draggedItemIndex, 1);
+    newPackages.splice(index, 0, draggedItem);
+    setDraggedItemIndex(index);
+    setPackages(newPackages);
+  };
+
+  const handleDragEnd = async () => {
+    setDraggedItemIndex(null);
+    try {
+      await fetch('/api/admin/price/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: packages.map(p => p._id) })
+      });
+      toast.success('Order saved');
+    } catch (e) {
+      toast.error('Failed to save arrangement');
     }
   };
 
@@ -425,8 +462,16 @@ export default function PricingManagement() {
              </div>
           ) : (
             <>
-              {packages.map((pkg) => (
-                <div key={pkg._id} className={`relative group overflow-hidden glass-panel border border-outline-variant/10 p-8 flex flex-col h-full hover:bg-surface-low/60 transition-all duration-700 rounded-lg ${!pkg.isActive ? 'grayscale opacity-60' : ''}`}>
+              {packages.map((pkg, index) => (
+                <div 
+                  key={pkg._id} 
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => e.preventDefault()}
+                  className={`cursor-grab active:cursor-grabbing relative group overflow-hidden glass-panel border border-outline-variant/10 p-8 flex flex-col h-full hover:bg-surface-low/60 transition-all duration-700 rounded-lg ${!pkg.isActive ? 'grayscale opacity-60' : ''} ${draggedItemIndex === index ? 'opacity-40 scale-95 border-tertiary' : ''}`}
+                >
                   <div className="absolute top-0 right-0 p-8">
                     <div className="flex items-center space-x-3 bg-surface-lowest/50 px-3 py-1.5 rounded-full backdrop-blur-md">
                       <span className="text-[9px] uppercase tracking-widest text-stone-400 font-bold">{pkg.isActive ? 'Public' : 'Private'}</span>
@@ -439,17 +484,22 @@ export default function PricingManagement() {
                     </div>
                   </div>
 
-                  <div className="mb-8">
-                    <div className="flex items-center gap-3 mb-4">
-                      <span className="text-[0.65rem] uppercase tracking-[0.3em] text-tertiary font-bold">Standard Series</span>
-                      <div 
-                        onClick={() => toggleRecommended(pkg)}
-                        className={`px-2 py-1 rounded text-[8px] uppercase tracking-widest font-black cursor-pointer transition-all duration-300 ${pkg.isRecommended ? 'bg-primary/20 text-primary border border-primary/20' : 'bg-stone-800/40 text-stone-500 border border-stone-800'}`}
-                      >
-                        {pkg.isRecommended ? "Curator's Choice" : "Standard Tier"}
-                      </div>
+                  <div className="mb-8 flex items-start gap-4">
+                    <div className="text-stone-700 mt-2 cursor-grab">
+                       <GripVertical className="w-6 h-6" />
                     </div>
-                    <h3 className="text-3xl font-headline font-extrabold tracking-tight text-stone-100 mb-2">{pkg.title}</h3>
+                    <div>
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-[0.65rem] uppercase tracking-[0.3em] text-tertiary font-bold">Standard Series</span>
+                        <div 
+                          onClick={() => toggleRecommended(pkg)}
+                          className={`px-2 py-1 rounded text-[8px] uppercase tracking-widest font-black cursor-pointer transition-all duration-300 ${pkg.isRecommended ? 'bg-primary/20 text-primary border border-primary/20' : 'bg-stone-800/40 text-stone-500 border border-stone-800'}`}
+                        >
+                          {pkg.isRecommended ? "Curator's Choice" : "Standard Tier"}
+                        </div>
+                      </div>
+                      <h3 className="text-3xl font-headline font-extrabold tracking-tight text-stone-100 mb-2">{pkg.title}</h3>
+                    </div>
                   </div>
 
                   <div className="mb-8 flex items-baseline space-x-2">

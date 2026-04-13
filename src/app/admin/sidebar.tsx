@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { LayoutGrid, Camera, Images, BookOpen,DollarSign, LayoutTemplate, Settings, LogOut, User } from 'lucide-react';
+import { LayoutGrid, Camera, Images, BookOpen,DollarSign, LayoutTemplate, Settings, LogOut, User,Mail,Star } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
@@ -14,6 +14,8 @@ const navItems = [
   { icon: Images, label: 'Manage Portfolio', path: '/admin/manage-portfolio' },
   { icon: DollarSign, label: 'Pricing', path: '/admin/pricing' },
   { icon: LayoutTemplate, label: 'Website Layout', path: '/admin/website-layout' },
+  { icon: Mail, label: 'Inquire', path: '/admin/inquire' },
+  { icon: Star, label: 'Review', path: '/admin/review' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
 
