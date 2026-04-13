@@ -29,6 +29,9 @@ export default function Home() {
     const fetchProjects = async () => {
       try {
         const response = await fetch('/api/user/project');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.success) {
           // Filter only public projects
@@ -43,6 +46,9 @@ export default function Home() {
     const fetchReviews = async () => {
       try {
         const response = await fetch('/api/user/review');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         if (data.success) {
           setReviews(data.data);
@@ -133,20 +139,52 @@ export default function Home() {
           transition={{ duration: 20, ease: "easeOut" }}
         >
           <img 
-            src="/Images/image.png" 
+            src="/Images/hero.jpg" 
             alt="Cinematic Camera Hero" 
-            className="w-full h-full object-contain object-top pt-24 pb-12 opacity-90 contrast-125"
+            className="w-full h-full object-cover opacity-40"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/60 to-black/20 z-10"></div>
         </motion.div>
+
+        <div className="relative z-20 flex flex-col items-center text-center px-4 w-full">
+          <motion.h1 
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5, duration: 1 }}
+            className="font-headline text-5xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter mb-4 drop-shadow-2xl"
+          >
+            Shivam Sharma
+          </motion.h1>
+          <motion.p 
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 1 }}
+            className="font-body text-xs md:text-sm tracking-[0.4em] text-white uppercase mb-12 drop-shadow-lg font-medium"
+          >
+            Digital Curator & Lens-Based Artist
+          </motion.p>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 1.1, duration: 1 }}
+          >
+            <button 
+              onClick={scrollToFeatured}
+              className="group inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white hover:bg-white/10 transition-colors"
+            >
+              <span className="font-body text-[10px] tracking-[0.2em] font-bold uppercase group-hover:tracking-[0.25em] transition-all">Explore</span>
+              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </motion.div>
+        </div>
         
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5, duration: 2 }}
           onClick={scrollToFeatured}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/20 animate-bounce cursor-pointer hover:text-white transition-colors"
+          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/20 animate-bounce cursor-pointer hover:text-white transition-colors z-20"
         >
           <ChevronDown size={24} />
         </motion.div>
