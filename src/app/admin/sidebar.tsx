@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
 import { useAdmin } from './AdminContext';
-import { AdminConfirmModal } from '@/components/admin/AdminConfirmModal';
+import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 
 const navItems = [
   { icon: LayoutGrid, label: 'Dashboard', path: '/admin' },

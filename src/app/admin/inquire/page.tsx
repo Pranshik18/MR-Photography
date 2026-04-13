@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AdminConfirmModal } from "@/components/admin/AdminConfirmModal";
+import { AdminConfirmModal } from "@/Components/admin/AdminConfirmModal";
 
 interface IContact {
   _id: string;

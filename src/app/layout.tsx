@@ -3,7 +3,7 @@ import { Manrope, Inter } from "next/font/google";
 import "./globals.css";
 
 
-import CustomToaster from "@/components/layout/Toaster";
+import CustomToaster from "@/Components/layout/Toaster";
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -16,8 +16,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MR.Photographer - Shivam Sharma",
+  title: "MR Photography",
   description: "Get in touch for editorial, architectural, and cinematic projects.",
+  icons: {
+    icon: "/Images/image-round.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
