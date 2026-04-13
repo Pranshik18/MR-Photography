@@ -2,16 +2,19 @@
 
 import type { ReactNode } from 'react';
 import { useEffect, useState, FormEvent } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 import Sidebar from './sidebar';
 import { Menu, Search } from 'lucide-react';
 import { AdminProvider } from './AdminContext';
 
-export default function AdminLayout({ children }: { children: { children: ReactNode }['children'] }) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
+
+  const isLoginPage = pathname === '/admin/login';
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
@@ -29,6 +32,14 @@ export default function AdminLayout({ children }: { children: { children: ReactN
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isMobileNavOpen]);
+
+  if (isLoginPage) {
+    return (
+      <AdminProvider>
+        {children}
+      </AdminProvider>
+    );
+  }
 
   return (
     <AdminProvider>
@@ -49,7 +60,7 @@ export default function AdminLayout({ children }: { children: { children: ReactN
         </div>
       ) : null}
 
-      <header className="fixed top-0 right-0 left-0 md:left-64 h-16 md:h-20 flex justify-between items-center px-4 md:px-12 z-20 bg-background/70 backdrop-blur-md border-b border-white/5">
+      <header className="fixed top-0 right-0 left-0 md:left-64 h-16 md:h-20 flex justify-between items-center px-4 md:px-12 z-40 bg-background/70 backdrop-blur-md border-b border-white/5">
         <div className="flex items-center gap-3 md:gap-4 min-w-0">
           <button
             type="button"

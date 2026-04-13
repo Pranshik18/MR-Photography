@@ -9,6 +9,7 @@ interface AdminConfirmModalProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  variant?: 'danger' | 'primary';
 }
 
 export function AdminConfirmModal({
@@ -18,20 +19,19 @@ export function AdminConfirmModal({
   confirmText = "Confirm",
   cancelText = "Cancel",
   onConfirm,
-  onCancel
+  onCancel,
+  variant = 'danger'
 }: AdminConfirmModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const confirmButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isOpen) {
-      // Focus the confirm button when modal opens
       confirmButtonRef.current?.focus();
 
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') onCancel();
         
-        // Basic focus trap iteration
         if (e.key === 'Tab') {
           const focusableElements = modalRef.current?.querySelectorAll(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -102,7 +102,11 @@ export function AdminConfirmModal({
                 type="button"
                 ref={confirmButtonRef}
                 onClick={onConfirm}
-                className="px-5 py-2 text-sm font-bold bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all shadow-[0_0_20px_rgba(239,68,68,0.15)] rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest"
+                className={`px-5 py-2 text-sm font-bold transition-all rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest ${
+                  variant === 'danger' 
+                    ? "bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.15)] focus-visible:ring-red-400" 
+                    : "bg-tertiary/10 text-tertiary hover:bg-tertiary hover:text-on-tertiary border border-tertiary/20 shadow-[0_0_20px_rgba(206,197,182,0.15)] focus-visible:ring-tertiary"
+                }`}
               >
                 {confirmText}
               </button>

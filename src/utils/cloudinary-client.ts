@@ -29,3 +29,13 @@ export const uploadMultiple = async (files: string[], folder: string = "mr-photo
     throw new Error("Failed to upload images to Cloudinary");
   }
 };
+
+export const deleteSingle = async (publicId: string) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (error) {
+    console.error("Cloudinary delete error:", error);
+    throw new Error("Failed to delete image from Cloudinary");
+  }
+};

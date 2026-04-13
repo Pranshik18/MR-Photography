@@ -5,7 +5,7 @@ import PricingModel from "@/models/price";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { title, features, currency, price, isActive, order } = body;
+    const { title, features, currency, price, isActive, order,isRecommended } = body;
 
     if (!title || !features || price === undefined) {
       return NextResponse.json(
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
       currency: currency || "INR",
       price,
       isActive: isActive !== undefined ? isActive : true,
+      isRecommended: isRecommended !== undefined ? isRecommended : false,
       order: order || 0,
     });
 

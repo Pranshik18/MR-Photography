@@ -37,9 +37,13 @@ export async function PUT(req: NextRequest) {
     }
 
     await connectToDatabase();
+    
+    // First, clear all current featured projects
+    await ProjectModel.updateMany({}, { featured: false, order: 0 });
 
+    // Then, set only the provided projects to featured with their matching order
     const updatePromises = projectIds.map((id, index) => {
-      return ProjectModel.findByIdAndUpdate(id, { order: index });
+      return ProjectModel.findByIdAndUpdate(id, { featured: true, order: index });
     });
 
     await Promise.all(updatePromises);
@@ -47,7 +51,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Project order updated successfully",
+        message: "Website featured layout synchronized successfully",
       },
       { status: 200 }
     );
