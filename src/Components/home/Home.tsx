@@ -34,9 +34,11 @@ export default function Home() {
         }
         const data = await response.json();
         if (data.success) {
-          // Filter only public projects
-          const publicProjects = data.data.filter((p: any) => p.isPublic);
-          setProjects(publicProjects.slice(0, 4)); // Get first 4 to match original design
+          const featuredProjects = data.data
+            .filter((p: any) => p.featured && p.isPublic)
+            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+            
+          setProjects(featuredProjects.slice(0, 4));
         }
       } catch (error) {
         console.error('Failed to load projects', error);
