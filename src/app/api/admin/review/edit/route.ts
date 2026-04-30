@@ -1,14 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectToDatabase from '@/utils/db';
-import ReviewModel from '@/models/Review';
+import ReviewModel from '@/models/review';
 
 // PUT: Update a review
 export async function PUT(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest
 ) {
   try {
-    const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: 'Review ID is required' },
+        { status: 400 }
+      );
+    }
     const body = await request.json();
 
     await connectToDatabase();

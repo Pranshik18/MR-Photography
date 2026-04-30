@@ -30,9 +30,9 @@ export default function Dashboard() {
     <div className="py-8 md:py-12 max-w-7xl mx-auto">
       <header className="mb-10 md:mb-16 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-tertiary mb-4 block">Overview / Alex Rivera</span>
+          <span className="text-[10px] uppercase tracking-[0.3em] text-tertiary mb-4 block">Overview</span>
           <h2 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface">
-            Welcome Back, <span className="block md:inline">Alex</span>
+            Welcome Back <span className="block md:inline"></span>
           </h2>
         </div>
         <Link

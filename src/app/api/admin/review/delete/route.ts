@@ -3,11 +3,18 @@ import connectToDatabase from '@/utils/db';
 import ReviewModel from '@/models/review';
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest
 ) {
   try {
-    const { id } = await params;
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: 'Review ID is required' },
+        { status: 400 }
+      );
+    }
 
     await connectToDatabase();
 

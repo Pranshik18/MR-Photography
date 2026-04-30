@@ -7,7 +7,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, message } = await req.json();
+    const { name, email, phone, date, location, category, message } = await req.json();
     if (!name || !email || !message) {
       return NextResponse.json(
         { success: false, message: "Name, email and message are required" },
@@ -17,9 +17,13 @@ export async function POST(req: NextRequest) {
 
     await connectToDatabase();
 
-    const newContact = await ContactModel.create({
+    await ContactModel.create({
       name,
       email,
+      phone,
+      date,
+      location,
+      category,
       message,
       status: "new",
       isRead: false,
@@ -29,13 +33,22 @@ export async function POST(req: NextRequest) {
     try {
       const { data, error } = await resend.emails.send({
         from: process.env.FROM_EMAIL || "onboarding@resend.dev",
-        to: process.env.ADMIN_EMAIL as string, // Will send to whoever is configured in .env
-        subject: `New Client Inquiry from ${name}`,
+        to: process.env.ADMIN_EMAIL || "bhavik@mrphotography.com", 
+        subject: `New Client Inquiry: ${category || 'General'} - ${name}`,
         html: `
-          <h2>New Contact Inquiry</h2>
-          <p><strong>Name:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Message:</strong><br/>${message.replace(/\n/g, '<br/>')}</p>
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eaeaea; padding: 20px; border-radius: 8px;">
+            <h2 style="color: #333; border-bottom: 1px solid #eaeaea; padding-bottom: 10px;">New Inquiry</h2>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
+            <p><strong>Phone:</strong> ${phone || 'N/A'}</p>
+            <p><strong>Event Date:</strong> ${date || 'N/A'}</p>
+            <p><strong>Location:</strong> ${location || 'N/A'}</p>
+            <p><strong>Category:</strong> ${category || 'N/A'}</p>
+            <div style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 4px;">
+              <p style="margin-top: 0;"><strong>Message:</strong></p>
+              <p style="white-space: pre-wrap; margin-bottom: 0;">${message}</p>
+            </div>
+          </div>
         `,
       });
 

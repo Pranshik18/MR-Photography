@@ -11,8 +11,7 @@ import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 const navItems = [
   { icon: LayoutGrid, label: 'Dashboard', path: '/admin' },
   { icon: Camera, label: 'Add New Project', path: '/admin/add-project' },
-  { icon: Images, label: 'Manage Portfolio', path: '/admin/manage-portfolio' },
-  { icon: DollarSign, label: 'Pricing', path: '/admin/pricing' },
+  { icon: Images, label: 'Manage Gallery', path: '/admin/manage-portfolio' },
   { icon: LayoutTemplate, label: 'Website Layout', path: '/admin/website-layout' },
   { icon: Mail, label: 'Inquire', path: '/admin/inquire' },
   { icon: Star, label: 'Review', path: '/admin/review' },
@@ -36,7 +35,7 @@ export default function Sidebar({ variant = 'desktop', onNavigate }: SidebarProp
   return (
     <aside className={asideClassName}>
       <div className="px-8 mb-12">
-        <h1 className="text-xl font-headline font-extrabold tracking-tight text-tertiary uppercase">The Curator</h1>
+        <h1 className="text-xl font-headline font-extrabold tracking-tight text-tertiary uppercase">MR PHOTOGRAPHY</h1>
         <p className="text-[10px] text-on-surface-variant tracking-[0.2em] uppercase mt-1 opacity-60">Gallery Administrator</p>
       </div>
 

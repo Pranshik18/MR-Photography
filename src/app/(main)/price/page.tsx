@@ -1,5 +1,5 @@
-import PricePage from "@/Components/price/Price";
+import { Pricing } from "@/Components/price/Price";
 
 export default function Page() {
-  return <PricePage />;
+  return <Pricing />;
 }
