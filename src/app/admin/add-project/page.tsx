@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion } from 'motion/react';
 import { Camera, Bold, Italic, List, Link as LinkIcon, Plus, X, ArrowLeft, Check } from 'lucide-react';
@@ -97,6 +97,8 @@ function AddProjectContent() {
   const descRef = useRef<HTMLTextAreaElement>(null);
   const [clientName, setClientName] = useState('');
   const [projectRole, setProjectRole] = useState('');
+  const [projectDate, setProjectDate] = useState('');
+  const [projectCategory, setProjectCategory] = useState('');
 
   const [heroPreview, setHeroPreview] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<File | null>(null);
@@ -142,6 +144,8 @@ function AddProjectContent() {
             setSubtitle(p.subtitle || '');
             setClientName(p.client || '');
             setProjectRole(p.role || '');
+            setProjectDate(p.date || '');
+            setProjectCategory(p.category || '');
             setDescription(p.description || '');
             if (p.heroImage) {
               setHeroPreview(p.heroImage);
@@ -305,6 +309,8 @@ function AddProjectContent() {
         description,
         clientName,
         projectRole,
+        date: projectDate,
+        category: projectCategory,
         heroImage: heroBase64,
         images: galleryBase64,
       };
@@ -514,27 +520,20 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Client & Role */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+        {/* Category Only */}
+        <div className="max-w-md">
           <div className="relative group">
-            <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Client</label>
-            <input 
-              type="text" 
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              placeholder="Private Commission"
-              className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all"
-            />
-          </div>
-          <div className="relative group">
-            <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Role</label>
-            <input 
-              type="text" 
-              value={projectRole}
-              onChange={(e) => setProjectRole(e.target.value)}
-              placeholder="Photographer"
-              className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all"
-            />
+            <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Category</label>
+            <select 
+              value={projectCategory}
+              onChange={(e) => setProjectCategory(e.target.value)}
+              className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all cursor-pointer"
+            >
+              <option value="" className="text-gray-900">Select Category</option>
+              {['WEDDINGS', 'PRE-WEDDING', 'PARTIES', 'TRADITIONS', 'MATERNITY', 'BOUDOIR', 'COMMERCIAL'].map(cat => (
+                <option key={cat} value={cat} className="text-gray-900">{cat}</option>
+              ))}
+            </select>
           </div>
         </div>
 

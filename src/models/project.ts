@@ -17,6 +17,8 @@ export interface IProject extends Document {
   images: IProjectImage[];              
   slug: string;                         
   year: number;
+  date?: string;
+  category?: string;
   location?: string;
   isPublic: boolean;                   
   featured: boolean;                    
@@ -118,6 +120,16 @@ const projectSchema: Schema<IProject> = new mongoose.Schema(
       type: String,
       trim: true,
       maxlength: 100,
+    },
+
+    date: {
+      type: String,
+      trim: true,
+    },
+
+    category: {
+      type: String,
+      trim: true,
     },
 
     isPublic: {

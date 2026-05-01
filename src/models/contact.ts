@@ -3,8 +3,12 @@ import mongoose, { Schema, Model, Document } from 'mongoose';
 export interface IContact extends Document {
   name: string;
   email: string;
+  phone?: string;
+  date?: string;
+  location?: string;
+  category?: string;
   message: string;
-  status: 'new' | 'read' | 'replied';
+  status: 'new' | 'read' | 'replied' | 'archived';
   isRead: boolean;
   reply?: string;
   repliedAt?: Date;
@@ -31,6 +35,11 @@ const contactSchema: Schema<IContact> = new mongoose.Schema(
         'Please enter a valid email address',
       ],
     },
+
+    phone: { type: String, trim: true },
+    date: { type: String, trim: true },
+    location: { type: String, trim: true },
+    category: { type: String, trim: true },
 
     message: {
       type: String,

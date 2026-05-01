@@ -7,6 +7,10 @@ interface IContact {
   _id: string;
   name: string;
   email: string;
+  phone?: string;
+  date?: string;
+  location?: string;
+  category?: string;
   message: string;
   status: string;
   isRead: boolean;
@@ -213,10 +217,34 @@ export default function InquirePage() {
                 <div className="w-16 h-16 shrink-0 bg-gradient-to-tr from-stone-800 to-stone-600 rounded-full flex items-center justify-center text-2xl font-headline font-bold text-stone-200">
                   {selectedInquiry.name.substring(0, 2).toUpperCase()}
                 </div>
-                <div className="break-all sm:break-normal">
-                  <h2 className="text-xl sm:text-2xl font-headline font-bold text-[#e5e2e1] mb-1">{selectedInquiry.name}</h2>
-                  <p className="text-sm text-[#c0c8c9] font-body">{selectedInquiry.email}</p>
-                  <p className="text-[0.65rem] text-stone-500 uppercase tracking-[0.2em] mt-2">Inquiry received {formatDate(selectedInquiry.createdAt)} {formatTime(selectedInquiry.createdAt) ? `at ${formatTime(selectedInquiry.createdAt)}` : ''}</p>
+                <div className="break-all sm:break-normal flex-grow w-full">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-headline font-bold text-[#e5e2e1] mb-1">{selectedInquiry.name}</h2>
+                      <p className="text-sm text-[#c0c8c9] font-body">{selectedInquiry.email}</p>
+                    </div>
+                    {selectedInquiry.category && (
+                      <span className="self-start px-3 py-1 bg-[#2a2a2a] text-[#cec5b6] text-[0.65rem] uppercase tracking-widest rounded-full border border-[#404849]/30">
+                        {selectedInquiry.category}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[0.65rem] text-stone-500 uppercase tracking-[0.2em] mt-3">Inquiry received {formatDate(selectedInquiry.createdAt)} {formatTime(selectedInquiry.createdAt) ? `at ${formatTime(selectedInquiry.createdAt)}` : ''}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-8 pb-8 border-b border-[#404849]/10">
+                <div>
+                  <h5 className="text-[0.65rem] font-bold uppercase tracking-widest text-stone-500 mb-1">Phone</h5>
+                  <p className="text-[#e5e2e1] text-sm">{selectedInquiry.phone || 'N/A'}</p>
+                </div>
+                <div>
+                  <h5 className="text-[0.65rem] font-bold uppercase tracking-widest text-stone-500 mb-1">Event Date</h5>
+                  <p className="text-[#e5e2e1] text-sm">{selectedInquiry.date || 'N/A'}</p>
+                </div>
+                <div>
+                  <h5 className="text-[0.65rem] font-bold uppercase tracking-widest text-stone-500 mb-1">Location</h5>
+                  <p className="text-[#e5e2e1] text-sm">{selectedInquiry.location || 'N/A'}</p>
                 </div>
               </div>
 

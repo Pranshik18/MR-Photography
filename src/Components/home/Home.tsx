@@ -1,320 +1,349 @@
 "use client";
-
-import { motion } from 'motion/react';
-import { ArrowRight, Mail, MapPin, ChevronDown, Star } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+// Trigger re-build
 
 
-const LAYOUT_CLASSES = [
-  "md:col-span-7 aspect-[16/10]",
-  "md:col-span-5 aspect-[4/5] md:-mt-24",
-  "md:col-span-4 aspect-square",
-  "md:col-span-8 aspect-[21/9]"
+import React, { useRef, useState, useEffect } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1538356111053-748a48e1acb8?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&q=80&w=2600",
+  "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&q=80&w=2600"
 ];
 
-export default function Home() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [reviews, setReviews] = useState<any[]>([]);
-  const [showAllReviews, setShowAllReviews] = useState(false);
-  const [reviewData, setReviewData] = useState({ name: '', rating: 5, comment: '' });
-  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
-  const [reviewSubmitStatus, setReviewSubmitStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+import { Page } from "../layout/Navbar";
+import { PORTFOLIO_ITEMS } from "../portfolio/Portfolio";
+import { useRouter } from "next/navigation";
+import { FAQ } from "../faq/FAQ";
+import { Reviews } from "../review/Review";
 
-  const [contactData, setContactData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error' | null, message: string }>({ type: null, message: '' });
+interface HomeProps {
+  setPage?: (page: Page) => void;
+}
+
+export const Home: React.FC<HomeProps> = ({ setPage }) => {
+  const router = useRouter();
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [stories, setStories] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchStories = async () => {
       try {
-        const response = await fetch('/api/user/project');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        const res = await fetch('/api/user/project');
+        const data = await res.json();
         if (data.success) {
-          const featuredProjects = data.data
-            .filter((p: any) => p.featured && p.isPublic)
-            .sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-            
-          setProjects(featuredProjects.slice(0, 4));
+          setStories(data.data);
         }
-      } catch (error) {
-        console.error('Failed to load projects', error);
+      } catch (err) {
+        console.error('Failed to fetch stories', err);
       }
     };
-    
-    const fetchReviews = async () => {
-      try {
-        const response = await fetch('/api/user/review');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        if (data.success) {
-          setReviews(data.data);
-        }
-      } catch (error) {
-        console.error('Failed to load reviews', error);
-      }
-    };
-    
-    fetchProjects();
-    fetchReviews();
+    fetchStories();
   }, []);
 
-  const handleReviewSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmittingReview(true);
-    setReviewSubmitStatus({ type: null, message: '' });
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
-    try {
-      const response = await fetch('/api/user/review', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setReviewSubmitStatus({ type: 'success', message: 'Review submitted successfully. It will be visible after approval.' });
-        setReviewData({ name: '', rating: 5, comment: '' });
-      } else {
-        setReviewSubmitStatus({ type: 'error', message: data.message || 'Failed to submit review.' });
-      }
-    } catch (error) {
-      setReviewSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
-    } finally {
-      setIsSubmittingReview(false);
-    }
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus({ type: null, message: '' });
-
-    try {
-      const response = await fetch('/api/user/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactData),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setSubmitStatus({ type: 'success', message: 'Inquiry sent successfully. We will get back to you soon.' });
-        setContactData({ name: '', email: '', message: '' });
-      } else {
-        setSubmitStatus({ type: 'error', message: data.message || 'Failed to send inquiry.' });
-      }
-    } catch (error) {
-      setSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const scrollToFeatured = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const element = document.getElementById('featured');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+  const handleNavClick = (path: string, page: Page) => {
+    if (setPage) setPage(page);
+    router.push(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
-    <div className="w-full">
+    <div className="bg-white text-gray-900">
       {/* Hero Section */}
-      <header className="relative h-[100vh] w-full overflow-hidden flex items-center justify-center bg-black z-10">
-        <motion.div 
-          className="absolute inset-0 z-0"
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 20, ease: "easeOut" }}
-        >
-          <img 
-            src="/Images/hero.jpg" 
-            alt="Cinematic Camera Hero" 
-            className="w-full h-full object-cover opacity-40"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-black/60 to-black/20 z-10"></div>
-        </motion.div>
-
-        <div className="relative z-20 flex flex-col items-center text-center px-4 w-full">
-          <motion.h1 
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="font-headline text-5xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tighter mb-4 drop-shadow-2xl"
-          >
-            Shivam Sharma
-          </motion.h1>
-          <motion.p 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 1 }}
-            className="font-body text-xs md:text-sm tracking-[0.4em] text-white uppercase mb-12 drop-shadow-lg font-medium"
-          >
-            Digital Curator & Lens-Based Artist
-          </motion.p>
+      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center bg-black">
+        <AnimatePresence>
           <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 1.1, duration: 1 }}
+            key={currentImageIndex}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0"
           >
-            <button 
-              onClick={scrollToFeatured}
-              className="group inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white hover:bg-white/10 transition-colors"
+            <img
+              src={HERO_IMAGES[currentImageIndex]}
+              alt="Hero Showcase"
+              className="w-full h-full object-cover brightness-[0.5] contrast-110 blur-[6px] scale-105"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="relative z-10 text-center px-6">
+            <div className="relative mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 1.5 }}
+                className="flex flex-col items-center text-white drop-shadow-2xl relative z-10"
+              >
+                <div className="relative">
+                  <motion.div
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: "115%", opacity: 1 }}
+                    transition={{ delay: 1.5, duration: 1.2, ease: "easeOut" }}
+                    className="absolute bottom-[15%] -left-[7.5%] h-[25%] bg-yellow-400/30 skew-x-[-15deg] blur-md z-0"
+                  />
+                  <span className="relative text-7xl md:text-[14rem] font-sans font-black italic tracking-tighter leading-none mb-2 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)] text-white">
+                    MR
+                  </span>
+                </div>
+                <span className="relative text-lg md:text-3xl font-sans font-bold uppercase tracking-[1em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-white/90">
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 2, duration: 1 }}
+                    className="absolute inset-x-0 -bottom-2 h-[2px] bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent"
+                  />
+                  PHOTOGRAPHY
+                </span>
+              </motion.div>
+            </div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5, duration: 1 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <button
+              className="flex flex-col items-center gap-4 text-white text-[12px] uppercase tracking-[0.2em] font-extrabold drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] hover:text-gray-300 transition-colors group"
             >
-              <span className="font-body text-[10px] tracking-[0.2em] font-bold uppercase group-hover:tracking-[0.25em] transition-all">Explore</span>
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              <span>Explore Portfolio</span>
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+                  <path d="m6 9 6 6 6-6"/>
+                </svg>
+              </motion.div>
             </button>
           </motion.div>
         </div>
-        
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 2 }}
-          onClick={scrollToFeatured}
-          className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/20 animate-bounce cursor-pointer hover:text-white transition-colors z-20"
-        >
-          <ChevronDown size={24} />
-        </motion.div>
-      </header>
-
-      {/* Featured Projects Section */}
-      <section id="featured" className="py-24 md:py-48 px-4 sm:px-6 md:px-16 max-w-screen-2xl mx-auto relative overflow-hidden">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-24 gap-8">
-          <div className="max-w-xl">
-            <span className="font-body text-[10px] tracking-[0.3em] text-primary uppercase mb-6 block font-bold">Volume 01</span>
-            <h2 className="font-headline text-4xl md:text-6xl font-light leading-tight text-white">
-              Featured <span className="font-extrabold italic opacity-90">Projects</span>
-            </h2>
-          </div>
-          <div className="font-body text-[10px] tracking-[0.3em] font-medium text-on-surface-variant/50 uppercase border-b border-white/10 pb-2">
-            Selected Works
-          </div>
+      </section>
+      {/* Portfolio Grid (Minimal Cards) */}
+      <section className="py-16 md:py-20 px-6 md:px-12 max-w-[1600px] mx-auto relative overflow-hidden">
+        {/* Impressive Header */}
+        <div className="text-center mb-16 md:mb-20 relative">
+          <h2 className="text-[4rem] md:text-[14rem] font-serif italic text-gray-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-0 pointer-events-none select-none drop-shadow-sm opacity-50 md:opacity-100">
+            Portfolios
+          </h2>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative z-10"
+          >
+            <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 block mb-4">Discover Our Work</span>
+            <h3 className="text-4xl md:text-5xl font-serif text-gray-900">Curated <span className="italic text-gray-500">Collections</span></h3>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          {projects.map((project, index) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
+          {["WEDDINGS", "MATERNITY", "BOUDOIR", "COMMERCIAL"].map(
+            (cat, idx) => {
+              const item = PORTFOLIO_ITEMS.find((p) => p.category === cat) || PORTFOLIO_ITEMS[idx];
+              return (
+                <motion.div
+                  key={cat}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: idx * 0.1 }}
+                  className="group relative cursor-pointer overflow-hidden rounded-2xl aspect-[4/5]"
+                  onClick={() => handleNavClick("/portfolio", "PORTFOLIO")}
+                >
+                  <img
+                    src={item?.imageUrl}
+                    alt={cat}
+                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-colors duration-500" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <h4 className="text-2xl md:text-3xl font-sans tracking-[0.2em] font-light uppercase text-center mb-4">
+                      {cat}
+                    </h4>
+                    <div className="w-8 h-[1px] bg-white/60 mb-4" />
+                    <span className="text-[9px] uppercase tracking-[0.3em] font-bold">
+                      View Gallery
+                    </span>
+                  </div>
+                  
+                  {/* Default visible title at the bottom */}
+                  <div className="absolute bottom-6 left-0 w-full text-center group-hover:opacity-0 transition-opacity duration-500">
+                    <h4 className="text-white text-sm md:text-base font-sans tracking-[0.2em] font-bold uppercase drop-shadow-md">
+                      {cat}
+                    </h4>
+                  </div>
+                </motion.div>
+              );
+            }
+          )}
+        </div>
+      </section>
+
+      {/* Featured Stories */}
+      <section className="bg-[#fafaf9] py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16 md:mb-24 relative">
+            <h2 className="text-[4.5rem] md:text-[14rem] font-serif italic text-gray-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-0 pointer-events-none select-none drop-shadow-sm opacity-50 md:opacity-100">
+              Journal
+            </h2>
             <motion.div 
-              key={project._id || project.title}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1, duration: 0.8 }}
-              className={`group relative overflow-hidden bg-surface ${LAYOUT_CLASSES[index % 4]} cursor-pointer`}
+              transition={{ duration: 0.8 }}
+              className="relative z-10"
             >
-              <Link href={`/detail/${project._id}`} className="block w-full h-full">
-                <img 
-                  src={project.heroImage || project.image} 
-                  alt={project.title} 
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-transform duration-[1.5s] ease-in-out group-hover:scale-[1.03]"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 flex flex-col justify-end p-6 md:p-12 z-20">
-                  <motion.span 
-                    initial={{ y: 10, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1, duration: 0.5 }}
-                    className="font-body text-[9px] tracking-[0.3em] text-primary uppercase mb-3 font-bold"
-                  >
-                    {project.subtitle || "Selected Work"}
-                  </motion.span>
-                  <motion.h3 
-                    initial={{ y: 10, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    className="font-headline text-2xl font-bold tracking-tight text-white"
-                  >
-                    {project.title}
-                  </motion.h3>
-                </div>
-              </Link>
+              <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-4">
+                ON THE BLOG
+              </span>
+              <h3 className="text-4xl md:text-6xl font-serif text-gray-900">Recent <span className="italic text-gray-600">Stories</span></h3>
             </motion.div>
-          ))}
-        </div>
+          </div>
 
-        <div className="mt-24 md:mt-48 max-w-4xl mx-auto text-center">
-          <p className="font-headline text-2xl md:text-4xl leading-[1.6] text-white/90 font-light italic">
-            &quot;Art is not what you see, but what you make others see through the deliberate{" "}
-            <span className="font-extrabold text-primary not-italic">absence of light</span>.&quot;
-          </p>
-          <div className="mt-12 flex justify-center">
-            <div className="w-24 h-px bg-white/20"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
+            {stories.slice(0, 4).map((story) => (
+              <div
+                key={story._id}
+                className="group cursor-pointer"
+                onClick={() => handleNavClick("/recentwork", "RECENT_WORK")}
+              >
+                <div className="aspect-[16/10] overflow-hidden mb-10">
+                  <img
+                    src={story.heroImage}
+                    alt={story.title}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                    loading="lazy"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <div className="px-4">
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="text-[9px] uppercase tracking-widest text-gray-600">
+                      {story.category}
+                    </span>
+                    <div className="w-1 h-1 bg-gray-300 rounded-full" />
+                    <span className="text-[9px] uppercase tracking-widest text-gray-600">
+                      {story.date || 'RECENT'}
+                    </span>
+                  </div>
+                  <h4 className="text-2xl md:text-3xl font-serif mb-4">
+                    {story.client || story.title}
+                  </h4>
+                  <p className="text-sm font-medium text-gray-600 leading-relaxed mb-6 line-clamp-2">
+                    {story.description}
+                  </p>
+                  <span className="text-[10px] uppercase tracking-widest border-b border-black pb-1">
+                    View Story
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-20 text-center">
+            <button
+              onClick={() => handleNavClick("/recentwork", "RECENT_WORK")}
+              className="text-[11px] uppercase tracking-[0.2em] border border-black px-12 py-5 hover:bg-black hover:text-white transition-colors duration-500 font-bold"
+            >
+              View All Works
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Reviews Section */}
-      {reviews.length > 0 && (
-        <section className="py-24 md:py-32 px-4 sm:px-6 md:px-16 max-w-screen-xl mx-auto relative border-t border-white/5">
-          <div className="text-center mb-16 md:mb-24">
-            <span className="font-body text-[10px] tracking-[0.3em] font-bold text-primary uppercase mb-6 block">Client Words</span>
-            <h2 className="font-headline text-4xl md:text-5xl font-light leading-tight text-white mb-6">
-              What <span className="font-extrabold italic opacity-90">Clients Say</span>
-            </h2>
-            <div className="w-12 h-px bg-white/20 mx-auto"></div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review, index) => (
-              <motion.div
-                key={review._id || index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="bg-surface/30 border border-white/5 p-8 md:p-10 flex flex-col justify-between hover:bg-surface/50 transition-colors duration-500"
-              >
-                <div>
-                  <div className="flex text-primary mb-6">
-                    {[...Array(review.rating || 5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" stroke="currentColor" />
-                    ))}
-                  </div>
-                  <p className="font-body text-sm leading-relaxed text-white/80 mb-8 italic">
-                    &quot;{review.description}&quot;
-                  </p>
-                </div>
-                <div>
-                  <p className="font-headline text-lg font-bold text-white mb-1 uppercase tracking-wider">{review.clientName}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+      {/* FAQ */}
+      <FAQ />
 
-          {reviews.length > 3 && (
-            <motion.div 
-               initial={{ opacity: 0 }}
-               whileInView={{ opacity: 1 }}
-               viewport={{ once: true }}
-               className="mt-16 text-center"
+      <Reviews />
+
+      {/* Philosophy */}
+      <section className="py-16 md:py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-20 items-center">
+          <div className="hidden md:block order-2 md:order-1">
+            <div className="aspect-[4/5] overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=2000"
+                alt="Majestic mountain lake landscape"
+                className="w-full h-full object-cover"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          </div>
+          <div className="order-1 md:order-2">
+            <span className="text-[10px] uppercase tracking-widest text-gray-600 block mb-4">
+              PHILOSOPHY
+            </span>
+            <h3 className="text-4xl md:text-6xl font-serif mb-10 leading-tight">
+              The beauty of <span className="italic">imperfection</span>
+            </h3>
+            <p className="text-gray-600 font-medium leading-relaxed mb-8">
+              We believe photography is profoundly more than orchestrating the perfect pose. It's about preserving the fleeting, in-between moments—the sharp intake of breath before the first look, the subtle, comforting touch of hands, and the way golden-hour light dances across a room. Our philosophy is rooted in observation rather than direction, allowing the genuine narrative of your day to unfold naturally.
+            </p>
+            <p className="text-gray-600 font-medium leading-relaxed mb-8">
+              In an era of endless digital noise, we strive to create images that feel tactile, emotive, and intimately personal. We look for the cinematic quality in the ordinary and the poetic resonance in the chaos. When you look back at your gallery, we want you to not just see what happened, but to viscerally remember exactly how it felt.
+            </p>
+            <p className="text-gray-600 font-medium leading-relaxed mb-12">
+              Our deepest invitation to you is simply to be present. Slow down, breathe in the significance of the people surrounding you, and trust us to meticulously document the art of your life. Every celebration is a unique legacy, and we treat it with the reverence it deserves.
+            </p>
+            <button
+              onClick={() => handleNavClick("/about", "ABOUT")}
+              className="text-[11px] uppercase tracking-widest border border-black px-10 py-4 hover:bg-black hover:text-white transition-all duration-300"
             >
-              <button 
-                onClick={() => setShowAllReviews(!showAllReviews)}
-                className="inline-flex items-center gap-4 px-8 py-4 border border-white/20 text-white font-body text-[10px] tracking-[0.2em] uppercase hover:bg-white/5 transition-colors"
-              >
-                {showAllReviews ? "Show Less" : "Read More Reviews"}
-              </button>
-            </motion.div>
-          )}
-        </section>
-      )}
-     
+              Our Story
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative h-[80vh] w-full overflow-hidden flex items-center justify-center">
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=2600"
+            alt="Studio"
+            className="w-full h-full object-cover brightness-[0.3]"
+          />
+        </div>
+        <div className="relative z-10 text-center px-6 max-w-4xl">
+          <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/60 mb-8 block">
+            Connect With Us
+          </span>
+          <h2 className="text-4xl md:text-8xl font-serif text-white mb-12 md:mb-16 leading-tight">
+            Ready to tell <br />
+            <span className="italic">your story?</span>
+          </h2>
+          <button
+            onClick={() => handleNavClick("/contact", "CONTACT")}
+            className="group relative px-10 py-5 bg-white text-black uppercase tracking-[0.2em] text-[11px] font-bold overflow-hidden rounded-full"
+          >
+            <div className="absolute inset-0 bg-gray-200 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-in-out" />
+            <span className="relative z-10">Inquire Now</span>
+          </button>
+        </div>
+      </section>
     </div>
   );
-}
-
-
+};
