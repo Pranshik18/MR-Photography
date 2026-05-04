@@ -82,7 +82,7 @@ function ManagePortfolioContent() {
 
   const fetchProjects = async () => {
     try {
-      const res = await fetch('/api/user/project');
+      const res = await fetch('/api/user/project?all=true');
       const data = await res.json();
       if (data.success) {
         setProjectList(data.data);

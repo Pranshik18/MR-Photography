@@ -40,7 +40,7 @@ export default function WebsiteLayoutPage() {
         setIsLoading(true);
         const [featuredRes, allRes] = await Promise.all([
           fetch('/api/admin/feature'),
-          fetch('/api/user/project')
+          fetch('/api/user/project?all=true')
         ]);
         
         const featuredData = await featuredRes.json();

@@ -7,7 +7,11 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
 
-    const projects = await ProjectModel.find({}).sort({ createdAt: -1 });
+    const { searchParams } = new URL(req.url);
+    const all = searchParams.get("all");
+
+    const query = all === "true" ? {} : { isPublic: true };
+    const projects = await ProjectModel.find(query).sort({ createdAt: -1 });
 
     return NextResponse.json(
       {
