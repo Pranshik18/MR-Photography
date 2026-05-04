@@ -36,10 +36,17 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
   useEffect(() => {
     const fetchStories = async () => {
       try {
-        const res = await fetch('/api/user/project');
+        const res = await fetch('/api/admin/feature');
         const data = await res.json();
-        if (data.success) {
-          setStories(data.data);
+        if (data.success && data.data && data.data.length > 0) {
+          setStories(data.data.slice(0, 4));
+        } else {
+          // Fallback if no featured items are configured
+          const fallbackRes = await fetch('/api/user/project');
+          const fallbackData = await fallbackRes.json();
+          if (fallbackData.success) {
+            setStories(fallbackData.data.slice(0, 4));
+          }
         }
       } catch (err) {
         console.error('Failed to fetch stories', err);
@@ -222,7 +229,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-24">
-            {stories.slice(0, 4).map((story) => (
+            {stories.map((story) => (
               <div
                 key={story._id}
                 className="group cursor-pointer"
@@ -248,7 +255,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                     </span>
                   </div>
                   <h4 className="text-2xl md:text-3xl font-serif mb-4">
-                    {story.client || story.title}
+                      {story.title}
                   </h4>
                   <p className="text-sm font-medium text-gray-600 leading-relaxed mb-6 line-clamp-2">
                     {story.description}
