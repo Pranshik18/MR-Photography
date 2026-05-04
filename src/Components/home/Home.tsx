@@ -68,6 +68,11 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleStoryClick = (storyId: string) => {
+    router.push(`/detail/${storyId}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="bg-white text-gray-900">
       {/* Hero Section */}
@@ -233,7 +238,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
               <div
                 key={story._id}
                 className="group cursor-pointer"
-                onClick={() => handleNavClick("/recentwork", "RECENT_WORK")}
+                onClick={() => handleStoryClick(story._id)}
               >
                 <div className="aspect-[16/10] overflow-hidden mb-10">
                   <img
