@@ -44,7 +44,16 @@ export const Reviews: React.FC = () => {
     setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
   };
 
-  if (loading || testimonials.length === 0) return null;
+  if (loading) return null;
+
+  if (testimonials.length === 0) {
+    return (
+      <div className="bg-white min-h-[50vh] flex flex-col items-center justify-center pt-24 pb-14">
+        <h1 className="text-4xl md:text-5xl italic font-serif text-black mb-4">Reviews</h1>
+        <p className="text-gray-500">No reviews present yet.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">

@@ -123,7 +123,7 @@ const RecentWorkInner: React.FC = () => {
           >
             <img
               src={featured.heroImage}
-              alt={featured.client || featured.title}
+              alt={featured.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-8 text-white text-center">
@@ -131,7 +131,7 @@ const RecentWorkInner: React.FC = () => {
                 LATEST POST
               </span>
               <h2 className="text-5xl font-serif italic mb-1">
-                {featured.client || featured.title}
+                {featured.title}
               </h2>
               <span className="text-xs tracking-[0.2em] font-medium">
                 {featured.date || "RECENT"}
@@ -209,12 +209,12 @@ const RecentWorkInner: React.FC = () => {
             >
               <img
                 src={story.heroImage}
-                alt={story.client || story.title}
+                alt={story.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6 text-white text-center">
                 <h3 className="text-3xl font-serif italic mb-1 drop-shadow-md">
-                  {story.client || story.title}
+                  {story.title}
                 </h3>
                 <span className="text-[10px] tracking-[0.2em] font-medium uppercase drop-shadow-md">
                   {story.date || "RECENT"}
