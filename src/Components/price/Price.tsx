@@ -1,9 +1,40 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+interface PricingPackage {
+  _id: string;
+  title: string;
+  features: string[];
+  currency: 'INR' | 'USD';
+  price: number;
+  isActive: boolean;
+  isRecommended: boolean;
+}
+
 export const Pricing: React.FC = () => {
+  const [packages, setPackages] = useState<PricingPackage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        const res = await fetch('/api/user/price');
+        const data = await res.json();
+        if (data.success && data.data) {
+          // Filter only active packages for the public facing UI
+          setPackages(data.data.filter((p: PricingPackage) => p.isActive));
+        }
+      } catch (error) {
+        console.error('Failed to fetch pricing:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPrices();
+  }, []);
+
   return (
     <div className="bg-[#f5f5f5] min-h-screen pt-20 pb-20">
       <div className="max-w-6xl mx-auto px-6 md:px-10">
@@ -48,7 +79,47 @@ export const Pricing: React.FC = () => {
           </div>
         </section>
 
-        <section className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-10">
+        {!loading && packages.length > 0 && (
+          <section className="mt-20">
+            <h2 className="text-4xl font-serif italic text-center text-black mb-12">Curated Packages</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {packages.map((pkg) => (
+                <div 
+                  key={pkg._id} 
+                  className={`bg-white rounded-xl p-8 flex flex-col items-center justify-between border ${pkg.isRecommended ? 'border-[#2f4c6c] shadow-lg relative' : 'border-gray-200'}`}
+                >
+                  {pkg.isRecommended && (
+                    <span className="absolute -top-3 bg-[#2f4c6c] text-white text-[10px] uppercase tracking-widest px-4 py-1 rounded-full font-semibold">
+                      RECOMMENDED
+                    </span>
+                  )}
+                  <h3 className="text-2xl font-serif mb-2 text-center text-gray-900">{pkg.title}</h3>
+                  <p className="text-3xl font-bold text-[#4a5568] mb-6">
+                    {pkg.currency === 'INR' ? '₹' : '$'}{pkg.price.toLocaleString()}
+                  </p>
+                  
+                  <ul className="text-[14px] text-gray-600 mb-8 space-y-3 w-full">
+                    {pkg.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start">
+                        <span className="text-[#2f4c6c] mr-2">•</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link
+                    href="/contact"
+                    className="w-full text-center rounded-full bg-gray-100 border border-gray-300 px-6 py-3 text-[11px] font-semibold uppercase tracking-widest text-gray-800 hover:bg-gray-200 transition-colors"
+                  >
+                    Inquire Now
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-10">
           <article className="text-center">
             <h2 className="text-6xl font-serif italic text-[#2f4c6c] mb-8">Travel</h2>
             <p className="text-[15px] md:text-[1.05rem] text-gray-600 leading-relaxed max-w-md mx-auto">

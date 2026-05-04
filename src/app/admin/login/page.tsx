@@ -55,16 +55,16 @@ const AdminLoginPage = () => {
     }
 
     return (
-        <div className="bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary min-h-screen flex items-center justify-center overflow-hidden relative py-16">
+        <div className="admin-theme bg-surface text-on-surface font-sans selection:bg-primary/30 selection:text-primary min-h-screen flex items-center justify-center overflow-hidden relative py-16">
             <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-surface-lowest"></div>
+                <div className="absolute inset-0 bg-surface-container-lowest"></div>
                 <img 
                     alt="blurred cinematic long exposure" 
                     className="absolute inset-0 w-full h-full object-cover opacity-20 grayscale brightness-50" 
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBaCdljwHNyvN44o8BmO6u6w-VDfuBXWTyKeYpi_6pBrC578ShylEJDUtSgx1xdnzeHojlhJG7icBe_vRvSSLh2Ahku-NxsXWAcgVLFJ9Att4SkEZQ6j4qPrGlLPAS_Io6gPmA6-pCWpJrtbncHLkyyJkn2okICLvsKTCOo872kpy1qQyqP4aMerrJIkRJbXa9Gz4U_zDGKzyn6mu6HOQQAQpSSG_RbSBF12DL2TfSfMz5yGT-tPt6j9qP4g2MbZUtm9xmG4pz0vO" 
                 />
                 <div className="absolute inset-0 vignette"></div>
-                <div className="absolute inset-0 bg-linear-to-b from-transparent via-surface/40 to-surface-lowest"></div>
+                <div className="absolute inset-0 bg-linear-to-b from-transparent via-surface/40 to-surface-container-lowest"></div>
             </div>
             <main className="relative z-10 w-full max-w-md px-6">
                 <div className="bg-surface/70 backdrop-blur-2xl border border-outline-variant/10 shadow-[0_0_60px_-15px_rgba(0,0,0,0.5)] rounded-lg p-10 md:p-12 flex flex-col items-center">

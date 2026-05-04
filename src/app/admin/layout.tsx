@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <AdminProvider>
-      <div className="min-h-screen film-grain">
+      <div className="min-h-screen film-grain admin-theme bg-surface text-on-surface">
         <Sidebar variant="desktop" />
 
         {isMobileNavOpen ? (
