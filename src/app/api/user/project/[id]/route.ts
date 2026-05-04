@@ -16,11 +16,14 @@ export async function GET(
       );
     }
 
+    const { searchParams } = new URL(req.url);
+    const all = searchParams.get("all");
+
     await connectToDatabase();
 
     const project = await ProjectModel.findById(id);
 
-    if (!project) {
+    if (!project || (!project.isPublic && all !== "true")) {
       return NextResponse.json(
         { success: false, message: "Project not found" },
         { status: 404 }

@@ -136,7 +136,7 @@ function AddProjectContent() {
     if (isEditing) {
       const fetchProjectDetails = async () => {
         try {
-          const res = await fetch(`/api/user/project/${projectId}`);
+          const res = await fetch(`/api/user/project/${projectId}?all=true`);
           const data = await res.json();
           if (data.success) {
             const p = data.data;

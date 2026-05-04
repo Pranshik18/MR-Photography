@@ -50,7 +50,7 @@ export default function ReviewsManagement() {
       setIsLoading(true);
       const [reviewsRes, projectsRes] = await Promise.all([
         fetch('/api/admin/review', { method: "GET", headers: { content: "application/json" } }),
-        fetch('/api/user/project')
+        fetch('/api/user/project?all=true')
       ]);
       
       const reviewsData = await reviewsRes.json();

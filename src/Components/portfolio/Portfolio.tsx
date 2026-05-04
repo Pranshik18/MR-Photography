@@ -223,7 +223,7 @@ export default function Portfolios() {
                       <div className="overflow-hidden rounded-[20px] shadow-lg relative aspect-[4/5]">
                         <img 
                           src={item.heroImage} 
-                          alt={item.client || item.title} 
+                          alt={item.title} 
                           className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500" />
@@ -231,7 +231,7 @@ export default function Portfolios() {
                         {/* Content Overlay */}
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                           <h2 className="text-3xl md:text-4xl font-sans tracking-[0.2em] font-light mb-4 uppercase text-center">
-                            {item.client || item.title}
+                            {item.title}
                           </h2>
                           {item.date && (
                             <>
