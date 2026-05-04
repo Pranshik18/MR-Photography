@@ -13,6 +13,7 @@ const navItems = [
   { icon: Camera, label: 'Add New Project', path: '/admin/add-project' },
   { icon: Images, label: 'Manage Gallery', path: '/admin/manage-portfolio' },
   { icon: LayoutTemplate, label: 'Website Layout', path: '/admin/website-layout' },
+  { icon: DollarSign, label: 'Pricing', path: '/admin/pricing' },
   { icon: Mail, label: 'Inquire', path: '/admin/inquire' },
   { icon: Star, label: 'Review', path: '/admin/review' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },

@@ -478,6 +478,25 @@ function AddProjectContent() {
               className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all"
             />
           </div>
+          <div className="relative group">
+            <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Client Name</label>
+            <input 
+              type="text" 
+              value={clientName}
+              onChange={(e) => setClientName(e.target.value)}
+              placeholder="e.g. Mr & Mrs. Smith"
+              className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all"
+            />
+          </div>
+          <div className="relative group">
+            <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Project Date</label>
+            <input 
+              type="date" 
+              value={projectDate}
+              onChange={(e) => setProjectDate(e.target.value)}
+              className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all [color-scheme:dark]"
+            />
+          </div>
         </div>
 
         {/* Description */}
@@ -529,9 +548,9 @@ function AddProjectContent() {
               onChange={(e) => setProjectCategory(e.target.value)}
               className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all cursor-pointer"
             >
-              <option value="" className="text-gray-900">Select Category</option>
+              <option value="" className="bg-[#1B1B1B] text-white">Select Category</option>
               {['WEDDINGS', 'PRE-WEDDING', 'PARTIES', 'TRADITIONS', 'MATERNITY', 'BOUDOIR', 'COMMERCIAL'].map(cat => (
-                <option key={cat} value={cat} className="text-gray-900">{cat}</option>
+                <option key={cat} value={cat} className="bg-[#1B1B1B] text-white">{cat}</option>
               ))}
             </select>
           </div>

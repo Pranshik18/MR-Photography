@@ -97,3 +97,5 @@
       transition: background-color 5000s ease-in-out 0s;
   }
 }
+
+.admin-theme { --surface: #0a0a0a; --on-surface: #f5f5f4; } 
