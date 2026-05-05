@@ -173,7 +173,7 @@ export default function SettingsPage() {
               { url: reader.result, order: homepageSettings.images.length }
             ]
           });
-          // Reset file input
+
           if (homepageFileInputRef.current) homepageFileInputRef.current.value = '';
         }
       };
@@ -184,7 +184,7 @@ export default function SettingsPage() {
   const removeHomepageImage = () => {
     if (imageToDelete !== null) {
       const newImages = homepageSettings.images.filter((_, i) => i !== imageToDelete);
-      // Re-order remaining images
+
       const reorderedImages = newImages.map((img, i) => ({ ...img, order: i }));
       setHomepageSettings({ ...homepageSettings, images: reorderedImages });
       setIsDeleteModalOpen(false);
@@ -305,7 +305,7 @@ export default function SettingsPage() {
                 <div className="space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Full Name</label>
                   <input 
-                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
                     type="text" 
                     required
                     value={adminProfile.name || ''}
@@ -315,7 +315,7 @@ export default function SettingsPage() {
                 <div className="space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Email Address</label>
                   <input 
-                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
                     type="email" 
                     required
                     value={adminProfile.email || ''}
@@ -325,7 +325,7 @@ export default function SettingsPage() {
                 <div className="md:col-span-2 space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Curator's Bio</label>
                   <textarea 
-                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide resize-none focus:pl-1" 
+                    className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide resize-none focus:pl-1" 
                     rows={3}
                     value={adminProfile.bio || ''}
                     onChange={(e) => setAdminProfile({ ...adminProfile, bio: e.target.value })}
@@ -368,7 +368,7 @@ export default function SettingsPage() {
                 <div className="space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Site Title</label>
                   <input 
-                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
                     type="text" 
                     required
                     value={homepageSettings.title}
@@ -378,7 +378,7 @@ export default function SettingsPage() {
                 <div className="space-y-2 group/field">
                   <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Subtitle</label>
                   <input 
-                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
                     type="text" 
                     required
                     value={homepageSettings.subtitle}
@@ -418,7 +418,7 @@ export default function SettingsPage() {
                         </div>
                       )}
                       
-                      {/* Overlay Controls */}
+
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
                         <div className="flex justify-between items-start">
                           <div className="bg-tertiary text-on-tertiary text-[9px] font-bold px-2 py-1 rounded tracking-widest uppercase">
@@ -506,7 +506,7 @@ export default function SettingsPage() {
                   <div className="space-y-2 group/field">
                     <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Current Password</label>
                     <input 
-                      className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
+                      className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
                       placeholder="current code" 
                       type="password"
                       value={passwords.current}
@@ -517,7 +517,7 @@ export default function SettingsPage() {
                     <div className="space-y-2 group/field">
                       <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">New Password</label>
                       <input 
-                        className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
+                        className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
                         placeholder="new cipher" 
                         type="password"
                         value={passwords.new}
@@ -527,7 +527,7 @@ export default function SettingsPage() {
                     <div className="space-y-2 group/field">
                       <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Confirm New Password</label>
                       <input 
-                        className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
+                        className="w-full bg-transparent border-b border-outline-variant/40 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1 uppercase placeholder:lowercase" 
                         placeholder="verify cipher" 
                         type="password"
                         value={passwords.confirm}
@@ -540,8 +540,7 @@ export default function SettingsPage() {
 
               <div className="lg:w-72 flex flex-col justify-end space-y-8">
                 <div className="glass-panel p-6 bg-surface-lowest/40 border-outline-variant/10 rounded-xl">
-                    <p className="font-body text-[9px] tracking-[0.1em] text-stone-600 uppercase mb-1">Last rotated</p>
-                    <p className="text-stone-400 text-xs font-light">Approximately 3 cycles ago</p>
+
                     <div className="mt-4 pt-4 border-t border-outline-variant/5">
                       <p className="text-[9px] text-primary/40 uppercase font-medium leading-relaxed">Regular rotation increases studio operational security.</p>
                     </div>

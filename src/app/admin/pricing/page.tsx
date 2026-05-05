@@ -219,7 +219,7 @@ export default function PricingManagement() {
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedItemIndex(index);
-    // Needed for Firefox
+
     if(e.dataTransfer) {
        e.dataTransfer.effectAllowed = 'move';
        e.dataTransfer.setData('text/html', e.currentTarget as any);
@@ -302,12 +302,10 @@ export default function PricingManagement() {
       </div>
 
       {isAdding ? (
-        /* Form View */
+
         <div className="relative max-w-4xl mx-auto py-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
           <form onSubmit={handleSubmit} className="bg-stone-900/40 backdrop-blur-2xl p-6 sm:p-10 md:p-12 border border-outline-variant/10 shadow-2xl space-y-12 rounded-lg">
-            {/* Basic Info Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-              {/* Package Title */}
               <div className="col-span-1 md:col-span-2 group relative">
                 <label className="block font-label text-[0.7rem] uppercase tracking-[0.15em] text-stone-500 mb-3 ml-1">Package Title</label>
                 <input 
@@ -520,7 +518,7 @@ export default function PricingManagement() {
                     </button>
                     <button 
                       onClick={() => deletePackage(pkg._id)}
-                      className="px-4 py-3 bg-surface-lowest/10 text-stone-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded text-[9px] uppercase tracking-widest font-bold"
+                      className="px-4 py-3 bg-surface-lowest/10 text-red-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded text-[9px] uppercase tracking-widest font-bold"
                     >
                       <span>Delete</span>
                     </button>

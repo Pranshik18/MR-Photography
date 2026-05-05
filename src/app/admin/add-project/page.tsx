@@ -6,8 +6,9 @@ import { useState, useRef, useEffect, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import Cropper from 'react-easy-crop';
+import toast from 'react-hot-toast';
 
-// Helper to create the cropped image
+
 const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const image = new Image();
@@ -110,14 +111,14 @@ function AddProjectContent() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Cropper State
+
   const [cropFile, setCropFile] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isCropping, setIsCropping] = useState(false);
 
-  // Prevent memory leaks by revoking object URLs on unmount
+
   const heroPreviewRef = useRef(heroPreview);
   const galleryRef = useRef(gallery);
   
@@ -161,7 +162,7 @@ function AddProjectContent() {
             setClientName(p.client || '');
             setProjectRole(p.role || '');
             setProjectDate(p.date || '');
-            // p.category is now the ID
+
             setProjectCategory(typeof p.category === 'string' ? p.category : p.category?._id || '');
             setDescription(p.description || '');
             if (p.heroImage) {
@@ -191,7 +192,7 @@ function AddProjectContent() {
       const url = URL.createObjectURL(file);
       setCropFile(url);
       setIsCropping(true);
-      // clear the input so user can re-upload if they cancel
+
       if (heroInputRef.current) {
          heroInputRef.current.value = '';
       }
@@ -237,7 +238,7 @@ function AddProjectContent() {
     }));
     setGallery(prev => [...prev, ...newImages]);
     
-    // Clear input so the onChange event fires properly on subsequent selections
+
     if (galleryInputRef.current) {
       galleryInputRef.current.value = '';
     }
@@ -282,7 +283,7 @@ function AddProjectContent() {
     
     setDescription(newText);
 
-    // Keep focus and select the inserted text for easy editing
+
     setTimeout(() => {
       textarea.focus();
       textarea.setSelectionRange(start + prefix.length, start + prefix.length + (selectedText.length || (type === 'link' ? 9 : 4)));
@@ -353,11 +354,11 @@ function AddProjectContent() {
       if (data.success) {
         router.push('/admin/manage-portfolio');
       } else {
-        alert(data.message || (isEditing ? 'Failed to update project' : 'Failed to create project'));
+        toast.error(data.error || data.message || (isEditing ? 'Failed to update project' : 'Failed to create project'));
       }
     } catch (error) {
       console.error(error);
-      alert('An error occurred while saving the project');
+      toast.error('An error occurred while saving the project');
     } finally {
       setIsSubmitting(false);
     }
@@ -386,14 +387,14 @@ function AddProjectContent() {
       </header>
 
       <form onSubmit={handleSubmit} className="glass-card p-6 sm:p-8 lg:p-16 border border-outline-variant/10 shadow-2xl space-y-10 sm:space-y-12">
-        {/* Hero Image Upload */}
+
         <div className="space-y-4">
           <label className="font-label text-[11px] uppercase tracking-[0.2em] text-on-surface-variant block">Hero Image</label>
           <input 
             type="file" 
             ref={heroInputRef} 
             onChange={handleHeroChange} 
-            // Removed hidden so Cropper modal can be appended correctly relative to container if needed, but it works globally too
+
             accept="image/*" 
             className="hidden" 
           />
@@ -413,7 +414,7 @@ function AddProjectContent() {
                     onZoomChange={setZoom}
                   />
                 </div>
-                {/* Controls */}
+
                 <div className="absolute bottom-0 w-full h-24 bg-surface/80 backdrop-blur-sm border-t border-outline-variant/20 flex flex-col items-center justify-center gap-2 px-6">
                   <div className="w-full max-w-md flex items-center gap-4">
                     <span className="font-label text-xs uppercase text-on-surface-variant">Zoom</span>
@@ -472,7 +473,7 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Basic Info Grid */}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
           <div className="relative group">
             <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Project Title</label>
@@ -516,7 +517,7 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Description */}
+
         <div className="space-y-4">
           <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block">Description</label>
           <div className="border border-outline-variant/20 bg-surface-container-lowest/50">
@@ -542,7 +543,7 @@ function AddProjectContent() {
                 placeholder="Compose the narrative of this collection..."
                 className="w-full h-44 sm:h-64 bg-transparent border-none p-4 sm:p-6 focus:ring-0 text-on-surface font-body leading-relaxed text-sm resize-none outline-none"
               />
-              {/* Preview Pane */}
+
               <div className="p-4 sm:p-6 h-44 sm:h-64 overflow-y-auto bg-[#1a1c1a]/50 text-sm font-body text-on-surface/90">
                 {description ? (
                   <div className="prose prose-invert max-w-none prose-p:my-2 prose-a:text-primary hover:prose-a:text-primary/80 prose-ul:list-disc prose-ul:pl-4 prose-strong:text-on-surface">
@@ -556,7 +557,7 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Category Only */}
+
         <div className="max-w-md">
           <div className="relative group">
             <label className="font-label text-[10px] uppercase tracking-[0.2em] text-on-surface-variant block mb-2">Category</label>
@@ -573,7 +574,7 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Gallery Grid */}
+
         <div className="space-y-6 pt-4">
           <div className="flex justify-between items-end">
             <label className="font-label text-[11px] uppercase tracking-[0.2em] text-on-surface-variant">Gallery Photos</label>
@@ -590,7 +591,7 @@ function AddProjectContent() {
           />
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            {/* Upload Slot */}
+
             <div 
               onClick={() => galleryInputRef.current?.click()}
               className="aspect-square bg-surface-container-lowest border border-dashed border-outline-variant/40 flex flex-col items-center justify-center cursor-pointer hover:bg-surface-container-high transition-colors group"
@@ -598,7 +599,7 @@ function AddProjectContent() {
               <Plus className="w-6 h-6 text-outline-variant group-hover:text-primary transition-colors" />
               <span className="font-label text-[8px] uppercase tracking-widest mt-2 text-outline-variant">Add Frame</span>
             </div>
-            {/* Preview Items */}
+
             {gallery.map((photo, i) => (
               <div key={i} className="aspect-square relative group overflow-hidden bg-surface-container-high">
                 <img 
@@ -623,7 +624,7 @@ function AddProjectContent() {
           </div>
         </div>
 
-        {/* Form Action */}
+
         <div className="pt-8 sm:pt-10 flex justify-end">
           <motion.button 
             type="submit"

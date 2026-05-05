@@ -12,11 +12,10 @@ export default function Dashboard() {
   const { searchQuery } = useAdmin();
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
-  // Debounce logic
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 500); // 500ms debounce
+    }, 500); 
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
@@ -24,7 +23,6 @@ export default function Dashboard() {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        // If there's a debounced query, fetch filtered projects, else fetch dashboard data
         const endpoint = debouncedQuery 
           ? `/api/admin/project?q=${encodeURIComponent(debouncedQuery)}` 
           : '/api/admin/dashboard';
@@ -33,7 +31,6 @@ export default function Dashboard() {
         const data = await response.json();
         
         if (data.success) {
-          // If filtering, limit to 3 as requested. Recent projects are already limited in the API usually.
           const results = debouncedQuery ? data.data.slice(0, 3) : data.data;
           setRecentProjects(results);
         }
@@ -79,7 +76,6 @@ export default function Dashboard() {
           <div className="text-center py-10 text-neutral-500">No projects found. Add one!</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-            {/* Large Project */}
             {recentProjects.length > 0 && (
               <div className="md:col-span-8 group relative overflow-hidden bg-surface-container-lowest">
                 <Link href="/admin/manage-portfolio" className="block w-full h-full relative">
@@ -109,7 +105,6 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Side Projects */}
             <div className="md:col-span-4 flex flex-col gap-8">
               {recentProjects.slice(1).map((project) => (
                 <Link key={project._id || project.id} href="/admin/manage-portfolio" className="group relative overflow-hidden flex flex-col cursor-pointer">

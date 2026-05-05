@@ -61,25 +61,32 @@ function AdminLayoutInner({ children }: { children: ReactNode }) {
 
         <div className="flex items-center gap-4 md:gap-8">
           {isDashboardPage && (
-            <form onSubmit={(e) => e.preventDefault()} className="relative hidden lg:block">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search archives..."
-                className="bg-surface-container-lowest border-none text-xs px-12 py-2.5 w-64 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant rounded-full"
-              />
-            </form>
-          )}
+            <>
+              <form onSubmit={(e) => e.preventDefault()} className="relative hidden md:block">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search archives..."
+                  className="bg-surface-container-lowest border-none text-xs px-12 py-2.5 w-48 lg:w-64 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant rounded-full"
+                />
+              </form>
 
-          <div className="flex items-center gap-4 md:gap-6 text-outline">
-            <button type="button" onClick={() => {
-               router.push('/admin/manage-portfolio');
-            }} className="lg:hidden hover:text-primary transition-colors">
-              <Search className="w-5 h-5" />
-            </button>
-          </div>
+              <div className="md:hidden flex items-center">
+                <form onSubmit={(e) => e.preventDefault()} className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-outline pointer-events-none" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="bg-surface-container-lowest border-none text-[10px] pl-9 pr-4 py-2 w-32 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant rounded-full"
+                  />
+                </form>
+              </div>
+            </>
+          )}
         </div>
       </header>
 

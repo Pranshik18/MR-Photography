@@ -6,7 +6,6 @@ export async function GET() {
   try {
     await connectToDatabase();
     const categories = await CategoryModel.find({}, 'title _id order').sort({ order: 1 });
-    console.log("--> Fetched Categories:", categories.length, categories);
 
     return NextResponse.json(
       {
