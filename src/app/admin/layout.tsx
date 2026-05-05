@@ -1,28 +1,20 @@
 "use client";
 
 import type { ReactNode } from 'react';
-import { useEffect, useState, FormEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 
 import Sidebar from './sidebar';
 import { Menu, Search } from 'lucide-react';
-import { AdminProvider } from './AdminContext';
+import { AdminProvider, useAdmin } from './AdminContext';
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+function AdminLayoutInner({ children }: { children: ReactNode }) {
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useAdmin();
   const router = useRouter();
   const pathname = usePathname();
 
-  const isLoginPage = pathname === '/admin/login';
-
-  const handleSearch = (e: FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/admin/manage-portfolio?q=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery('');
-    }
-  };
+  const isDashboardPage = pathname === '/admin';
 
   useEffect(() => {
     if (!isMobileNavOpen) return;
@@ -33,20 +25,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isMobileNavOpen]);
 
-  if (isLoginPage) {
-    return (
-      <AdminProvider>
-        {children}
-      </AdminProvider>
-    );
-  }
-
   return (
-    <AdminProvider>
-      <div className="min-h-screen film-grain admin-theme bg-surface text-on-surface">
-        <Sidebar variant="desktop" />
+    <div className="min-h-screen film-grain admin-theme bg-surface text-on-surface">
+      <Sidebar variant="desktop" />
 
-        {isMobileNavOpen ? (
+      {isMobileNavOpen ? (
         <div className="md:hidden fixed inset-0 z-40">
           <button
             type="button"
@@ -77,20 +60,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex items-center gap-4 md:gap-8">
-          <form onSubmit={handleSearch} className="relative hidden lg:block">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search archives..."
-              className="bg-surface-container-lowest border-none text-xs px-12 py-2.5 w-64 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant"
-            />
-          </form>
+          {isDashboardPage && (
+            <form onSubmit={(e) => e.preventDefault()} className="relative hidden lg:block">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search archives..."
+                className="bg-surface-container-lowest border-none text-xs px-12 py-2.5 w-64 focus:ring-1 focus:ring-primary/40 text-on-surface placeholder:text-outline-variant rounded-full"
+              />
+            </form>
+          )}
 
           <div className="flex items-center gap-4 md:gap-6 text-outline">
             <button type="button" onClick={() => {
-               // Mobile search button could just toggle a mobile search bar or redirect to manage portfolio page directly
                router.push('/admin/manage-portfolio');
             }} className="lg:hidden hover:text-primary transition-colors">
               <Search className="w-5 h-5" />
@@ -100,9 +84,25 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       </header>
 
       <main className="ml-0 md:ml-64 pt-16 md:pt-20 px-4 md:px-12">{children}</main>
-      </div>
-    </AdminProvider>
+    </div>
   );
 }
 
+export default function AdminLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/admin/login';
 
+  if (isLoginPage) {
+    return (
+      <AdminProvider>
+        {children}
+      </AdminProvider>
+    );
+  }
+
+  return (
+    <AdminProvider>
+      <AdminLayoutInner>{children}</AdminLayoutInner>
+    </AdminProvider>
+  );
+}

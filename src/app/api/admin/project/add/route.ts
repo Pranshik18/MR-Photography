@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       clientName,
       projectRole,
       date,
-      category,
+      categoryId,
       heroImage, 
       images,   
     } = body;
@@ -32,11 +32,8 @@ export async function POST(req: NextRequest) {
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    // Upload Hero Image
     const heroUpload = await uploadSingle(heroImage, `mr-photography/projects/${slug}`);
     const heroUrl = heroUpload.secure_url;
-
-    // Upload Gallery Images
     const uploadedImages = [];
     if (images && images.length > 0) {
       for (const img of images) {
@@ -56,7 +53,7 @@ export async function POST(req: NextRequest) {
       client: clientName,
       role: projectRole || "Photographer",
       date: date || "",
-      category: category || "",
+      category: categoryId || null,
       heroImage: heroUrl,
       images: uploadedImages,
       slug,

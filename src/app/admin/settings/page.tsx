@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Save, ShieldCheck, Loader2 } from 'lucide-react';
+import { Camera, Save, ShieldCheck, Loader2, Plus, Trash2, Image as ImageIcon, ChevronUp, ChevronDown } from 'lucide-react';
 import { useAdmin } from '../AdminContext';
 import toast from 'react-hot-toast';
+import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
 
 export default function SettingsPage() {
   const { profile, setProfile } = useAdmin();
@@ -13,9 +14,19 @@ export default function SettingsPage() {
   const [adminProfile, setAdminProfile] = useState(profile);
   const [avatarPreview, setAvatarPreview] = useState(profile.avatar);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const homepageFileInputRef = useRef<HTMLInputElement>(null);
 
   const [isSavingPassword, setIsSavingPassword] = useState(false);
   const [passwords, setPasswords] = useState({ current: '', new: '', confirm: '' });
+
+  const [isSavingHomepage, setIsSavingHomepage] = useState(false);
+  const [homepageSettings, setHomepageSettings] = useState({
+    title: '',
+    subtitle: '',
+    images: [] as { url: string; order: number; alt?: string }[]
+  });
+  const [imageToDelete, setImageToDelete] = useState<number | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -38,7 +49,24 @@ export default function SettingsPage() {
       }
     };
 
+    const fetchHomepage = async () => {
+      try {
+        const response = await fetch('/api/admin/user/home');
+        const result = await response.json();
+        if (result.success) {
+          setHomepageSettings({
+            title: result.data.title || '',
+            subtitle: result.data.subtitle || '',
+            images: result.data.images || []
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching homepage:', error);
+      }
+    };
+
     fetchProfile();
+    fetchHomepage();
   }, []); 
   useEffect(() => {
     if (profile) {
@@ -95,6 +123,89 @@ export default function SettingsPage() {
     } finally {
       setIsSavingProfile(false);
     }
+  };
+
+  const handleHomepageSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingHomepage(true);
+
+    try {
+      const response = await fetch('/api/admin/user/home', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(homepageSettings),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast.success('Homepage settings updated');
+      } else {
+        toast.error(result.message || 'Update failed');
+      }
+    } catch (error) {
+      console.error('Homepage update error:', error);
+      toast.error('Connection failed');
+    } finally {
+      setIsSavingHomepage(false);
+    }
+  };
+
+  const addHomepageImage = () => {
+    homepageFileInputRef.current?.click();
+  };
+
+  const handleHomepageImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error('Image is too large (max 10MB)');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === 'string') {
+          setHomepageSettings({
+            ...homepageSettings,
+            images: [
+              ...homepageSettings.images, 
+              { url: reader.result, order: homepageSettings.images.length }
+            ]
+          });
+          // Reset file input
+          if (homepageFileInputRef.current) homepageFileInputRef.current.value = '';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeHomepageImage = () => {
+    if (imageToDelete !== null) {
+      const newImages = homepageSettings.images.filter((_, i) => i !== imageToDelete);
+      // Re-order remaining images
+      const reorderedImages = newImages.map((img, i) => ({ ...img, order: i }));
+      setHomepageSettings({ ...homepageSettings, images: reorderedImages });
+      setIsDeleteModalOpen(false);
+      setImageToDelete(null);
+    }
+  };
+
+  const moveImage = (index: number, direction: 'up' | 'down') => {
+    const newImages = [...homepageSettings.images];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex >= 0 && targetIndex < newImages.length) {
+      [newImages[index], newImages[targetIndex]] = [newImages[targetIndex], newImages[index]];
+      const reorderedImages = newImages.map((img, i) => ({ ...img, order: i }));
+      setHomepageSettings({ ...homepageSettings, images: reorderedImages });
+    }
+  };
+
+  const updateHomepageImage = (index: number, field: string, value: string | number) => {
+    const newImages = [...homepageSettings.images];
+    newImages[index] = { ...newImages[index], [field]: value };
+    setHomepageSettings({ ...homepageSettings, images: newImages });
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -244,6 +355,135 @@ export default function SettingsPage() {
             </div>
           </form>
         </section>
+
+        <section>
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="font-headline font-bold text-lg tracking-widest uppercase text-stone-400 opacity-60">Homepage Narrative</h3>
+            <span className="h-[1px] flex-1 bg-outline-variant/10 ml-6"></span>
+          </div>
+
+          <form onSubmit={handleHomepageSubmit} className="glass-panel p-6 sm:p-8 lg:p-12 rounded-lg relative overflow-hidden group">
+            <div className="space-y-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-2 group/field">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Site Title</label>
+                  <input 
+                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    type="text" 
+                    required
+                    value={homepageSettings.title}
+                    onChange={(e) => setHomepageSettings({ ...homepageSettings, title: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2 group/field">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500 group-focus-within/field:text-tertiary transition-colors">Subtitle</label>
+                  <input 
+                    className="w-full bg-transparent border-b border-outline-variant/20 py-2 text-stone-200 focus:outline-none focus:border-tertiary transition-all text-sm font-light tracking-wide focus:pl-1" 
+                    type="text" 
+                    required
+                    value={homepageSettings.subtitle}
+                    onChange={(e) => setHomepageSettings({ ...homepageSettings, subtitle: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <label className="font-body text-[10px] tracking-[0.2em] uppercase text-stone-500">Hero Archive (Images)</label>
+                  <input 
+                    type="file" 
+                    ref={homepageFileInputRef} 
+                    onChange={handleHomepageImageUpload} 
+                    accept="image/*" 
+                    className="hidden" 
+                  />
+                  <button 
+                    type="button" 
+                    onClick={addHomepageImage}
+                    className="flex items-center gap-2 text-[9px] uppercase tracking-[0.2em] text-tertiary hover:text-stone-200 transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>Upload New Frame</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {homepageSettings.images.map((img, index) => (
+                    <div key={index} className="relative group/item aspect-[4/5] rounded-lg overflow-hidden bg-surface-container/30 border border-outline-variant/10 shadow-xl">
+                      {img.url ? (
+                        <img src={img.url} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover/item:scale-110" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ImageIcon className="w-10 h-10 text-stone-700" />
+                        </div>
+                      )}
+                      
+                      {/* Overlay Controls */}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/item:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4">
+                        <div className="flex justify-between items-start">
+                          <div className="bg-tertiary text-on-tertiary text-[9px] font-bold px-2 py-1 rounded tracking-widest uppercase">
+                            Frame {index + 1}
+                          </div>
+                          <button 
+                            type="button"
+                            onClick={() => {
+                              setImageToDelete(index);
+                              setIsDeleteModalOpen(true);
+                            }}
+                            className="p-2 bg-red-500/20 hover:bg-red-500 text-red-500 hover:text-white rounded-full transition-all"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="flex justify-center gap-4 pb-2">
+                          <button 
+                            type="button"
+                            disabled={index === 0}
+                            onClick={() => moveImage(index, 'up')}
+                            className="p-3 bg-white/10 hover:bg-white/20 rounded-full disabled:opacity-20 transition-all backdrop-blur-md"
+                          >
+                            <ChevronUp className="w-5 h-5 text-white" />
+                          </button>
+                          <button 
+                            type="button"
+                            disabled={index === homepageSettings.images.length - 1}
+                            onClick={() => moveImage(index, 'down')}
+                            className="p-3 bg-white/10 hover:bg-white/20 rounded-full disabled:opacity-20 transition-all backdrop-blur-md"
+                          >
+                            <ChevronDown className="w-5 h-5 text-white" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button 
+                    type="button"
+                    onClick={addHomepageImage}
+                    className="aspect-[4/5] rounded-lg border-2 border-dashed border-outline-variant/10 hover:border-tertiary/40 flex flex-col items-center justify-center gap-3 group/add transition-all bg-surface-container/10"
+                  >
+                    <Plus className="w-8 h-8 text-stone-700 group-hover/add:text-tertiary transition-colors" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-stone-600 group-hover/add:text-tertiary/80 transition-colors">Add Frame</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-end pt-6">
+                <button 
+                  disabled={isSavingHomepage} 
+                  type="submit" 
+                  className="bg-tertiary text-on-tertiary w-full sm:w-auto px-10 py-4 font-body text-[10px] tracking-[0.2em] uppercase font-bold hover:shadow-[0_0_30px_rgba(206,197,182,0.3)] hover:-translate-y-1 transition-all duration-300 rounded-lg disabled:opacity-50 flex items-center justify-center space-x-3"
+                >
+                  {isSavingHomepage ? (
+                    <><Loader2 className="w-4 h-4 animate-spin" /><span>Syncing Archive...</span></>
+                  ) : (
+                    <><Save className="w-4 h-4" /><span>Persist Homepage</span></>
+                  )}
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
         <section>
           <div className="flex items-center justify-between mb-8">
             <h3 className="font-headline font-bold text-lg tracking-widest uppercase text-stone-400 opacity-60">Authentication & Shield</h3>
@@ -329,6 +569,18 @@ export default function SettingsPage() {
           </form>
         </section>
       </div>
+      <AdminConfirmModal 
+        isOpen={isDeleteModalOpen}
+        title="Remove Frame?"
+        message="Are you sure you want to remove this image from the homepage archive? This will only remove it from the display list, not delete the source file."
+        confirmText="Remove Image"
+        variant="danger"
+        onConfirm={removeHomepageImage}
+        onCancel={() => {
+          setIsDeleteModalOpen(false);
+          setImageToDelete(null);
+        }}
+      />
     </div>
   );
 }

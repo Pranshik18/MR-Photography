@@ -99,6 +99,7 @@ function AddProjectContent() {
   const [projectRole, setProjectRole] = useState('');
   const [projectDate, setProjectDate] = useState('');
   const [projectCategory, setProjectCategory] = useState('');
+  const [categories, setCategories] = useState<{_id: string, title: string}[]>([]);
 
   const [heroPreview, setHeroPreview] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<File | null>(null);
@@ -126,6 +127,21 @@ function AddProjectContent() {
   }, [heroPreview, gallery]);
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/admin/category');
+        const data = await res.json();
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     return () => {
       if (heroPreviewRef.current) URL.revokeObjectURL(heroPreviewRef.current);
       galleryRef.current.forEach(item => URL.revokeObjectURL(item.preview));
@@ -145,7 +161,8 @@ function AddProjectContent() {
             setClientName(p.client || '');
             setProjectRole(p.role || '');
             setProjectDate(p.date || '');
-            setProjectCategory(p.category || '');
+            // p.category is now the ID
+            setProjectCategory(typeof p.category === 'string' ? p.category : p.category?._id || '');
             setDescription(p.description || '');
             if (p.heroImage) {
               setHeroPreview(p.heroImage);
@@ -310,7 +327,7 @@ function AddProjectContent() {
         clientName,
         projectRole,
         date: projectDate,
-        category: projectCategory,
+        categoryId: projectCategory,
         heroImage: heroBase64,
         images: galleryBase64,
       };
@@ -549,8 +566,8 @@ function AddProjectContent() {
               className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all cursor-pointer"
             >
               <option value="" className="bg-[#1B1B1B] text-white">Select Category</option>
-              {['WEDDINGS', 'PRE-WEDDING', 'PARTIES', 'TRADITIONS', 'MATERNITY', 'BOUDOIR', 'COMMERCIAL'].map(cat => (
-                <option key={cat} value={cat} className="bg-[#1B1B1B] text-white">{cat}</option>
+              {categories.map(cat => (
+                <option key={cat._id} value={cat._id} className="bg-[#1B1B1B] text-white">{cat.title}</option>
               ))}
             </select>
           </div>
