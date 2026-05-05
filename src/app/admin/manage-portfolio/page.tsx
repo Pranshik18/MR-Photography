@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, ChevronDown, Edit2, Trash2, Plus } from 'lucide-react';
@@ -78,14 +78,22 @@ function ManagePortfolioContent() {
   const [sortOpen, setSortOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [openVisibilityId, setOpenVisibilityId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 0,
+    limit: 9
+  });
   const sortMenuRef = useRef<HTMLDivElement | null>(null);
 
   const fetchProjects = async () => {
+    setLoading(true);
     try {
-      const res = await fetch('/api/user/project?all=true');
+      const res = await fetch(`/api/admin/project?page=${currentPage}&limit=9&q=${encodeURIComponent(qsString)}`);
       const data = await res.json();
       if (data.success) {
         setProjectList(data.data);
+        setPagination(data.pagination);
       }
     } catch (error) {
       console.error('Failed to fetch projects', error);
@@ -96,7 +104,7 @@ function ManagePortfolioContent() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [currentPage, qsString]);
 
   useEffect(() => {
     if (!sortOpen) return;
@@ -407,6 +415,43 @@ function ManagePortfolioContent() {
           </motion.div>
         </Link>
       </section>
+
+      {/* Pagination UI */}
+      {!loading && pagination?.totalPages > 1 && (
+        <div className="mt-16 flex items-center justify-center gap-4">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            className="px-4 py-2 border border-outline-variant/10 text-xs uppercase tracking-widest hover:border-tertiary transition-colors disabled:opacity-30 disabled:hover:border-outline-variant/10"
+          >
+            Previous
+          </button>
+          
+          <div className="flex items-center gap-2">
+            {[...Array(pagination?.totalPages || 0)].map((_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`w-8 h-8 flex items-center justify-center text-[10px] font-mono transition-all border ${
+                  currentPage === i + 1 
+                    ? 'bg-tertiary text-[#353025] border-tertiary' 
+                    : 'border-outline-variant/10 text-outline hover:border-tertiary'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            disabled={currentPage === (pagination?.totalPages || 1)}
+            onClick={() => setCurrentPage(prev => Math.min(pagination?.totalPages || 1, prev + 1))}
+            className="px-4 py-2 border border-outline-variant/10 text-xs uppercase tracking-widest hover:border-tertiary transition-colors disabled:opacity-30 disabled:hover:border-outline-variant/10"
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {sortedProjects.length === 0 && !loading && (
         <div className="text-center py-20">

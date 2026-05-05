@@ -1,30 +1,51 @@
-﻿'use client';
+'use client';
 
 import { Plus, Edit2, Tag, Layers, Settings, Mail, MessageSquare, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useAdmin } from './AdminContext';
 
 export default function Dashboard() {
   const [recentProjects, setRecentProjects] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { searchQuery } = useAdmin();
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
+
+  // Debounce logic
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 500); // 500ms debounce
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true);
       try {
-        const response = await fetch('/api/admin/dashboard');
+        // If there's a debounced query, fetch filtered projects, else fetch dashboard data
+        const endpoint = debouncedQuery 
+          ? `/api/admin/project?q=${encodeURIComponent(debouncedQuery)}` 
+          : '/api/admin/dashboard';
+        
+        const response = await fetch(endpoint);
         const data = await response.json();
+        
         if (data.success) {
-          setRecentProjects(data.data);
+          // If filtering, limit to 3 as requested. Recent projects are already limited in the API usually.
+          const results = debouncedQuery ? data.data.slice(0, 3) : data.data;
+          setRecentProjects(results);
         }
       } catch (error) {
-        console.error('Failed to fetch dashboard data:', error);
+        console.error('Failed to fetch projects:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDashboardData();
-  }, []);
+    fetchProjects();
+  }, [debouncedQuery]);
 
   return (
     <div className="py-8 md:py-12 max-w-7xl mx-auto">
@@ -46,7 +67,9 @@ export default function Dashboard() {
 
       <section>
         <div className="flex justify-between items-center mb-6 md:mb-8">
-          <h3 className="text-xl font-headline font-bold text-on-surface tracking-tight">Recent Projects</h3>
+          <h3 className="text-xl font-headline font-bold text-on-surface tracking-tight">
+            {debouncedQuery ? 'Filtered Projects' : 'Recent Projects'}
+          </h3>
           <Link href="/admin/manage-portfolio" className="text-[10px] uppercase tracking-[0.15em] text-tertiary hover:text-on-surface transition-colors">View All Archive</Link>
         </div>
 

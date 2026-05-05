@@ -3,15 +3,20 @@ import connectToDatabase from "@/utils/db";
 import ProjectModel from "@/models/project";
 
 export async function GET(req: NextRequest) {
-  console.log("--> GET /api/user/project CALLED!");
   try {
     await connectToDatabase();
 
     const { searchParams } = new URL(req.url);
     const all = searchParams.get("all");
+    const categoryId = searchParams.get("categoryId");
 
-    const query = all === "true" ? {} : { isPublic: true };
-    const projects = await ProjectModel.find(query).sort({ createdAt: -1 });
+    const filter: any = all === "true" ? {} : { isPublic: true };
+    
+    if (categoryId) {
+      filter.category = categoryId;
+    }
+
+    const projects = await ProjectModel.find(filter).sort({ createdAt: -1 });
 
     return NextResponse.json(
       {

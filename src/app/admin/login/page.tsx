@@ -4,10 +4,12 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import { useAdmin } from '../AdminContext'
 
 
 const AdminLoginPage = () => {
     const router = useRouter();
+    const { setProfile } = useAdmin();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +37,16 @@ const AdminLoginPage = () => {
             })
             const data = await req.json();
             if(data.success){
+                try {
+                    const profileRes = await fetch('/api/admin/user');
+                    const profileData = await profileRes.json();
+                    if (profileData.success) {
+                        setProfile(profileData.data);
+                    }
+                } catch (e) {
+                    console.error('Failed to pre-fetch profile:', e);
+                }
+                
                 setEmail('');
                 setPassword('');
                 router.push('/admin')

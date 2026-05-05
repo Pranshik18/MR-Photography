@@ -13,6 +13,8 @@ export interface AdminProfile {
 interface AdminContextType {
   profile: AdminProfile;
   setProfile: (profile: AdminProfile) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
 }
 
 const defaultProfile: AdminProfile = {
@@ -35,16 +37,28 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
         const parsed = JSON.parse(stored);
         if (typeof parsed === 'object' && parsed !== null) {
           setProfileState({ ...defaultProfile, ...parsed });
-        } else {
-          throw new Error('Invalid profile format');
         }
       } catch (e) {
-        console.error('Failed to parse adminProfile from localStorage, resetting to default:', e);
-        localStorage.removeItem('adminProfile');
-        setProfileState(defaultProfile);
+        console.error('Failed to parse adminProfile from localStorage:', e);
       }
     }
+
+    const fetchFreshProfile = async () => {
+      try {
+        const response = await fetch('/api/admin/user');
+        const result = await response.json();
+        if (result.success) {
+          setProfile(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching fresh profile:', error);
+      }
+    };
+
+    fetchFreshProfile();
   }, []);
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const setProfile = useCallback((newProfile: AdminProfile) => {
     setProfileState(newProfile);
@@ -52,7 +66,7 @@ export function AdminProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AdminContext.Provider value={{ profile, setProfile }}>
+    <AdminContext.Provider value={{ profile, setProfile, searchQuery, setSearchQuery }}>
       {children}
     </AdminContext.Provider>
   );

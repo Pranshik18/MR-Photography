@@ -18,7 +18,7 @@ export interface IProject extends Document {
   slug: string;                         
   year: number;
   date?: string;
-  category?: string;
+  category?: mongoose.Types.ObjectId | string;
   location?: string;
   isPublic: boolean;                   
   featured: boolean;                    
@@ -128,8 +128,8 @@ const projectSchema: Schema<IProject> = new mongoose.Schema(
     },
 
     category: {
-      type: String,
-      trim: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
     },
 
     isPublic: {

@@ -14,7 +14,7 @@ export async function PUT(req: NextRequest) {
       clientName,
       projectRole,
       date,
-      category,
+      categoryId,
       heroImage, 
       images,   
     } = body;
@@ -83,7 +83,7 @@ export async function PUT(req: NextRequest) {
         client: clientName,
         role: projectRole || "Photographer",
         date: date || "",
-        category: category || "",
+        category: categoryId || null,
         heroImage: heroUrl,
         images: uploadedImages,
         slug,
