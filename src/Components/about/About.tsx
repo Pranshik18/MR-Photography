@@ -53,20 +53,36 @@ export const About: React.FC = () => {
           </div>
         </section>
 
-        <section className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-serif text-black mb-8">What Makes Us Unique</h2>
-            <ul className="space-y-5 text-gray-700 leading-relaxed">
-              <li><span className="font-semibold text-black">Story First:</span> We prioritize real interactions over forced poses.</li>
-              <li><span className="font-semibold text-black">Editorial Finish:</span> Every gallery is polished with consistent tones and timeless color grading.</li>
-              <li><span className="font-semibold text-black">Calm Direction:</span> We guide you naturally so you feel comfortable in front of the camera.</li>
-              <li><span className="font-semibold text-black">Detail Obsessed:</span> From decor to gestures, we capture the frames you did not even notice in the moment.</li>
+        <section className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="pr-4 lg:pr-8">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-gray-700 block mb-4">OUR APPROACH</span>
+            <h2 className="text-4xl md:text-5xl font-serif text-black mb-8 leading-tight">What Makes Us <span className="italic">Unique</span></h2>
+            <p className="text-gray-700 mb-8 leading-relaxed">
+              We believe that the best photographs are born from genuine connection. Our approach blends documentary authenticity with an editorial eye, ensuring your memories are both truthful and beautifully composed.
+            </p>
+            <ul className="space-y-6 text-gray-700 leading-relaxed border-l-2 border-stone-200 pl-6">
+              <li>
+                <span className="font-serif text-xl text-black block mb-1">Story First</span> 
+                We prioritize real interactions and unfolding narratives over forced poses.
+              </li>
+              <li>
+                <span className="font-serif text-xl text-black block mb-1">Editorial Finish</span> 
+                Every gallery is meticulously polished with consistent, timeless color grading.
+              </li>
+              <li>
+                <span className="font-serif text-xl text-black block mb-1">Calm Direction</span> 
+                We guide you naturally, creating a relaxed atmosphere where you can truly be yourselves.
+              </li>
+              <li>
+                <span className="font-serif text-xl text-black block mb-1">Detail Obsessed</span> 
+                From the grand architecture to the quietest glances, we capture the nuances you might miss.
+              </li>
             </ul>
           </div>
-          <div className="rounded-2xl overflow-hidden">
+          <div className="rounded-2xl overflow-hidden shadow-2xl">
             <img
-              src="https://images.stockcake.com/public/9/7/2/9728bf53-7533-4b4b-a3a3-302af3b69679_large/traditional-indian-wedding-stockcake.jpg"
-              alt="Bride standing with veil in sunlight"
+              src="/Images/about_img.png"
+              alt="Bride standing with vei"
               className="w-full h-full object-cover aspect-[4/5]"
               loading="lazy"
               referrerPolicy="no-referrer"

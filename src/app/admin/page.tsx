@@ -183,7 +183,7 @@ export default function Dashboard() {
               <Layers className="w-6 h-6 text-outline group-hover:text-[#353025]" />
             </div>
             <h4 className="text-lg font-headline font-bold text-on-surface tracking-tight">Website Layout</h4>
-            <p className="text-xs text-neutral-500 mt-2">Reorder and customize featured work</p>
+
           </Link>
           <Link href="/admin/settings" className="group bg-surface-container-lowest border border-outline-variant/10 hover:border-tertiary/40 rounded-lg p-8 flex flex-col items-start transition-all">
             <div className="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center mb-6 group-hover:bg-tertiary transition-colors">

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export const PORTFOLIO_ITEMS = [
   {
@@ -74,9 +74,18 @@ export const PORTFOLIO_ITEMS = [
 const CATEGORIES = ['WEDDINGS', 'PRE-WEDDING', 'PARTIES', 'TRADITIONS', 'MATERNITY', 'BOUDOIR', 'COMMERCIAL'];
 
 export default function Portfolios() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [stories, setStories] = useState<any[]>([]);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialCategory = searchParams.get('category');
+  
+  const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
+  const [stories, setStories] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (initialCategory) {
+      setActiveCategory(initialCategory);
+    }
+  }, [initialCategory]);
 
   React.useEffect(() => {
     const fetchStories = async () => {
@@ -94,12 +103,21 @@ export default function Portfolios() {
   }, []);
 
   const filteredStories = stories.filter((item) => item.category === activeCategory);
-  const categoryCards = CATEGORIES.map((category) => {
-    const firstItem = PORTFOLIO_ITEMS.find((item) => item.category === category);
+  
+  // Combine predefined categories with any new categories from the admin's stories
+  const allCategories = Array.from(new Set([
+    ...CATEGORIES,
+    ...stories.map((item) => item.category)
+  ])).filter(Boolean);
+
+  const categoryCards = allCategories.map((category) => {
+    const firstStory = stories.find((item) => item.category === category);
+    const hardcodedInfo = PORTFOLIO_ITEMS.find((item) => item.category === category);
+    
     return {
       category,
-      imageUrl: firstItem?.imageUrl ?? 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=1200',
-      subtitle: firstItem?.subtitle ?? 'DISCOVER MORE',
+      imageUrl: firstStory?.heroImage ?? hardcodedInfo?.imageUrl ?? 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=1200',
+      subtitle: hardcodedInfo?.subtitle ?? 'DISCOVER MORE',
     };
   });
 

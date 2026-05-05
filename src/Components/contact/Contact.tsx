@@ -62,7 +62,7 @@ export const Contact: React.FC = () => {
               We take a limited number of commissions each year to ensure every story receives the care and attention it deserves. Please share a bit about yourself and your vision below.
             </p>
             
-            <div className="pt-8 border-t border-gray-300 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="pt-8 border-t border-gray-300 grid grid-cols-1 gap-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-sky-400">
@@ -72,13 +72,14 @@ export const Contact: React.FC = () => {
                   <span className="text-[9px] uppercase tracking-widest text-gray-800 block">STUDIO ADDRESS</span>
                 </div>
                 <p className="text-1xl font-sans leading-relaxed text-gray-900">
-                  Shop No 2114 Bindraban, Palampur, Himachal Pradesh 176061
+                  Shop No 2114 Bindraban, Palampur,<br />
+                   Himachal Pradesh 176061
                 </p>
               </div>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-sky-400">
-                    <path d="M22 16.92v2a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.08 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.11 3.2 2 2 0 0 1 4.1 1h2a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L7.2 8.52a16 16 0 0 0 6.28 6.28l1.06-1.07a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92Z" />
+                  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" className="h-5 w-5 text-green-500">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.021-.967-.263-.099-.454-.148-.645.148-.19.298-.765.967-.938 1.164-.171.199-.344.224-.641.075-.297-.15-1.255-.463-2.39-1.405-.883-.733-1.48-1.639-1.653-1.937-.171-.299-.018-.46.13-.61.134-.135.298-.344.446-.516.149-.172.199-.297.298-.497.101-.2.05-.374-.025-.522-.075-.15-.645-1.554-.883-2.127-.232-.557-.468-.482-.641-.49-.171-.008-.368-.01-.564-.01-.196 0-.514.075-.783.373-.269.299-1.026 1.002-1.026 2.443 0 1.442 1.051 2.837 1.199 3.036.148.199 2.062 3.149 5.006 4.416.7.3 1.246.48 1.671.614.703.224 1.345.193 1.848.117.568-.086 1.758-.718 2.006-1.413.249-.695.249-1.29.174-1.414-.074-.124-.268-.198-.564-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
                   <span className="text-[9px] uppercase tracking-widest text-gray-800 block">WHATSAPP NUMBER</span>
                 </div>
@@ -86,16 +87,7 @@ export const Contact: React.FC = () => {
                   86280 92160
                 </a>
               </div>
-              <div className="space-y-3 sm:col-span-2">
-                <div className="flex items-center gap-3">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-sky-400">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v5l3 2" />
-                  </svg>
-                  <span className="text-[9px] uppercase tracking-widest text-gray-800 block">HOURS</span>
-                </div>
-                <p className="text-1xl font-sans leading-relaxed text-gray-900">Open 24 hours</p>
-              </div>
+             
             </div>
           </div>
         </div>
