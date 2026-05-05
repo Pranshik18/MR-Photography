@@ -149,6 +149,8 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
           </motion.div>
         </div>
       </section>
+      <br />
+      <br />
       {/* Portfolio Grid (Minimal Cards) */}
       <section className="py-16 md:py-20 px-6 md:px-12 max-w-[1600px] mx-auto relative overflow-hidden">
         {/* Impressive Header */}
@@ -163,13 +165,13 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
             transition={{ duration: 0.8 }}
             className="relative z-10"
           >
-            <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 block mb-4">Discover Our Work</span>
+            <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 block mb-4"></span>
             <h3 className="text-4xl md:text-5xl font-serif text-gray-900">Curated <span className="italic text-gray-500">Collections</span></h3>
           </motion.div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
-          {["WEDDINGS", "MATERNITY", "BOUDOIR", "COMMERCIAL"].map(
+          {["WEDDINGS", "PRE-WEDDING","PARTIES","COMMERCIAL"].map(
             (cat, idx) => {
               const item = PORTFOLIO_ITEMS.find((p) => p.category === cat) || PORTFOLIO_ITEMS[idx];
               return (
@@ -180,7 +182,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.8, delay: idx * 0.1 }}
                   className="group relative cursor-pointer overflow-hidden rounded-2xl aspect-[4/5]"
-                  onClick={() => handleNavClick("/portfolio", "PORTFOLIO")}
+                  onClick={() => handleNavClick(`/portfolio?category=${encodeURIComponent(cat)}`, "PORTFOLIO")}
                 >
                   <img
                     src={item?.imageUrl}
@@ -217,7 +219,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 md:mb-24 relative">
             <h2 className="text-[4.5rem] md:text-[14rem] font-serif italic text-gray-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-0 pointer-events-none select-none drop-shadow-sm opacity-50 md:opacity-100">
-              Journal
+              latest work
             </h2>
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -227,7 +229,6 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
               className="relative z-10"
             >
               <span className="text-[10px] uppercase tracking-widest text-gray-500 block mb-4">
-                ON THE BLOG
               </span>
               <h3 className="text-4xl md:text-6xl font-serif text-gray-900">Recent <span className="italic text-gray-600">Stories</span></h3>
             </motion.div>
