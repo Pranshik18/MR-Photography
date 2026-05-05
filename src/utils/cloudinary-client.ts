@@ -8,9 +8,10 @@ export const uploadSingle = async (file: string, folder: string = "mr-photograph
       resource_type: "auto",
     });
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Cloudinary upload error:", error);
-    throw new Error("Failed to upload image to Cloudinary");
+    const message = error?.message || "Unknown Cloudinary error";
+    throw new Error(`Failed to upload image to Cloudinary: ${message}`);
   }
 };
 

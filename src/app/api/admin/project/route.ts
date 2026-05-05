@@ -15,13 +15,7 @@ export async function GET(req: NextRequest) {
     let filter = {};
     if (query) {
       filter = {
-        $or: [
-          { title: { $regex: query, $options: "i" } },
-          { subtitle: { $regex: query, $options: "i" } },
-          { description: { $regex: query, $options: "i" } },
-          { client: { $regex: query, $options: "i" } },
-          { category: { $regex: query, $options: "i" } },
-        ],
+        title: { $regex: query, $options: "i" }
       };
     }
 

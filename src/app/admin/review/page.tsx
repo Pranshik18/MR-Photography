@@ -121,7 +121,7 @@ export default function ReviewsManagement() {
         toast.success(editingId ? 'Review updated successfully' : 'Review added successfully');
         setIsAdding(false);
         setEditingId(null);
-        fetchReviewsAndProjects(); // Refresh list
+        fetchReviewsAndProjects(); 
       } else {
         toast.error(data.message || 'Operation failed');
       }
@@ -378,7 +378,7 @@ export default function ReviewsManagement() {
                     </button>
                     <button
                       onClick={() => deleteReview(review)}
-                      className="p-3 bg-surface-lowest/10 text-stone-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded"
+                      className="p-3 bg-surface-lowest/10 text-red-600 hover:text-error hover:bg-error-container/20 transition-all duration-300 rounded"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
