@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
     const recentProjects = await ProjectModel.find({ isPublic: true })
       .sort({ createdAt: -1 })
-      .limit(3);
+      .limit(6);
 
     return NextResponse.json(
       {
