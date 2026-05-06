@@ -18,7 +18,6 @@ export default function WebsiteLayoutPage() {
   const router = useRouter();
   const [featured, setFeatured] = useState<Project[]>([]);
   const [allProjects, setAllProjects] = useState<Project[]>([]);
-  const [headerSearch, setHeaderSearch] = useState('');
   const [addSearch, setAddSearch] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,7 +56,7 @@ export default function WebsiteLayoutPage() {
     loadData();
   }, []);
 
-  const displayFeatured = featured.filter(p => !headerSearch || p.title.toLowerCase().includes(headerSearch.toLowerCase()));
+
 
   const searchSuggestions = addSearch.trim() === '' ? [] : allProjects.filter(p => 
     p.title.toLowerCase().includes(addSearch.toLowerCase()) && 
@@ -171,32 +170,21 @@ export default function WebsiteLayoutPage() {
             Website Layout <span className="text-on-surface/20">— Home Page</span>
           </h1>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface/40 w-4 h-4" />
-            <input 
-              value={headerSearch}
-              onChange={(e) => setHeaderSearch(e.target.value)}
-              className="bg-surface border-none text-[0.7rem] tracking-[0.15em] pl-10 pr-4 py-2 w-full sm:w-64 focus:ring-1 focus:ring-tertiary transition-all placeholder:text-on-surface/20 uppercase font-medium rounded-sm" 
-              placeholder="FILTER CURRENT..." 
-              type="text"
-            />
-          </div>
-        </div>
+
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="space-y-12 lg:col-span-12 max-w-4xl mx-auto w-full">
           <section>
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-2 mb-6 md:mb-8">
-              <h3 className="text-[0.75rem] font-medium tracking-[0.15em] uppercase text-on-surface/60">Featured Projects ({displayFeatured.length})</h3>
+              <h3 className="text-[0.75rem] font-medium tracking-[0.15em] uppercase text-on-surface/60">Featured Projects ({featured.length})</h3>
               <p className="text-[0.65rem] text-on-surface/30 italic">Drag to reorder elements on the live grid</p>
             </div>
             <div className="space-y-4">
-              {displayFeatured.map((project) => (
+              {featured.map((project) => (
                 <div 
                   key={project._id}
-                  draggable={!headerSearch}
+                  draggable={true}
                   onDragStart={(e) => handleDragStart(e, project._id)}
                   onDragEnter={(e) => handleDragEnter(e, project._id)}
                   onDragEnd={handleDragEnd}
@@ -226,10 +214,10 @@ export default function WebsiteLayoutPage() {
                 </div>
               ))}
               
-              {displayFeatured.length === 0 && (
+              {featured.length === 0 && (
                 <div className="border-2 border-dashed border-tertiary/10 rounded-lg p-8 flex flex-col items-center justify-center bg-neutral-900/20 gap-2">
                   <span className="text-[0.8rem] tracking-[0.2em] uppercase text-on-surface/40 font-bold">
-                    {featured.length === 0 ? 'No projects featured' : 'No matching projects'}
+                    No projects featured
                   </span>
                   <span className="text-[0.65rem] tracking-[0.1em] text-on-surface/20">
                     {featured.length === 0 ? 'Add projects from your portfolio below' : `Try a different search filter`}

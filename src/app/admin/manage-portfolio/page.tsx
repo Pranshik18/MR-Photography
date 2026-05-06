@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { AdminConfirmModal } from '@/Components/admin/AdminConfirmModal';
+import toast from 'react-hot-toast';
 
 const initialProjects = [
   {
@@ -191,7 +192,7 @@ function ManagePortfolioContent() {
         if (data.success) {
           setProjectList(prev => prev.filter(p => p._id !== projectToDelete));
         } else {
-          alert('Failed to delete project');
+          toast.error('Failed to delete project');
         }
       } catch (error) {
         console.error('Error deleting project', error);
