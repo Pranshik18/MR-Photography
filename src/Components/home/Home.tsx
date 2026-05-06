@@ -32,6 +32,22 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [stories, setStories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/user/home/category');
+        const data = await res.json();
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch categories', err);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -151,7 +167,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
       </section>
       <br />
       <br />
-      {/* Portfolio Grid (Minimal Cards) */}
+      {/* Portfolio Grid (Dynamic from Backend) */}
       <section className="py-16 md:py-20 px-6 md:px-12 max-w-[1600px] mx-auto relative overflow-hidden">
         {/* Impressive Header */}
         <div className="text-center mb-16 md:mb-20 relative">
@@ -171,48 +187,44 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative z-10">
-          {["WEDDINGS", "PRE-WEDDING","PARTIES","COMMERCIAL"].map(
-            (cat, idx) => {
-              const item = PORTFOLIO_ITEMS.find((p) => p.category === cat) || PORTFOLIO_ITEMS[idx];
-              return (
-                <motion.div
-                  key={cat}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, delay: idx * 0.1 }}
-                  className="group relative cursor-pointer overflow-hidden rounded-2xl aspect-[4/5]"
-                  onClick={() => handleNavClick(`/portfolio?category=${encodeURIComponent(cat)}`, "PORTFOLIO")}
-                >
-                  <img
-                    src={item?.imageUrl}
-                    alt={cat}
-                    className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-colors duration-500" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                    <h4 className="text-2xl md:text-3xl font-sans tracking-[0.2em] font-light uppercase text-center mb-4">
-                      {cat}
-                    </h4>
-                    <div className="w-8 h-[1px] bg-white/60 mb-4" />
-                    <span className="text-[9px] uppercase tracking-[0.3em] font-bold">
-                      View Gallery
-                    </span>
-                  </div>
-                  
-                  {/* Default visible title at the bottom */}
-                  <div className="absolute bottom-6 left-0 w-full text-center group-hover:opacity-0 transition-opacity duration-500">
-                    <h4 className="text-white text-sm md:text-base font-sans tracking-[0.2em] font-bold uppercase drop-shadow-md">
-                      {cat}
-                    </h4>
-                  </div>
-                </motion.div>
-              );
-            }
-          )}
+          {categories.map((cat, idx) => (
+            <motion.div
+              key={cat.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: idx * 0.1 }}
+              className="group relative cursor-pointer overflow-hidden rounded-2xl aspect-[4/5]"
+              onClick={() => handleNavClick(`/portfolio?id=${cat.id}&title=${encodeURIComponent(cat.title)}`, "PORTFOLIO")}
+            >
+              <img
+                src={cat.imageUrl || "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=2600"}
+                alt={cat.title}
+                className="w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/50 transition-colors duration-500" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <h4 className="text-2xl md:text-3xl font-sans tracking-[0.2em] font-light uppercase text-center mb-4">
+                  {cat.title}
+                </h4>
+                <div className="w-8 h-[1px] bg-white/60 mb-4" />
+                <span className="text-[9px] uppercase tracking-[0.3em] font-bold">
+                  View Gallery
+                </span>
+              </div>
+              
+              {/* Default visible title at the bottom */}
+              <div className="absolute bottom-6 left-0 w-full text-center group-hover:opacity-0 transition-opacity duration-500">
+                <h4 className="text-white text-sm md:text-base font-sans tracking-[0.2em] font-bold uppercase drop-shadow-md">
+                  {cat.title}
+                </h4>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
+
 
       {/* Featured Stories */}
       <section className="bg-[#fafaf9] py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
