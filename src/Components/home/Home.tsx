@@ -16,7 +16,6 @@ const HERO_IMAGES = [
 ];
 
 import { Page } from "../layout/Navbar";
-import { PORTFOLIO_ITEMS } from "../portfolio/Portfolio";
 import { useRouter } from "next/navigation";
 import { FAQ } from "../faq/FAQ";
 import { Reviews } from "../review/Review";

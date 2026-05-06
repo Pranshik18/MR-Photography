@@ -214,7 +214,7 @@ function AddProjectContent() {
       }
     } catch (e) {
       console.error(e);
-      alert("Failed to crop image");
+      toast.error("Failed to crop image");
     } finally {
       setIsCropping(false);
       URL.revokeObjectURL(cropFile);
@@ -293,7 +293,11 @@ function AddProjectContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!heroPreview && !heroImage) {
-      alert("Hero image is required");
+      toast.error("Hero image is required");
+      return;
+    }
+    if (!projectCategory) {
+      toast.error("Category is required");
       return;
     }
     setIsSubmitting(true);
@@ -564,6 +568,7 @@ function AddProjectContent() {
             <select 
               value={projectCategory}
               onChange={(e) => setProjectCategory(e.target.value)}
+              required
               className="w-full bg-transparent border-b border-outline-variant/40 py-3 focus:outline-none focus:border-primary text-on-surface-variant font-body text-base transition-all cursor-pointer"
             >
               <option value="" className="bg-[#1B1B1B] text-white">Select Category</option>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Cormorant_Garamond } from 'next/font/google';
 
@@ -11,9 +11,26 @@ const cormorant = Cormorant_Garamond({
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', date: '', location: '', category: 'Wedding', message: ''
+    name: '', email: '', phone: '', date: '', location: '', category: '', message: ''
   });
+  const [categories, setCategories] = useState<any[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/user/category');
+        const data = await res.json();
+        if (data.success && data.data.length > 0) {
+          setCategories(data.data);
+          setFormData(prev => ({ ...prev, category: data.data[0].title }));
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +54,7 @@ export const Contact: React.FC = () => {
       });
       if (res.ok) {
         setStatus('success');
-        setFormData({ name: '', email: '', phone: '', date: '', location: '', category: 'Wedding', message: '' });
+        setFormData({ name: '', email: '', phone: '', date: '', location: '', category: categories[0]?.title || '', message: '' });
       } else {
         setStatus('error');
       }
@@ -176,14 +193,12 @@ export const Contact: React.FC = () => {
                   onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
                   className={`w-full rounded-xl border border-stone-300 bg-white/80 px-4 py-3.5 text-lg text-stone-900 transition-all duration-200 focus:border-stone-900 focus:outline-none focus:ring-2 focus:ring-stone-300 appearance-none ${cormorant.className}`}
                  >
-                    <option>Wedding</option>
-                    <option>Pre-Wedding</option>
-                    <option>Parties</option>
-                    <option>Traditions</option>
-                    <option>Maternity</option>
-                    <option>Boudoir</option>
-                    <option>Commercial</option>
-                    <option>Other</option>
+                    {categories.map((cat) => (
+                      <option key={cat._id} value={cat.title}>
+                        {cat.title}
+                      </option>
+                    ))}
+                    <option value="Other">Other</option>
                  </select>
               </div>
 
