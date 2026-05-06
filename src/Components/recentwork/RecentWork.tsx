@@ -24,7 +24,7 @@ const RecentWorkInner: React.FC = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch("/api/user/project");
+        const res = await fetch("/api/user/project/recent");
         const data = await res.json();
         if (data.success) {
           setStories(data.data);
