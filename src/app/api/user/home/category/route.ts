@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/utils/db";
 import ProjectModel from "@/models/project";
+import CategoryModel from "@/models/category";
 
 export async function GET() {
   try {
@@ -10,11 +11,21 @@ export async function GET() {
       isPublic: true 
     });
 
+    const categories = await CategoryModel.find({
+      _id: { $in: distinctCategoryIds }
+    }).select("title imageUrl _id").sort({ order: 1 });
+
+    const formattedCategories = categories.map((cat) => ({
+      id: cat._id.toString(),
+      title: cat.title,
+      imageUrl: cat.imageUrl,
+    }));
+
     return NextResponse.json(
       {
         success: true,
-        message: "Unique category IDs retrieved successfully",
-        data: distinctCategoryIds,
+        message: "Unique categories retrieved successfully",
+        data: formattedCategories,
       },
       { status: 200 }
     );
