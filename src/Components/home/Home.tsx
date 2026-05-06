@@ -33,6 +33,29 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [stories, setStories] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [heroTitle, setHeroTitle] = useState("MR");
+  const [heroSubtitle, setHeroSubtitle] = useState("PHOTOGRAPHY");
+  const [heroImages, setHeroImages] = useState<string[]>(HERO_IMAGES);
+
+  useEffect(() => {
+    const fetchHomepageData = async () => {
+      try {
+        const res = await fetch('/api/user/home');
+        const data = await res.json();
+        if (data.success && data.data && data.data._id) {
+          if (data.data.title) setHeroTitle(data.data.title);
+          if (data.data.subtitle) setHeroSubtitle(data.data.subtitle);
+          if (data.data.images && data.data.images.length > 0) {
+            const sortedImages = [...data.data.images].sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+            setHeroImages(sortedImages.map((img: any) => img.url));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch homepage data', err);
+      }
+    };
+    fetchHomepageData();
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -73,10 +96,10 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % HERO_IMAGES.length);
+      setCurrentImageIndex((prev) => (prev + 1) % heroImages.length);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroImages.length]);
 
   const handleNavClick = (path: string, page: Page) => {
     if (setPage) setPage(page);
@@ -103,7 +126,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
             className="absolute inset-0"
           >
             <img
-              src={HERO_IMAGES[currentImageIndex]}
+              src={heroImages[currentImageIndex]}
               alt="Hero Showcase"
               className="w-full h-full object-cover brightness-[0.5] contrast-110 blur-[6px] scale-105"
               loading="lazy"
@@ -128,7 +151,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                     className="absolute bottom-[15%] -left-[7.5%] h-[25%] bg-yellow-400/30 skew-x-[-15deg] blur-md z-0"
                   />
                   <span className="relative text-7xl md:text-[14rem] font-sans font-black italic tracking-tighter leading-none mb-2 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)] text-white">
-                    MR
+                    {heroTitle}
                   </span>
                 </div>
                 <span className="relative text-lg md:text-3xl font-sans font-bold uppercase tracking-[1em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-white/90">
@@ -138,7 +161,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                     transition={{ delay: 2, duration: 1 }}
                     className="absolute inset-x-0 -bottom-2 h-[2px] bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent"
                   />
-                  PHOTOGRAPHY
+                  {heroSubtitle}
                 </span>
               </motion.div>
             </div>
