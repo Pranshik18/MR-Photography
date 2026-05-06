@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/utils/db";
 import CategoryModel from "@/models/category";
+import ProjectModel from "@/models/project";
 
 export async function GET(
   req: NextRequest,
@@ -19,11 +20,35 @@ export async function GET(
       );
     }
 
+    const projects = await ProjectModel.find({ category: id, isPublic: true });
+
+    const formattedImages: { title: string; imageUrl: string }[] = [];
+
+    projects.forEach((project) => {
+      if (project.heroImage) {
+        formattedImages.push({
+          title: project.title,
+          imageUrl: project.heroImage,
+        });
+      }
+
+      if (project.images && Array.isArray(project.images)) {
+        project.images.forEach((img: any) => {
+          if (img.url) {
+            formattedImages.push({
+              title: project.title,
+              imageUrl: img.url,
+            });
+          }
+        });
+      }
+    });
+
     return NextResponse.json(
       {
         success: true,
-        message: "Category information retrieved successfully",
-        data: category,
+        message: "Category images retrieved successfully",
+        data: formattedImages,
       },
       { status: 200 }
     );
