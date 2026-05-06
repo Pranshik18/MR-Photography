@@ -76,18 +76,26 @@ const CATEGORIES = ['WEDDINGS', 'PRE-WEDDING', 'PARTIES', 'TRADITIONS', 'MATERNI
 export default function Portfolios() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const categoryId = searchParams.get('id');
+  const categoryTitle = searchParams.get('title');
   const initialCategory = searchParams.get('category');
   
   const [activeCategory, setActiveCategory] = useState<string | null>(initialCategory);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(categoryId);
   const [stories, setStories] = useState<any[]>([]);
+  const [categoryImages, setCategoryImages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialCategory) {
       setActiveCategory(initialCategory);
     }
-  }, [initialCategory]);
+    if (categoryId) {
+      setActiveCategoryId(categoryId);
+    }
+  }, [initialCategory, categoryId]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const fetchStories = async () => {
       try {
         const res = await fetch('/api/user/project');
@@ -101,6 +109,25 @@ export default function Portfolios() {
     };
     fetchStories();
   }, []);
+
+  useEffect(() => {
+    const fetchCategoryImages = async () => {
+      if (!activeCategoryId) return;
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/user/home/category/${activeCategoryId}`);
+        const data = await res.json();
+        if (data.success) {
+          setCategoryImages(data.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch category images', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategoryImages();
+  }, [activeCategoryId]);
 
   const filteredStories = stories.filter((item) => item.category === activeCategory);
   
@@ -144,7 +171,7 @@ export default function Portfolios() {
         </header>
 
         <AnimatePresence mode="wait">
-          {!activeCategory ? (
+          {!activeCategory && !activeCategoryId ? (
             <motion.div 
               key="categories"
               initial={{ opacity: 0, y: 20 }}
@@ -204,6 +231,70 @@ export default function Portfolios() {
                   </div>
                 </div>
               </motion.div>
+            </motion.div>
+          ) : activeCategoryId ? (
+            <motion.div
+              key="category-photos"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between border-t border-gray-100 pt-8 gap-4">
+                <h2 className="text-3xl md:text-4xl font-serif italic text-black">{categoryTitle || "Category"}</h2>
+                <button 
+                  onClick={() => {
+                    setActiveCategoryId(null);
+                    router.push('/portfolio');
+                  }}
+                  className="text-[11px] uppercase tracking-[0.2em] font-bold text-gray-500 hover:text-black transition-colors self-start md:self-auto flex items-center gap-2"
+                >
+                  <span>←</span> BACK TO CATEGORIES
+                </button>
+              </div>
+              
+              {loading ? (
+                <div className="flex justify-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
+                </div>
+              ) : (
+                <motion.div 
+                  layout
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                >
+                  <AnimatePresence mode='popLayout'>
+                    {categoryImages.map((item, idx) => (
+                      <motion.div
+                        layout
+                        key={idx}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.5 }}
+                        className="group relative cursor-pointer col-span-1"
+                      >
+                        <div className="overflow-hidden rounded-[20px] shadow-lg relative aspect-[4/5]">
+                          <img 
+                            src={item.imageUrl} 
+                            alt={item.title} 
+                            className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-110"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500" />
+                          
+                          {/* Content Overlay - Show Title on Hover */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            <h2 className="text-2xl md:text-3xl font-sans tracking-[0.1em] font-light uppercase text-center">
+                              {item.title}
+                            </h2>
+                            <div className="w-12 h-[1px] bg-white/60 mt-4" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              )}
             </motion.div>
           ) : (
             <motion.div
