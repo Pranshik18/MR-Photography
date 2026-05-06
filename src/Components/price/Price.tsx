@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PricingPackage {
   _id: string;
@@ -16,6 +17,11 @@ interface PricingPackage {
 export const Pricing: React.FC = () => {
   const [packages, setPackages] = useState<PricingPackage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [transitionEnabled, setTransitionEnabled] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [isMoving, setIsMoving] = useState(false);
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -23,8 +29,9 @@ export const Pricing: React.FC = () => {
         const res = await fetch('/api/user/price');
         const data = await res.json();
         if (data.success && data.data) {
-          // Filter only active packages for the public facing UI
-          setPackages(data.data.filter((p: PricingPackage) => p.isActive));
+          const activePkgs = data.data.filter((p: PricingPackage) => p.isActive);
+          setPackages(activePkgs);
+          setCurrentIndex(activePkgs.length * 2);
         }
       } catch (error) {
         console.error('Failed to fetch pricing:', error);
@@ -34,6 +41,65 @@ export const Pricing: React.FC = () => {
     };
     fetchPrices();
   }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setVisibleCount(1);
+      } else if (window.innerWidth < 1024) {
+        setVisibleCount(2);
+      } else {
+        setVisibleCount(3);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleNext = () => {
+    if (isMoving || !transitionEnabled || packages.length === 0) return;
+    setIsMoving(true);
+    setCurrentIndex((prev) => prev + 1);
+  };
+
+  const handlePrev = () => {
+    if (isMoving || !transitionEnabled || packages.length === 0) return;
+    setIsMoving(true);
+    setCurrentIndex((prev) => prev - 1);
+  };
+
+  const handleTransitionEnd = () => {
+    setIsMoving(false);
+    const N = packages.length;
+    if (N === 0) return;
+    if (currentIndex >= 3 * N) {
+      setTransitionEnabled(false);
+      setCurrentIndex(currentIndex - N);
+    } else if (currentIndex < 2 * N) {
+      setTransitionEnabled(false);
+      setCurrentIndex(currentIndex + N);
+    }
+  };
+
+  useEffect(() => {
+    if (!transitionEnabled) {
+      const timeout = setTimeout(() => {
+        setTransitionEnabled(true);
+      }, 50);
+      return () => clearTimeout(timeout);
+    }
+  }, [transitionEnabled]);
+
+  useEffect(() => {
+    if (isHovered || packages.length === 0 || !transitionEnabled) return;
+    const interval = setInterval(() => {
+      handleNext();
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isHovered, packages.length, transitionEnabled, currentIndex]);
+
+  const displayPackages = [...packages, ...packages, ...packages, ...packages, ...packages];
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen pt-20 pb-20">
@@ -80,41 +146,78 @@ export const Pricing: React.FC = () => {
         </section>
 
         {!loading && packages.length > 0 && (
-          <section className="mt-20">
+          <section className="mt-20 relative px-4 md:px-12">
             <h2 className="text-4xl font-serif italic text-center text-black mb-12">Curated Packages</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {packages.map((pkg) => (
+            
+            <div className="relative group/carousel max-w-5xl mx-auto">
+              <div className="overflow-hidden rounded-2xl py-4">
                 <div 
-                  key={pkg._id} 
-                  className={`bg-white rounded-xl p-8 flex flex-col items-center justify-between border ${pkg.isRecommended ? 'border-[#2f4c6c] shadow-lg relative' : 'border-gray-200'}`}
+                  className={`flex ${transitionEnabled ? 'transition-transform duration-500 ease-out' : ''}`}
+                  style={{ transform: `translateX(-${currentIndex * (100 / visibleCount)}%)` }}
+                  onTransitionEnd={handleTransitionEnd}
                 >
-                  {pkg.isRecommended && (
-                    <span className="absolute -top-3 bg-[#2f4c6c] text-white text-[10px] uppercase tracking-widest px-4 py-1 rounded-full font-semibold">
-                      RECOMMENDED
-                    </span>
-                  )}
-                  <h3 className="text-2xl font-serif mb-2 text-center text-gray-900">{pkg.title}</h3>
-                  <p className="text-3xl font-bold text-[#4a5568] mb-6">
-                    {pkg.currency === 'INR' ? '₹' : '$'}{pkg.price.toLocaleString()}
-                  </p>
-                  
-                  <ul className="text-[14px] text-gray-600 mb-8 space-y-3 w-full">
-                    {pkg.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start">
-                        <span className="text-[#2f4c6c] mr-2">•</span>
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  {displayPackages.map((pkg, idx) => (
+                    <div 
+                      key={`${pkg._id}-${idx}`}
+                      style={{ width: `${100 / visibleCount}%`, flexShrink: 0 }}
+                      className="px-4"
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <div 
+                        className={`bg-white rounded-xl p-8 h-full flex flex-col items-center justify-between border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                          pkg.isRecommended ? 'border-[#2f4c6c] shadow-md relative' : 'border-gray-200'
+                        }`}
+                      >
+                        {pkg.isRecommended && (
+                          <span className="absolute -top-3 bg-[#2f4c6c] text-white text-[10px] uppercase tracking-widest px-4 py-1 rounded-full font-semibold">
+                            RECOMMENDED
+                          </span>
+                        )}
+                        <h3 className="text-2xl font-serif mb-2 text-center text-gray-900">{pkg.title}</h3>
+                        <p className="text-3xl font-bold text-[#4a5568] mb-6">
+                          {pkg.currency === 'INR' ? '₹' : '$'}{pkg.price.toLocaleString()}
+                        </p>
+                        
+                        <ul className="text-[14px] text-gray-600 mb-8 space-y-3 w-full">
+                          {pkg.features.map((feature, idx) => (
+                            <li key={idx} className="flex items-start">
+                              <span className="text-[#2f4c6c] mr-2">•</span>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
 
-                  <Link
-                    href="/contact"
-                    className="w-full text-center rounded-full bg-gray-100 border border-gray-300 px-6 py-3 text-[11px] font-semibold uppercase tracking-widest text-gray-800 hover:bg-gray-200 transition-colors"
-                  >
-                    Inquire Now
-                  </Link>
+                        <Link
+                          href="/contact"
+                          className="w-full text-center rounded-full bg-gray-100 border border-gray-300 px-6 py-3 text-[11px] font-semibold uppercase tracking-widest text-gray-800 hover:bg-gray-200 transition-colors mt-auto"
+                        >
+                          Inquire Now
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <button
+                onClick={handlePrev}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className="absolute -left-2 md:-left-8 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-black hover:text-white text-gray-800 p-4 rounded-full shadow-lg border border-gray-200/50 backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none z-20 flex items-center justify-center cursor-pointer"
+                aria-label="Previous Package"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={handleNext}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className="absolute -right-2 md:-right-8 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-black hover:text-white text-gray-800 p-4 rounded-full shadow-lg border border-gray-200/50 backdrop-blur-md transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none z-20 flex items-center justify-center cursor-pointer"
+                aria-label="Next Package"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
             </div>
           </section>
         )}
