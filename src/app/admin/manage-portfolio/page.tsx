@@ -71,7 +71,7 @@ function ManagePortfolioContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const qsString = searchParams.get('q') || '';
-  
+
   const [projectList, setProjectList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(qsString);
@@ -150,22 +150,19 @@ function ManagePortfolioContent() {
   const sortedProjects = useMemo(() => {
     let copy = [...projectList];
 
-    // 1. Search Filter
     if (searchQuery.trim() !== '') {
       const q = searchQuery.toLowerCase();
-      copy = copy.filter(p => 
-        p.title.toLowerCase().includes(q) || 
+      copy = copy.filter(p =>
+        p.title.toLowerCase().includes(q) ||
         p.subtitle.toLowerCase().includes(q)
       );
     }
 
-    // 2. Sort Modifiers
     if (sortOption === 'az') {
       copy.sort((a, b) => a.title.localeCompare(b.title));
       return copy;
     }
-    
-    // With dynamic data, ID is string so use dates
+
     copy.sort((a, b) => {
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
@@ -215,7 +212,7 @@ function ManagePortfolioContent() {
         setProjectList(prev => prev.map(p => {
           if (p._id === id) {
             return {
-              ...p, 
+              ...p,
               isPublic: isPublic
             };
           }
@@ -234,19 +231,19 @@ function ManagePortfolioContent() {
           <label className="text-[10px] uppercase tracking-[0.3em] text-tertiary">Gallery Oversight</label>
           <h2 className="text-4xl md:text-5xl font-headline font-extrabold tracking-[-0.03em] text-on-surface">Manage Portfolio</h2>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full lg:w-auto relative z-30">
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-outline pointer-events-none" />
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Find project..." 
+              placeholder="Find project..."
               className="bg-surface-container-low border-none focus:ring-1 focus:ring-tertiary/30 text-on-surface placeholder:text-outline-variant text-sm py-3 pl-12 pr-6 w-full xl:w-64 transition-all"
             />
           </div>
-          
+
           <div className="relative" ref={sortMenuRef}>
             <button
               type="button"
@@ -297,7 +294,7 @@ function ManagePortfolioContent() {
               Loading projects...
             </div>
           ) : sortedProjects.map((project: any) => (
-            <motion.div 
+            <motion.div
               layout
               key={project._id}
               initial={{ opacity: 0, scale: 0.95 }}
@@ -308,8 +305,8 @@ function ManagePortfolioContent() {
               className="group relative flex flex-col glass-card border border-white/5 hover:border-tertiary/20 transition-all duration-700 shadow-2xl"
             >
               <div className="aspect-[4/3] overflow-hidden relative">
-                <img 
-                  src={project.heroImage || project.image} 
+                <img
+                  src={project.heroImage || project.image}
                   alt={project.title}
                   className="w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-110 transition-all duration-[2000ms] ease-out"
                   referrerPolicy="no-referrer"
@@ -320,7 +317,7 @@ function ManagePortfolioContent() {
                   </span>
                 </div>
               </div>
-              
+
               <div className="p-4 md:p-6 space-y-4 relative z-10 bg-surface-container-lowest/80 backdrop-blur-xs flex-grow flex flex-col">
                 <div className="flex justify-between items-start flex-grow">
                   <div className="pr-4">
@@ -328,13 +325,13 @@ function ManagePortfolioContent() {
                     <p className="text-xs lg:text-sm text-outline tracking-wide mt-1 line-clamp-1">{project.subtitle || new Date(project.updatedAt).toLocaleDateString()}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                       onClick={() => router.push(`/admin/add-project?id=${project._id}`)}
                       className="text-white hover:text-gray-200 hover:scale-110 transition-all p-1"
                     >
                       <Edit2 className="w-5 h-5" />
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(project._id)}
                       className="text-red-500 hover:text-red-400 hover:scale-110 transition-all p-1"
                     >
@@ -342,7 +339,7 @@ function ManagePortfolioContent() {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="pt-4 lg:pt-6 border-t border-white/5 flex items-center justify-between mt-auto">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-outline">Visibility</span>
                   <div className="relative visibility-menu-container">
@@ -358,10 +355,10 @@ function ManagePortfolioContent() {
                     </button>
                     <AnimatePresence>
                       {openVisibilityId === project._id && (
-                        <motion.div 
-                          initial={{ opacity: 0, y: -5 }} 
-                          animate={{ opacity: 1, y: 0 }} 
-                          exit={{ opacity: 0, y: -5 }} 
+                        <motion.div
+                          initial={{ opacity: 0, y: -5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
                           transition={{ duration: 0.15 }}
                           role="menu"
                           className="absolute right-0 bottom-full mb-2 w-32 bg-surface-container border border-outline-variant/30 shadow-2xl z-50 py-1"
@@ -398,9 +395,8 @@ function ManagePortfolioContent() {
           ))}
         </AnimatePresence>
 
-        {/* Add New Card */}
         <Link href="/admin/add-project" className="block h-full">
-          <motion.div 
+          <motion.div
             whileHover={{ scale: 1.02 }}
             className="group relative flex flex-col items-center justify-center border-2 border-dashed border-white/5 hover:border-tertiary/40 transition-all duration-500 cursor-pointer min-h-[400px] h-full"
           >
@@ -417,7 +413,6 @@ function ManagePortfolioContent() {
         </Link>
       </section>
 
-      {/* Pagination UI */}
       {!loading && pagination?.totalPages > 1 && (
         <div className="mt-16 flex items-center justify-center gap-4">
           <button
@@ -427,17 +422,16 @@ function ManagePortfolioContent() {
           >
             Previous
           </button>
-          
+
           <div className="flex items-center gap-2">
             {[...Array(pagination?.totalPages || 0)].map((_, i) => (
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`w-8 h-8 flex items-center justify-center text-[10px] font-mono transition-all border ${
-                  currentPage === i + 1 
-                    ? 'bg-tertiary text-[#353025] border-tertiary' 
+                className={`w-8 h-8 flex items-center justify-center text-[10px] font-mono transition-all border ${currentPage === i + 1
+                    ? 'bg-tertiary text-[#353025] border-tertiary'
                     : 'border-outline-variant/10 text-outline hover:border-tertiary'
-                }`}
+                  }`}
               >
                 {i + 1}
               </button>

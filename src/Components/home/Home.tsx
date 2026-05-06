@@ -1,5 +1,4 @@
 "use client";
-// Trigger re-build
 
 
 import React, { useRef, useState, useEffect } from "react";
@@ -62,7 +61,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
         const res = await fetch('/api/user/home/category');
         const data = await res.json();
         if (data.success) {
-          setCategories(data.data);
+          setCategories(data.data.slice(0, 4));
         }
       } catch (err) {
         console.error('Failed to fetch categories', err);
@@ -236,7 +235,6 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                 </span>
               </div>
               
-              {/* Default visible title at the bottom */}
               <div className="absolute bottom-6 left-0 w-full text-center group-hover:opacity-0 transition-opacity duration-500">
                 <h4 className="text-white text-sm md:text-base font-sans tracking-[0.2em] font-bold uppercase drop-shadow-md">
                   {cat.title}
@@ -248,8 +246,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
       </section>
 
 
-      {/* Featured Stories */}
-      <section className="bg-[#fafaf9] py-16 md:py-24 px-6 md:px-12 relative overflow-hidden">
+      <section className="relative py-24 md:py-36 bg-[#0a0a0a] overflow-hidden">
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-16 md:mb-24 relative">
             <h2 className="text-[4.5rem] md:text-[14rem] font-serif italic text-gray-100 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-0 pointer-events-none select-none drop-shadow-sm opacity-50 md:opacity-100">
