@@ -127,70 +127,81 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
             <img
               src={heroImages[currentImageIndex]}
               alt="Hero Showcase"
-              className="w-full h-full object-cover brightness-[0.5] contrast-110 blur-[6px] scale-105"
+              className="w-full h-full object-cover brightness-[0.65] contrast-[1.03] blur-[2.5px] scale-[1.02]"
               loading="lazy"
               referrerPolicy="no-referrer"
             />
           </motion.div>
         </AnimatePresence>
 
-        <div className="relative z-10 text-center px-6">
-            <div className="relative mb-16">
+        {/* Elegant Editorial Overlays */}
+        <div className="absolute inset-0 bg-black/25 z-[1] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45 z-[1] pointer-events-none" />
+
+        <div className="relative z-10 text-center px-6 select-none">
+            <div className="relative mb-16 flex flex-col items-center justify-center -rotate-3">
+              
+              {/* Brand Title (Handwritten Brush Signature with natural slant) */}
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 1.5 }}
-                className="flex flex-col items-center text-white drop-shadow-2xl relative z-10"
+                initial={{ opacity: 0, y: 25, rotate: -6, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, rotate: -3, scale: 1 }}
+                transition={{ delay: 0.5, duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+                className="relative z-10"
               >
-                <div className="relative">
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: "115%", opacity: 1 }}
-                    transition={{ delay: 1.5, duration: 1.2, ease: "easeOut" }}
-                    className="absolute bottom-[15%] -left-[7.5%] h-[25%] bg-yellow-400/30 skew-x-[-15deg] blur-md z-0"
-                  />
-                  <span className="relative text-7xl md:text-[14rem] font-sans font-black tracking-tighter leading-none mb-2 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)] text-white">
-                    {heroTitle}
-                  </span>
-                </div>
-                <span className="relative text-lg md:text-3xl font-sans font-bold uppercase tracking-[1em] drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] text-white/90">
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 2, duration: 1 }}
-                    className="absolute inset-x-0 -bottom-2 h-[2px] bg-gradient-to-r from-transparent via-yellow-400/50 to-transparent"
-                  />
+                <span className="block text-[6rem] font-semibold md:text-[10rem] font-signature text-white leading-[0.8] drop-shadow-[0_8px_16px_rgba(0,0,0,0.4)]">
+                  {heroTitle}
+                </span>
+              </motion.div>
+
+              {/* Brand Subtitle (Modern Geometric Wide Sans-Serif, kept level to ground composition) */}
+              <motion.div
+                initial={{ opacity: 0, y: 0 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.2, duration: 1.2, ease: "easeOut" }}
+                className="relative z-10"
+              >
+                <span className="block text-[15px] md:text-xl font-montserrat font-semibold uppercase tracking-[0.5em] text-white/90 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] mt-2 md:translate-x-9 translate-x-3">
                   {heroSubtitle}
                 </span>
               </motion.div>
-            </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5, duration: 1 }}
-            className="flex flex-col items-center gap-4"
-          >
-            <button
-              className="flex flex-col items-center gap-4 text-white text-[12px] uppercase tracking-[0.2em] font-extrabold drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)] hover:text-gray-300 transition-colors group"
-            >
-              <span>Explore Portfolio</span>
-              <motion.div
-                animate={{ y: [0, 8, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
-                  <path d="m6 9 6 6 6-6"/>
-                </svg>
-              </motion.div>
-            </button>
-          </motion.div>
+            </div>
         </div>
+
+        {/* Explore Portfolio absolute at the bottom of the hero section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.8, duration: 1 }}
+          className="absolute bottom-[40px] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-4"
+        >
+          <button
+            onClick={() => {
+              const portEl = document.getElementById("portfolio-grid");
+              if (portEl) {
+                portEl.scrollIntoView({ behavior: "smooth" });
+              } else {
+                window.scrollTo({ top: window.innerHeight, behavior: "smooth" });
+              }
+            }}
+            className="flex flex-col items-center gap-3 text-white text-[10px] uppercase tracking-[0.25em] font-semibold font-montserrat drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] hover:text-white/80 transition-colors group"
+          >
+            <span>Explore Portfolio</span>
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity">
+                <path d="m6 9 6 6 6-6"/>
+              </svg>
+            </motion.div>
+          </button>
+        </motion.div>
       </section>
       <br />
       <br />
       {/* Portfolio Grid (Dynamic from Backend) */}
-      <section className="py-16 md:py-20 px-6 md:px-12 max-w-[1600px] mx-auto relative overflow-hidden">
+      <section id="portfolio-grid" className="py-16 md:py-20 px-6 md:px-12 max-w-[1600px] mx-auto relative overflow-hidden">
         {/* Impressive Header */}
         <div className="text-center mb-16 md:mb-20 relative">
           <h2 className="text-[4rem] md:text-[14rem] font-serif italic text-gray-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap z-0 pointer-events-none select-none drop-shadow-sm opacity-50 md:opacity-100">

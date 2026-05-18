@@ -36,6 +36,9 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui;
   --font-display: var(--font-manrope), ui-serif, Georgia;
   --font-serif: var(--font-cormorant), ui-serif, Georgia;
+  --font-signature: var(--font-allison), cursive;
+  --font-montserrat: var(--font-montserrat), sans-serif;
+  --font-pinyon: var(--font-pinyon), cursive;
 
   --animate-slow-zoom: zoom 800ms cubic-bezier(0.4, 0, 0.2, 1);
 }
