@@ -1,4 +1,26 @@
+import { Readable } from "stream";
 import cloudinary from "./cloudinary";
+
+export const uploadStream = async (buffer: Buffer, folder: string = "mr-photography"): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "auto",
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload_stream error:", error);
+          const message = error?.message || "Unknown Cloudinary error";
+          reject(new Error(`Failed to upload image to Cloudinary: ${message}`));
+        } else {
+          resolve(result);
+        }
+      }
+    );
+    Readable.from(buffer).pipe(stream);
+  });
+};
 
 
 export const uploadSingle = async (file: string, folder: string = "mr-photography") => {

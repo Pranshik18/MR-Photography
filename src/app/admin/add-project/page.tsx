@@ -303,27 +303,55 @@ function AddProjectContent() {
     setIsSubmitting(true);
 
     try {
-      const fileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = error => reject(error);
+      const uploadFile = async (file: File, slug: string): Promise<{ url: string; publicId: string }> => {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("slug", slug);
+
+        const res = await fetch("/api/admin/project/upload", {
+          method: "POST",
+          body: formData,
         });
+
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.message || "Failed to upload image");
+        }
+        return { url: data.url, publicId: data.publicId };
       };
 
-      let heroBase64 = heroPreview || '';
+      const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+
+      let heroUrl = heroPreview || "";
+      let heroPublicId = "";
       if (heroImage) {
-        heroBase64 = await fileToBase64(heroImage);
+        toast.loading("Uploading hero image...", { id: "upload-status" });
+        const heroUpload = await uploadFile(heroImage, slug);
+        heroUrl = heroUpload.url;
+        heroPublicId = heroUpload.publicId;
       }
 
-      const galleryBase64 = await Promise.all(
-        gallery.map(async (item, index) => ({
-          url: item.file ? await fileToBase64(item.file) : item.preview,
-          order: index,
-          publicId: item.publicId || undefined
-        }))
-      );
+      const uploadedImages = [];
+      for (let i = 0; i < gallery.length; i++) {
+        const item = gallery[i];
+        if (item.file) {
+          toast.loading(`Uploading gallery image ${i + 1} of ${gallery.length}...`, { id: "upload-status" });
+          const uploadRes = await uploadFile(item.file, slug);
+          uploadedImages.push({
+            url: uploadRes.url,
+            publicId: uploadRes.publicId,
+            order: i,
+          });
+        } else {
+          uploadedImages.push({
+            url: item.preview,
+            publicId: item.publicId || "",
+            order: i,
+          });
+        }
+      }
+
+      toast.loading("Saving project details...", { id: "upload-status" });
 
       const payload: any = {
         title,
@@ -333,40 +361,42 @@ function AddProjectContent() {
         projectRole,
         date: projectDate,
         categoryId: projectCategory,
-        heroImage: heroBase64,
-        images: galleryBase64,
+        heroImage: heroUrl,
+        images: uploadedImages,
       };
 
-      let endpoint = '/api/admin/project/add';
-      let method = 'POST';
+      let endpoint = "/api/admin/project/add";
+      let method = "POST";
 
       if (isEditing) {
         payload.id = projectId;
-        endpoint = '/api/admin/project/edit';
-        method = 'PUT';
+        endpoint = "/api/admin/project/edit";
+        method = "PUT";
       }
 
       const response = await fetch(endpoint, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
       });
 
       const data = await response.json();
       if (data.success) {
-        router.push('/admin/manage-portfolio');
+        toast.success("Project saved successfully!", { id: "upload-status" });
+        router.push("/admin/manage-portfolio");
       } else {
-        toast.error(data.error || data.message || (isEditing ? 'Failed to update project' : 'Failed to create project'));
+        toast.error(data.error || data.message || (isEditing ? "Failed to update project" : "Failed to create project"), { id: "upload-status" });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      toast.error('An error occurred while saving the project');
+      toast.error(error.message || "An error occurred while saving the project", { id: "upload-status" });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="py-8 md:py-12 max-w-5xl mx-auto">
