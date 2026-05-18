@@ -32,6 +32,22 @@ export const Reviews: React.FC = () => {
     fetchReviews();
   }, []);
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    setIsExpanded(false);
+  }, [activeIndex]);
+
+  const limitWords = (text: string, limit: number) => {
+    const words = text.trim().split(/\s+/);
+    if (words.length <= limit) return text;
+    return words.slice(0, limit).join(' ') + '...';
+  };
+
+  const isLongReview = (text: string) => {
+    return text.trim().split(/\s+/).length > 50;
+  };
+
   const activeReview = testimonials[activeIndex];
 
   const goToPrev = () => {
@@ -98,9 +114,19 @@ export const Reviews: React.FC = () => {
           ‹
         </button>
 
-        <div className="relative z-10 max-w-3xl px-8 md:px-14 text-center text-white">
-          <p className="text-xl md:text-4xl leading-relaxed font-light">"{activeReview.description}"</p>
-          <p className="mt-8 text-3xl md:text-5xl font-serif italic">{activeReview.clientName}</p>
+        <div className="relative z-10 max-w-3xl px-8 md:px-14 py-12 md:py-20 text-center text-white">
+          <p className="text-xl md:text-3xl leading-relaxed font-light">
+            "{isExpanded ? activeReview.description : limitWords(activeReview.description, 50)}"
+            {isLongReview(activeReview.description) && (
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="ml-2 text-yellow-400 hover:text-yellow-300 font-semibold text-sm uppercase tracking-wider bg-transparent border-none cursor-pointer focus:outline-none transition-colors"
+              >
+                {isExpanded ? "Read Less" : "Read More"}
+              </button>
+            )}
+          </p>
+          <p className="mt-8 text-2xl md:text-3xl font-serif italic">{activeReview.clientName}</p>
         </div>
 
         <button

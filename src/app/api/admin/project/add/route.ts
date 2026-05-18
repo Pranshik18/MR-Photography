@@ -32,17 +32,29 @@ export async function POST(req: NextRequest) {
 
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
-    const heroUpload = await uploadSingle(heroImage, `mr-photography/projects/${slug}`);
-    const heroUrl = heroUpload.secure_url;
+    let heroUrl = heroImage;
+    if (heroImage && heroImage.startsWith("data:image")) {
+      const heroUpload = await uploadSingle(heroImage, `mr-photography/projects/${slug}`);
+      heroUrl = heroUpload.secure_url;
+    }
+
     const uploadedImages = [];
     if (images && images.length > 0) {
       for (const img of images) {
-        const upload = await uploadSingle(img.url, `mr-photography/projects/${slug}/gallery`);
-        uploadedImages.push({
-          url: upload.secure_url,
-          publicId: upload.public_id,
-          order: img.order || 0
-        });
+        if (img.url && img.url.startsWith("data:image")) {
+          const upload = await uploadSingle(img.url, `mr-photography/projects/${slug}/gallery`);
+          uploadedImages.push({
+            url: upload.secure_url,
+            publicId: upload.public_id,
+            order: img.order || 0
+          });
+        } else {
+          uploadedImages.push({
+            url: img.url,
+            publicId: img.publicId || "",
+            order: img.order || 0
+          });
+        }
       }
     }
 

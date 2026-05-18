@@ -95,9 +95,9 @@ const projectSchema: Schema<IProject> = new mongoose.Schema(
       default: [],
       validate: {
         validator: function (images: IProjectImage[]) {
-          return images.length <= 30; // Limit gallery size
+          return images.length <= 40;
         },
-        message: 'Maximum 30 images allowed per project',
+        message: 'Maximum 40 images allowed per project',
       },
     },
 

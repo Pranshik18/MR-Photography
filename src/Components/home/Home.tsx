@@ -148,7 +148,7 @@ export const Home: React.FC<HomeProps> = ({ setPage }) => {
                     transition={{ delay: 1.5, duration: 1.2, ease: "easeOut" }}
                     className="absolute bottom-[15%] -left-[7.5%] h-[25%] bg-yellow-400/30 skew-x-[-15deg] blur-md z-0"
                   />
-                  <span className="relative text-7xl md:text-[14rem] font-sans font-black italic tracking-tighter leading-none mb-2 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)] text-white">
+                  <span className="relative text-7xl md:text-[14rem] font-sans font-black tracking-tighter leading-none mb-2 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)] text-white">
                     {heroTitle}
                   </span>
                 </div>
