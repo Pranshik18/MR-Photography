@@ -2,31 +2,84 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 export const About: React.FC = () => {
+  const [avatarUrl, setAvatarUrl] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function fetchAvatar() {
+      try {
+        const res = await fetch("/api/user/profile");
+        const json = await res.json();
+        if (json.success && json.data?.avatar) {
+          setAvatarUrl(json.data.avatar);
+        }
+      } catch (error) {
+        console.error("Error loading user profile avatar:", error);
+      }
+    }
+    fetchAvatar();
+  }, []);
+
   return (
-    <div className="bg-white min-h-screen pt-20 pb-16">
+    <div className="bg-white min-h-screen pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
-          <div className="lg:col-span-6 rounded-2xl overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1600"
-              alt="Couple portrait photographed outdoors"
-              className="w-full h-full object-cover aspect-[4/5]"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-          <div className="lg:col-span-6">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-gray-700 block mb-6">About Our Photography</span>
-            <h1 className="text-5xl md:text-7xl leading-[0.95] font-serif text-black mb-8">
-              We photograph stories with <span className="italic">emotion, elegance,</span> and intention.
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-center">
+          
+          {/* Left Column: Asymmetrical Editorial Image */}
+          <motion.div 
+            initial={{ opacity: 0, y: 35 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="lg:col-span-5 order-2 lg:order-1"
+          >
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[2.5rem] md:rounded-[3rem] shadow-2xl bg-stone-100 group">
+              {/* Subtle warm overlay to give cinematic tone */}
+              <div className="absolute inset-0 bg-amber-500/5 mix-blend-multiply z-[2] pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-900/10 via-transparent to-transparent z-[2] pointer-events-none" />
+              <img
+                src={avatarUrl || "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1600"}
+                alt="Photographer Portrait Avatar"
+                className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-105 filter brightness-[0.98] contrast-[1.02]"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          </motion.div>
+
+          {/* Right Column: Spacious Storytelling Content */}
+          <motion.div 
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: "easeOut" }}
+            className="lg:col-span-7 order-1 lg:order-2 flex flex-col justify-center"
+          >
+            <span className="font-montserrat text-[10px] md:text-xs font-semibold uppercase tracking-[0.3em] text-stone-400 mb-4 block">
+              ABOUT OUR PHOTOGRAPHY
+            </span>
+            
+            <h1 className="font-signature font-normal text-6xl md:text-8xl text-stone-800 mb-2 select-none leading-none">
+              Hello!
             </h1>
-            <p className="text-lg text-gray-700 leading-relaxed max-w-xl">
-              We specialize in wedding and portrait photography that feels natural, editorial, and deeply personal.
-              Our work is built around honest moments, beautiful light, and timeless storytelling.
-            </p>
-          </div>
+            
+            <h2 className="font-serif italic text-stone-700 text-2xl md:text-4xl mb-8 leading-snug">
+              We photograph stories with <span className="italic text-stone-800">emotion, elegance,</span> and intention.
+            </h2>
+
+            <div className="space-y-6 text-stone-600 font-montserrat font-light text-sm md:text-base leading-relaxed max-w-xl">
+              <p>
+                We believe that the absolute best photographs are born from honest, uninterrupted human connection. Our approach rejects typical "cookie-cutter" formulas in favor of something far more meaningful—your actual, unscripted story. We want to know your jokes, your dynamic, and what truly makes you two tick so that your gallery feels authentic to who you are.
+              </p>
+              <p>
+                During your celebration, our goal is to fit effortlessly into the natural flow of your day. We capture the grand, breath-catching milestones alongside the quietest, most vulnerable in-between details—without taking over the room or orchestrating forced poses. We are humans first, photographers second, committed to giving you a calm, stress-free experience.
+              </p>
+              <p>
+                Combining a refined documentary eye with a warm, cinematic editorial finish, we deliver timeless collections that prioritize real emotions and true-to-life colors. When you look back at your gallery decades from now, we want you to not just see how beautiful everything was, but to viscerally remember exactly how it felt.
+              </p>
+            </div>
+          </motion.div>
+
         </section>
 
         <section className="mt-16">
